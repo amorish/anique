@@ -105,7 +105,11 @@
     max-height: 420px;
     overflow-y: auto;
   }
-  .dropdown.open { display: block; }
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .dropdown.open { display: block; animation: fadeInDown 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
   .drop-item {
     display: flex;
     gap: 12px;
@@ -143,9 +147,11 @@
     font-size: 12px;
     cursor: pointer;
     flex-shrink: 0;
+    transition: all 0.2s;
   }
   .drop-add:hover { background: #c0070f; }
-  .drop-add.added { background: #333; color: var(--muted); cursor: default; }
+  .drop-add:active { transform: scale(0.96); }
+  .drop-add.added { background: #333; color: var(--muted); cursor: default; transform: none; }
   .drop-empty { padding: 20px; text-align: center; color: var(--muted); font-size: 13px; }
 
   /* ── STATS BAR ── */
@@ -174,6 +180,9 @@
   .filter-btn:hover {
     border-color: var(--border-hover);
     color: var(--text);
+  }
+  .filter-btn:active {
+    transform: scale(0.96);
   }
   .filter-btn.active {
     background: var(--accent);
@@ -238,6 +247,7 @@
     backdrop-filter: blur(4px);
   }
   .watched-btn:hover { border-color: #4caf50; }
+  .watched-btn:active { transform: scale(0.9); }
   .watched-btn.checked { background: #4caf50; border-color: #4caf50; }
   .watched-btn svg { width: 13px; height: 13px; fill: none; stroke: white; stroke-width: 2.5; }
 
@@ -328,6 +338,9 @@
     background: var(--accent); 
     color: #ffffff; 
   }
+  .remove-btn:active {
+    transform: scale(0.96);
+  }
 
   /* ── EMPTY STATE ── */
   .empty-state {
@@ -377,8 +390,10 @@
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     z-index: 2;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .modal-close:hover { color: var(--text); background: #333; }
+  .modal-close:hover { color: var(--text); background: #333; transform: rotate(90deg); }
+  .modal-close:active { transform: rotate(90deg) scale(0.9); }
 
   .modal-hero {
     display: flex;
@@ -597,6 +612,7 @@
     border-radius: 8px; font-weight: 600; font-family: var(--font-heading); font-size: 15px; cursor: pointer; transition: 0.2s;
   }
   .auth-btn:hover { background: #c0070f; }
+  .auth-btn:active { transform: scale(0.98); }
   .auth-toggle { background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer; margin-top: 16px; }
   .auth-toggle:hover { color: white; }
   .forgot-link { margin-top: 4px; font-size: 11px; color: #666; }
