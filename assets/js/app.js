@@ -154,8 +154,9 @@ function toggleAuthMode() {
   isSignupMode = !isSignupMode;
   document.getElementById('authTitle').textContent = isSignupMode ? "Create Account" : "Sign In";
   document.getElementById('authActionBtn').textContent = isSignupMode ? "Sign Up" : "Sign In";
-  document.getElementById('authToggleBtn').textContent = isSignupMode ? "Already have an account? Sign in" : "Need an account? Sign up";
-  document.getElementById('authUsername').style.display = isSignupMode ? "block" : "none";
+  document.getElementById('authFooterText').textContent = isSignupMode ? "Already have an account?" : "Need an account?";
+  document.getElementById('authToggleBtn').textContent = isSignupMode ? "Sign in" : "Sign up";
+  document.getElementById('authUsernameGroup').style.display = isSignupMode ? "block" : "none";
 }
 
 async function handleAuth() {
@@ -206,8 +207,9 @@ async function handleAuth() {
           isSignupMode = true;
           document.getElementById('authTitle').textContent = "Create Account";
           document.getElementById('authActionBtn').textContent = "Sign Up";
-          document.getElementById('authToggleBtn').textContent = "Already have an account? Sign in";
-          document.getElementById('authUsername').style.display = "block";
+          document.getElementById('authFooterText').textContent = "Already have an account?";
+          document.getElementById('authToggleBtn').textContent = "Sign in";
+          document.getElementById('authUsernameGroup').style.display = "block";
           showToast("No account found — sign up instead!");
         } else {
           showToast("Incorrect password. Try again.");

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AniQue - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;900&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "surface-container-high": "#2a2a2a",
+                        "on-primary-fixed-variant": "#930007",
+                        "primary-fixed-dim": "#ffb4aa",
+                        "surface-dim": "#131313",
+                        "on-primary-container": "#fff7f6",
+                        "secondary": "#c8c6c5",
+                        "on-secondary": "#303030",
+                        "primary-container": "#e50914",
+                        "on-secondary-container": "#b7b5b4",
+                        "outline-variant": "#5e3f3b",
+                        "surface-variant": "#353534",
+                        "on-surface": "#e5e2e1",
+                        "on-background": "#e5e2e1",
+                        "on-secondary-fixed": "#1b1b1c",
+                        "on-tertiary": "#303030",
+                        "tertiary": "#c8c6c5",
+                        "surface": "#131313",
+                        "on-tertiary-fixed-variant": "#474746",
+                        "inverse-on-surface": "#313030",
+                        "secondary-container": "#474746",
+                        "tertiary-container": "#737272",
+                        "surface-container-low": "#1c1b1b",
+                        "on-tertiary-container": "#fbf8f8",
+                        "on-primary-fixed": "#410001",
+                        "error-container": "#93000a",
+                        "inverse-primary": "#c0000c",
+                        "error": "#ffb4ab",
+                        "surface-container-highest": "#353534",
+                        "tertiary-fixed": "#e4e2e1",
+                        "background": "#131313",
+                        "on-error": "#690005",
+                        "outline": "#af8782",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-secondary-fixed-variant": "#474746",
+                        "surface-container": "#201f1f",
+                        "on-surface-variant": "#e9bcb6",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "primary-fixed": "#ffdad5",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "inverse-surface": "#e5e2e1",
+                        "secondary-fixed": "#e5e2e1",
+                        "surface-tint": "#ffb4aa",
+                        "surface-bright": "#393939",
+                        "on-primary": "#690003",
+                        "primary": "#ffb4aa",
+                        "on-error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "40px",
+                        "gutter": "24px",
+                        "sm": "12px",
+                        "base": "8px",
+                        "xs": "4px",
+                        "md": "24px",
+                        "xl": "64px",
+                        "margin": "32px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Outfit"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "title-sm": ["Outfit"],
+                        "headline-md": ["Outfit"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "title-sm": ["20px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "headline-md": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-24 md:pb-0">
+<!-- Top Navigation (Web) -->
+<nav class="hidden md:flex bg-black/80 backdrop-blur-md border-b border-white/10 shadow-none docked full-width top-0 sticky z-50 px-6 py-4 max-w-7xl mx-auto justify-between items-center w-full">
+<div class="flex items-center gap-md">
+<span class="text-2xl font-black tracking-tighter text-red-600 uppercase font-['Outfit']">AniQue</span>
+</div>
+<div class="flex-1 max-w-xl mx-md relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant z-10" style="font-variation-settings: 'FILL' 0;">search</span>
+<input class="w-full bg-surface-container/50 border border-white/10 rounded-full py-2 pl-10 pr-4 text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary-container focus:bg-surface-container/80 backdrop-blur-sm transition-all text-sm font-['Outfit'] font-medium" placeholder="Search anime..." type="text"/>
+</div>
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-white/10 bg-surface-container">
+<img alt="User Avatar" class="w-full h-full object-cover" data-alt="close up portrait of a young man looking directly at camera with neutral expression against soft blue background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuC-DPFygkCjhvNIZ1OiSv8L1DiR15w1Qi8kwlXmmTdtj-t8KR8NMGeNXwrKYZ6vcIbV7b3REFi3-ZVf2Iqip5oThTo3yHpMZZUwI-PuLrPJUsASKJ9flykUEwnNnhyPSpehPw8ZTXRzKpzJPS1-gH1zy2GRt1CD3NW2wxzS3WNg3IZnPPZoQSLIzuxySbXYcg_xopind1wLHoSawU2uGdkYz42zwbq1M5gecaKeYY9RZKuJTFPEveuW5z_zRYWfrM6XxG_1Uc4as"/>
+</div>
+<button class="text-zinc-400 hover:text-red-500 transition-colors duration-200 active:scale-95 transform font-['Outfit'] text-sm font-medium flex items-center gap-xs">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">logout</span>
+<span class="sr-only">logout</span>
+</button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="max-w-7xl mx-auto px-4 md:px-margin pt-md">
+<!-- Mobile Header (Visible only on mobile) -->
+<header class="md:hidden flex justify-between items-center mb-md">
+<span class="text-2xl font-black tracking-tighter text-red-600 uppercase font-['Outfit']">AniQue</span>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-white/10 bg-surface-container">
+<img alt="User Avatar" class="w-full h-full object-cover" data-alt="close up portrait of a young man looking directly at camera with neutral expression against soft blue background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfsC1vRtaYPpJ2n3C5qrgzFCmCMjjClrSZJ2DYqvb1Y4FmFmUHOtECoAPS8Zx5HjZ8HTAXd5XxDdhiucnEkBqwLex3ZXFp1-6gHLYnQ1P57TBCpgwhtmzzueQFueHkA_DHCBnTP1yyZyBzOPtsp60Feyi9Ul9U9U_pwU3DXKKDV0ZK8ZwcA2dhI7mJTiCmZ-2LnEJP7UjB69x6tZV1aXAG63SXwD04ojCyOYBClwej_EOLLbmuknVLTPmULs8yuebToYlhN0rz1jc"/>
+</div>
+</header>
+<!-- Stats Strip -->
+<section class="flex flex-wrap gap-md mb-xl bg-surface-container-low p-md rounded-xl border border-white/5 backdrop-blur-md">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Total</span>
+<span class="font-headline-md text-headline-md text-on-surface">42</span>
+</div>
+<div class="w-px bg-white/10 hidden sm:block"></div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Watched</span>
+<span class="font-headline-md text-headline-md text-primary-container">12</span>
+</div>
+<div class="w-px bg-white/10 hidden sm:block"></div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Remaining</span>
+<span class="font-headline-md text-headline-md text-on-surface">30</span>
+</div>
+</section>
+<!-- Filters -->
+<div class="flex gap-sm mb-lg overflow-x-auto pb-xs scrollbar-hide">
+<button class="px-4 py-1.5 rounded-full bg-primary-container text-white border border-primary-container font-label-sm text-label-sm transition-transform active:scale-95 whitespace-nowrap shadow-[0_0_10px_rgba(229,9,20,0.3)]">All</button>
+<button class="px-4 py-1.5 rounded-full bg-surface-container text-on-surface-variant border border-white/10 hover:border-white/30 hover:text-on-surface font-label-sm text-label-sm transition-all active:scale-95 whitespace-nowrap">Watching</button>
+<button class="px-4 py-1.5 rounded-full bg-surface-container text-on-surface-variant border border-white/10 hover:border-white/30 hover:text-on-surface font-label-sm text-label-sm transition-all active:scale-95 whitespace-nowrap">Watched</button>
+</div>
+<!-- Watchlist Grid -->
+<section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-gutter">
+<!-- Card 1 -->
+<article class="group relative aspect-[2/3] rounded-lg overflow-hidden border border-white/10 bg-surface-container transition-all hover:scale-[1.05] hover:border-white/30 hover:z-10 cursor-pointer">
+<img alt="Anime Poster" class="w-full h-full object-cover" data-alt="dramatic futuristic cityscape at night with neon red lights reflecting off wet dark streets and towering skyscrapers" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_ybiz3Q_CYVDO5XcFk1KxnChIW6-6dbraROeHiY1-NLjHLj1DFuLA1_VWDMc8M99GVB8L_6JukFyuxBHkg9QGiyB95g3yIpHrrUkvSuN7zntrj9KIPXYhjNHY-dnXTy4WcsZ4Y-mena8K0MyG46IeF7I8YzBW0QVp9tM0nYEdzhLTyXHoCsJ0nm_i8fE3acjxhaaIU7NLOrTNSPDJfknSRl8VCrArpXLLR2_qpTTuN-qYH0oHwqMmd6m0aQw-iqOJPOhH9vCD78A"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent opacity-90"></div>
+<button class="absolute top-sm right-sm w-8 h-8 rounded-full bg-surface-container-high/80 backdrop-blur-sm border border-white/20 flex items-center justify-center hover:bg-primary-container hover:border-primary-container transition-colors z-20 group/btn">
+<span class="material-symbols-outlined text-[18px] text-on-surface group-hover/btn:text-white" style="font-variation-settings: 'FILL' 0;">check_circle</span>
+</button>
+<div class="absolute bottom-0 left-0 w-full p-sm flex flex-col gap-xs">
+<h3 class="font-title-sm text-title-sm text-on-surface line-clamp-2 leading-tight">Cyberpunk: Edgerunners</h3>
+<div class="flex items-center gap-xs font-label-sm text-label-sm text-on-surface-variant">
+<span class="bg-surface-container-high px-1.5 py-0.5 rounded text-[10px]">TV</span>
+<span>•</span>
+<span>2022</span>
+<span>•</span>
+<span>10 Eps</span>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="absolute bottom-0 left-0 w-full h-1 bg-surface-container-highest">
+<div class="h-full bg-primary-container w-[100%] shadow-[0_0_8px_rgba(229,9,20,0.8)]"></div>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="group relative aspect-[2/3] rounded-lg overflow-hidden border border-white/10 bg-surface-container transition-all hover:scale-[1.05] hover:border-white/30 hover:z-10 cursor-pointer">
+<img alt="Anime Poster" class="w-full h-full object-cover" data-alt="sleek modern sports car driving on a coastal road at sunset with deep orange and purple sky over calm ocean" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnD7c7EdknL_4E0YtMNba4dhxLNwnc_4aKsjTh7ccZt7vhx0Yf_5wFz9oBv06A7XfwEGrCCsymfOIrOfnpRzzNSLATf33BvXuy2VjKQwV_OnMwaBs7tUCPzX0F_OEiGN-di2kzIOVmGah1fyBdsFTKTnyRt48IYlhKZl8dgAKvEpEg1EEA9YF6kFgR1JZG0Y8fvI0_XZ_mWfhs8GFmZtI0YuwnN2w2IRwh3RO3ybvGXMP4MHPbMFHMwK1bAGSc2cnAgJ4ZPifSYds"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent opacity-90"></div>
+<button class="absolute top-sm right-sm w-8 h-8 rounded-full bg-surface-container-high/80 backdrop-blur-sm border border-white/20 flex items-center justify-center hover:bg-primary-container hover:border-primary-container transition-colors z-20 group/btn">
+<span class="material-symbols-outlined text-[18px] text-on-surface group-hover/btn:text-white" style="font-variation-settings: 'FILL' 0;">check_circle</span>
+</button>
+<div class="absolute bottom-0 left-0 w-full p-sm flex flex-col gap-xs">
+<h3 class="font-title-sm text-title-sm text-on-surface line-clamp-2 leading-tight">Initial D First Stage</h3>
+<div class="flex items-center gap-xs font-label-sm text-label-sm text-on-surface-variant">
+<span class="bg-surface-container-high px-1.5 py-0.5 rounded text-[10px]">TV</span>
+<span>•</span>
+<span>1998</span>
+<span>•</span>
+<span>26 Eps</span>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="absolute bottom-0 left-0 w-full h-1 bg-surface-container-highest">
+<div class="h-full bg-primary-container w-[45%] shadow-[0_0_8px_rgba(229,9,20,0.8)]"></div>
+</div>
+</article>
+<!-- Card 3 -->
+<article class="group relative aspect-[2/3] rounded-lg overflow-hidden border border-white/10 bg-surface-container transition-all hover:scale-[1.05] hover:border-white/30 hover:z-10 cursor-pointer">
+<img alt="Anime Poster" class="w-full h-full object-cover" data-alt="misty dense ancient forest with giant moss covered trees and soft glowing ethereal light piercing through canopy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_g4oIm7HnsRCo2TJicYhCv5S__uru6G0GNPhk547wZFQgnaWyYhcFrOv94bFJy2HM4Cb4Mx8v8R6JNFwEgm4xA156zK2Mh0z8JfX5Tu6CDsIIKr6lOl91F2xcGC4wsbfD7fMQ6hLxLvQVE_TUGdEid5LzoDGtQimW-mKtRnL0T5C3T9HDQ_fNbJwhTQTVD6WrcIyxQwBnefi0mYJogvAMYqoNe1-AKZc_V2tqn4CGWzDMAIMN6Fwxo68D2meZE-yqApfPWdTXj3M"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent opacity-90"></div>
+<button class="absolute top-sm right-sm w-8 h-8 rounded-full bg-surface-container-high/80 backdrop-blur-sm border border-white/20 flex items-center justify-center hover:bg-primary-container hover:border-primary-container transition-colors z-20 group/btn">
+<span class="material-symbols-outlined text-[18px] text-on-surface group-hover/btn:text-white" style="font-variation-settings: 'FILL' 0;">check_circle</span>
+</button>
+<div class="absolute bottom-0 left-0 w-full p-sm flex flex-col gap-xs">
+<h3 class="font-title-sm text-title-sm text-on-surface line-clamp-2 leading-tight">Mushishi</h3>
+<div class="flex items-center gap-xs font-label-sm text-label-sm text-on-surface-variant">
+<span class="bg-surface-container-high px-1.5 py-0.5 rounded text-[10px]">TV</span>
+<span>•</span>
+<span>2005</span>
+<span>•</span>
+<span>26 Eps</span>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="absolute bottom-0 left-0 w-full h-1 bg-surface-container-highest">
+<div class="h-full bg-primary-container w-[10%] shadow-[0_0_8px_rgba(229,9,20,0.8)]"></div>
+</div>
+</article>
+<!-- Card 4 -->
+<article class="group relative aspect-[2/3] rounded-lg overflow-hidden border border-white/10 bg-surface-container transition-all hover:scale-[1.05] hover:border-white/30 hover:z-10 cursor-pointer">
+<img alt="Anime Poster" class="w-full h-full object-cover" data-alt="vast open starry night sky over a quiet dark landscape with faint silhouette of mountains on horizon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDopK3xFlw2a8JS8M_DUKAo0ZXsV307NgmAFEJfJCOpWW-vuftv93ja1QdKxLStHLgDVdCfF2WA1AQu9qJsAHX4m0xfeH4wrrRdMOvwLuoLwKRohkYGShEJ0FZjA0mjAxO0XUor8PxgtceGbhmPHNKNw2A0k_ouVun0li5wrGVzcI2HO7pHBO0-dru84QeExRM0H7JN1JORHu6RefEyi0Px-cYa2Y0gFidlMEFsQuL2LdTDGzn-YCk-KRGVoG1ySvgc_wqLNjqRno"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent opacity-90"></div>
+<button class="absolute top-sm right-sm w-8 h-8 rounded-full bg-surface-container-high/80 backdrop-blur-sm border border-white/20 flex items-center justify-center hover:bg-primary-container hover:border-primary-container transition-colors z-20 group/btn">
+<span class="material-symbols-outlined text-[18px] text-on-surface group-hover/btn:text-white" style="font-variation-settings: 'FILL' 0;">check_circle</span>
+</button>
+<div class="absolute bottom-0 left-0 w-full p-sm flex flex-col gap-xs">
+<h3 class="font-title-sm text-title-sm text-on-surface line-clamp-2 leading-tight">Steins;Gate</h3>
+<div class="flex items-center gap-xs font-label-sm text-label-sm text-on-surface-variant">
+<span class="bg-surface-container-high px-1.5 py-0.5 rounded text-[10px]">TV</span>
+<span>•</span>
+<span>2011</span>
+<span>•</span>
+<span>24 Eps</span>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="absolute bottom-0 left-0 w-full h-1 bg-surface-container-highest">
+<div class="h-full bg-primary-container w-[80%] shadow-[0_0_8px_rgba(229,9,20,0.8)]"></div>
+</div>
+</article>
+</section>
+</main>
+<!-- Bottom Navigation (Mobile) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 rounded-t-xl bg-zinc-950/90 backdrop-blur-lg border-t border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.5)] flex justify-around items-center px-4 py-3 pb-safe font-['Outfit'] text-[10px] font-bold uppercase tracking-widest">
+<button class="flex flex-col items-center justify-center text-zinc-500 hover:text-white transition-colors active:scale-90 duration-150 gap-xs">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 0;">home</span>
+<span>Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-red-600 scale-110 transition-transform hover:text-white active:scale-90 duration-150 gap-xs">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">format_list_bulleted</span>
+<span>Watchlist</span>
+</button>
+<button class="flex flex-col items-center justify-center text-zinc-500 hover:text-white transition-colors active:scale-90 duration-150 gap-xs">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 0;">local_fire_department</span>
+<span>Trending</span>
+</button>
+<button class="flex flex-col items-center justify-center text-zinc-500 hover:text-white transition-colors active:scale-90 duration-150 gap-xs">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 0;">person</span>
+<span>Profile</span>
+</button>
+</nav>
+</body></html>

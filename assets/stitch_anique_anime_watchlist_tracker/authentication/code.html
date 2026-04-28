@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AniQue - Sign In</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Outfit:wght@500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "surface-container-high": "#2a2a2a",
+                        "on-primary-fixed-variant": "#930007",
+                        "primary-fixed-dim": "#ffb4aa",
+                        "surface-dim": "#131313",
+                        "on-primary-container": "#fff7f6",
+                        "secondary": "#c8c6c5",
+                        "on-secondary": "#303030",
+                        "primary-container": "#e50914",
+                        "on-secondary-container": "#b7b5b4",
+                        "outline-variant": "#5e3f3b",
+                        "surface-variant": "#353534",
+                        "on-surface": "#e5e2e1",
+                        "on-background": "#e5e2e1",
+                        "on-secondary-fixed": "#1b1b1c",
+                        "on-tertiary": "#303030",
+                        "tertiary": "#c8c6c5",
+                        "surface": "#131313",
+                        "on-tertiary-fixed-variant": "#474746",
+                        "inverse-on-surface": "#313030",
+                        "secondary-container": "#474746",
+                        "tertiary-container": "#737272",
+                        "surface-container-low": "#1c1b1b",
+                        "on-tertiary-container": "#fbf8f8",
+                        "on-primary-fixed": "#410001",
+                        "error-container": "#93000a",
+                        "inverse-primary": "#c0000c",
+                        "error": "#ffb4ab",
+                        "surface-container-highest": "#353534",
+                        "tertiary-fixed": "#e4e2e1",
+                        "background": "#131313",
+                        "on-error": "#690005",
+                        "outline": "#af8782",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-secondary-fixed-variant": "#474746",
+                        "surface-container": "#201f1f",
+                        "on-surface-variant": "#e9bcb6",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "primary-fixed": "#ffdad5",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "inverse-surface": "#e5e2e1",
+                        "secondary-fixed": "#e5e2e1",
+                        "surface-tint": "#ffb4aa",
+                        "surface-bright": "#393939",
+                        "on-primary": "#690003",
+                        "primary": "#ffb4aa",
+                        "on-error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "40px",
+                        "gutter": "24px",
+                        "sm": "12px",
+                        "base": "8px",
+                        "xs": "4px",
+                        "md": "24px",
+                        "xl": "64px",
+                        "margin": "32px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Outfit"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "title-sm": ["Outfit"],
+                        "headline-md": ["Outfit"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "title-sm": ["20px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "headline-md": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex items-center justify-center relative overflow-hidden font-body-md text-body-md">
+<!-- Background Layer with Blur -->
+<div class="absolute inset-0 z-0">
+<img alt="" class="w-full h-full object-cover opacity-20 mix-blend-overlay" data-alt="Abstract dark atmospheric background with subtle crimson and deep purple gradient flows, moody modern anime cinematic aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEHrf07c9Om-6HxSi7EO1O5noHSASYYtpGmq1BiEp-w6e8Thn8B6o-q-yLIe7koXWFfP_KViKJ2GSe2LEiCR9kbWwhhEk0ia9WVuaCgxkFt5eRBWQVO1HZJShGzfi5dWd4QPAkwi1v6jQl-taZkXJhuNyYWDq6kVw9TlUflkikq7MCxxpkE6nGWcVyuBgUzCWOg2DswgkxCOGi8PTf9uWdu8S0ZqXWy_LffeHrMRFs0DF5PFuGs7heqf3N24QZbcZEQgDmAocktuU"/>
+<div class="absolute inset-0 bg-background/80 backdrop-blur-3xl"></div>
+</div>
+<!-- Centered Glassmorphism Card -->
+<main class="relative z-10 w-full max-w-[420px] px-6">
+<div class="bg-surface-container-low/70 backdrop-blur-2xl border border-white/5 rounded-xl p-10 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.8)] flex flex-col gap-8 relative overflow-hidden">
+<!-- Subtle gradient glow within card -->
+<div class="absolute -top-24 -right-24 w-48 h-48 bg-primary-container/20 rounded-full blur-3xl pointer-events-none"></div>
+<!-- Header -->
+<header class="text-center flex flex-col items-center gap-2 relative z-10">
+<h1 class="font-display-lg text-display-lg text-primary-container uppercase tracking-tighter">AniQue</h1>
+<h2 class="font-title-sm text-title-sm text-on-surface tracking-wide mt-2">Sign In</h2>
+</header>
+<!-- Form -->
+<form class="flex flex-col gap-5 relative z-10">
+<!-- Email Field -->
+<div class="flex flex-col gap-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider" for="email">Email</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" style="font-variation-settings: 'FILL' 0;">mail</span>
+<input class="w-full bg-surface-container-highest/40 border border-outline-variant/30 rounded-lg py-3.5 pl-12 pr-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all placeholder-on-surface-variant/40" id="email" placeholder="Enter your email" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="flex flex-col gap-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider" for="password">Password</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" style="font-variation-settings: 'FILL' 0;">lock</span>
+<input class="w-full bg-surface-container-highest/40 border border-outline-variant/30 rounded-lg py-3.5 pl-12 pr-12 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all placeholder-on-surface-variant/40" id="password" placeholder="Enter your password" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center" type="button">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">visibility_off</span>
+</button>
+</div>
+<!-- Forgot Password Link -->
+<div class="flex justify-end mt-1">
+<a class="font-label-sm text-label-sm text-primary-fixed hover:text-primary transition-colors duration-200" href="#">Forgot password?</a>
+</div>
+</div>
+<!-- Submit Button -->
+<button class="w-full bg-primary-container text-on-primary-container font-label-sm text-label-sm uppercase tracking-widest py-4 rounded-lg mt-4 hover:bg-inverse-primary hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-[0_0_20px_-5px_rgba(229,9,20,0.5)]" type="button">
+                    Sign In
+                </button>
+</form>
+<!-- Footer -->
+<div class="text-center mt-2 relative z-10 border-t border-white/5 pt-6">
+<p class="font-body-md text-body-md text-on-surface-variant">
+                    Need an account? 
+                    <a class="text-primary-fixed hover:text-primary font-label-sm text-label-sm ml-1 transition-colors duration-200 uppercase tracking-wide" href="#">Sign up</a>
+</p>
+</div>
+</div>
+</main>
+</body></html>

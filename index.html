@@ -82,20 +82,48 @@
     <div class="auth-card">
       <img src="assets/images/anique.png" alt="AniQue" class="logo-img">
       <h2 id="authTitle">Sign In</h2>
-      <p>Sign in to sync your Anime watchlist.</p>
+      
       <div class="auth-form">
-        <input type="text" id="authUsername" placeholder="Username" style="display:none;" />
-        <input type="email" id="authEmail" placeholder="Email address" autocomplete="email" />
-        <div class="password-wrapper">
-          <input type="password" id="authPwd" placeholder="Password" />
-          <button class="pwd-toggle" type="button" onclick="togglePassword()" id="pwdToggleBtn" aria-label="Toggle password visibility">
-            <i data-lucide="eye" id="pwdEyeIcon"></i>
-          </button>
+        <!-- Username -->
+        <div class="input-group" id="authUsernameGroup" style="display:none;">
+          <label for="authUsername">Username</label>
+          <div class="input-wrapper">
+            <i data-lucide="user" class="input-icon"></i>
+            <input type="text" id="authUsername" placeholder="Enter your username" />
+          </div>
         </div>
+
+        <!-- Email -->
+        <div class="input-group">
+          <label for="authEmail">Email</label>
+          <div class="input-wrapper">
+            <i data-lucide="mail" class="input-icon"></i>
+            <input type="email" id="authEmail" placeholder="Enter your email" autocomplete="email" />
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="input-group">
+          <label for="authPwd">Password</label>
+          <div class="input-wrapper password-wrapper">
+            <i data-lucide="lock" class="input-icon"></i>
+            <input type="password" id="authPwd" placeholder="Enter your password" />
+            <button class="pwd-toggle" type="button" onclick="togglePassword()" id="pwdToggleBtn" aria-label="Toggle password visibility">
+              <i data-lucide="eye-off" id="pwdEyeIcon"></i>
+            </button>
+          </div>
+          <div class="forgot-link-wrapper" id="forgotLinkWrapper">
+            <button class="forgot-link" type="button" onclick="forgotPassword()">Forgot password?</button>
+          </div>
+        </div>
+
         <button class="auth-btn" id="authActionBtn" onclick="handleAuth()">Sign In</button>
       </div>
-      <button class="auth-toggle" onclick="toggleAuthMode()" id="authToggleBtn">Need an account? Sign up</button>
-      <button class="auth-toggle forgot-link" onclick="forgotPassword()">Forgot password?</button>
+
+      <div class="auth-footer border-top">
+        <span class="auth-footer-text" id="authFooterText">Need an account?</span>
+        <button class="auth-toggle-inline" onclick="toggleAuthMode()" id="authToggleBtn">Sign up</button>
+      </div>
     </div>
   </div>
 
@@ -105,14 +133,18 @@
       <img src="assets/images/anique.png" alt="AniQue" class="logo-img">
       <div class="verify-icon"><i data-lucide="mail" style="width:48px;height:48px;color:var(--accent);"></i></div>
       <h2>Verify Your Email</h2>
-      <p>We've sent a verification link to:</p>
+      <p class="verify-hint" style="margin-bottom:8px !important;">We've sent a verification link to:</p>
       <p class="verify-email-display" id="verifyEmail"></p>
       <p class="verify-hint">Click the link in the email, then come back and press the button below.</p>
-      <div class="auth-form">
+      
+      <div class="auth-form" style="margin-top: 16px;">
         <button class="auth-btn" onclick="checkVerification()">I've Verified — Let Me In</button>
         <button class="auth-btn verify-resend-btn" id="resendBtn" onclick="resendVerification()">Resend Verification Email</button>
       </div>
-      <button class="auth-toggle" onclick="verifyLogout()">Use a different account</button>
+      
+      <div class="auth-footer border-top">
+        <button class="auth-toggle-inline" onclick="verifyLogout()">Use a different account</button>
+      </div>
     </div>
   </div>
 

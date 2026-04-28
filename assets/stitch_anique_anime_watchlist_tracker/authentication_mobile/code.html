@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AniQue - Sign In</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Spline+Sans:wght@500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: 300;
+            font-style: normal;
+            font-size: 24px;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "surface-container-highest": "#353534",
+                        "surface-tint": "#ffb4aa",
+                        "on-secondary-fixed-variant": "#474746",
+                        "tertiary-fixed": "#e4e2e1",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-container-lowest": "#0e0e0e",
+                        "primary-fixed": "#ffdad5",
+                        "inverse-on-surface": "#313030",
+                        "error": "#ffb4ab",
+                        "secondary-container": "#474746",
+                        "surface-container": "#201f1f",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "error-container": "#93000a",
+                        "on-tertiary": "#303030",
+                        "surface-variant": "#353534",
+                        "on-primary-container": "#fff7f6",
+                        "on-secondary-fixed": "#1b1b1c",
+                        "background": "#131313",
+                        "tertiary": "#c8c6c5",
+                        "surface-container-high": "#2a2a2a",
+                        "on-background": "#e5e2e1",
+                        "surface": "#131313",
+                        "outline-variant": "#5e3f3b",
+                        "secondary-fixed": "#e5e2e1",
+                        "on-surface-variant": "#e9bcb6",
+                        "on-tertiary-fixed-variant": "#474746",
+                        "tertiary-container": "#737272",
+                        "on-error-container": "#ffdad6",
+                        "surface-dim": "#131313",
+                        "on-surface": "#e5e2e1",
+                        "on-secondary-container": "#b7b5b4",
+                        "inverse-primary": "#c0000c",
+                        "on-tertiary-container": "#fbf8f8",
+                        "on-secondary": "#303030",
+                        "secondary": "#c8c6c5",
+                        "on-error": "#690005",
+                        "primary-container": "#e50914",
+                        "outline": "#af8782",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-bright": "#393939",
+                        "on-primary-fixed-variant": "#930007",
+                        "on-primary-fixed": "#410001",
+                        "primary-fixed-dim": "#ffb4aa",
+                        "primary": "#ffb4aa",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "on-primary": "#690003"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "24px",
+                        "lg": "40px",
+                        "sm": "12px",
+                        "base": "8px",
+                        "xs": "4px",
+                        "gutter": "24px",
+                        "margin": "32px",
+                        "xl": "64px"
+                    },
+                    "fontFamily": {
+                        "title-sm": ["Spline Sans"],
+                        "display-lg": ["Spline Sans"],
+                        "headline-md": ["Spline Sans"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "title-sm": ["20px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen w-full flex items-center justify-center p-6 relative overflow-hidden antialiased">
+<!-- Atmospheric Background Image -->
+<img alt="" class="fixed inset-0 w-full h-full object-cover opacity-10 filter blur-[40px] pointer-events-none mix-blend-screen" data-alt="Dark, moody cinematic scene with deep shadows and subtle red neon light bleeding through a frosted glass window" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbVW5ea8Sux6VvxqTnz5dFsvfcaVj_HBCjySxFIZ8aKIKLvi3a-NBZDLzc6CU80zIesCgBGtIGWePGTTGiTqKIylTklu3nW8QEvy2MELY2g1udfCxp7N17FpXjocrK1Jnc-xROWl9lf7BzXTdro39QgIE3pFdwSXnQxJu95XppXxsuZfEr05EEMfQC_pwioy1WKHWnQHhw_lhpJZkKk8yG7vklajpDZCzJ9Z-Rny_5riZqHH2uL_JFmqstjyPkPCdkxyn7uc-LBbM"/>
+<!-- Deep Space Gradient Accent -->
+<div class="absolute top-[-10%] right-[-10%] w-[60vw] h-[60vw] max-w-[600px] max-h-[600px] bg-primary-container rounded-full blur-[120px] opacity-10 pointer-events-none"></div>
+<!-- Main Authentication Card (Level 2 Surface - Glassmorphism) -->
+<main class="relative z-10 w-full max-w-[420px] bg-surface-container-low/60 backdrop-blur-3xl border border-white/5 rounded-xl p-8 shadow-2xl flex flex-col gap-lg">
+<!-- Header / Identity -->
+<header class="flex flex-col items-center justify-center gap-xs text-center">
+<h1 class="font-display-lg text-[40px] font-black text-primary-container tracking-tighter leading-none">AniQue</h1>
+<p class="font-body-md text-body-md text-on-surface-variant/80 mt-2">Welcome back to the premiere experience.</p>
+</header>
+<!-- Form Section -->
+<form class="flex flex-col gap-md w-full">
+<!-- Email Input -->
+<div class="flex flex-col gap-base">
+<label class="font-label-sm text-label-sm text-secondary uppercase tracking-widest pl-1" for="email">Email Address</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant/50 group-focus-within:text-primary-container transition-colors" data-icon="mail">mail</span>
+</div>
+<input class="w-full bg-surface-container-highest/40 border border-white/10 rounded-lg pl-12 pr-4 py-[14px] font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/40 focus:border-primary-container focus:bg-surface-container-highest/60 focus:ring-1 focus:ring-primary-container outline-none transition-all duration-200" id="email" placeholder="name@example.com" type="email"/>
+</div>
+</div>
+<!-- Password Input -->
+<div class="flex flex-col gap-base">
+<label class="font-label-sm text-label-sm text-secondary uppercase tracking-widest pl-1" for="password">Password</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant/50 group-focus-within:text-primary-container transition-colors" data-icon="lock">lock</span>
+</div>
+<input class="w-full bg-surface-container-highest/40 border border-white/10 rounded-lg pl-12 pr-12 py-[14px] font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/40 focus:border-primary-container focus:bg-surface-container-highest/60 focus:ring-1 focus:ring-primary-container outline-none transition-all duration-200" id="password" placeholder="••••••••" type="password"/>
+<button aria-label="Toggle password visibility" class="absolute inset-y-0 right-0 pr-4 flex items-center text-on-surface-variant/50 hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="visibility_off">visibility_off</span>
+</button>
+</div>
+</div>
+<!-- Contextual Links -->
+<div class="flex justify-end w-full mt-[-8px]">
+<a class="font-label-sm text-label-sm text-secondary hover:text-primary-container transition-colors" href="#">Forgot Password?</a>
+</div>
+<!-- Primary Action -->
+<button class="w-full bg-primary-container text-on-primary-container font-label-sm text-label-sm uppercase tracking-widest py-[16px] rounded-lg mt-sm hover:bg-opacity-90 active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(229,9,20,0.3)] hover:shadow-[0_0_25px_rgba(229,9,20,0.5)]" type="submit">
+                Sign In
+                <span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</form>
+<!-- Footer Links -->
+<footer class="flex justify-center items-center gap-2 mt-sm pt-md border-t border-white/5 w-full">
+<span class="font-body-md text-[14px] text-on-surface-variant">New to AniQue?</span>
+<a class="font-label-sm text-label-sm text-primary-container hover:text-primary transition-colors uppercase tracking-wider" href="#">Sign Up</a>
+</footer>
+</main>
+</body></html>

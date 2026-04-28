@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AniQue - Empty Watchlist</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Outfit:wght@500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-fixed": "#1b1c1c",
+                      "surface-container-high": "#2a2a2a",
+                      "on-primary-fixed-variant": "#930007",
+                      "primary-fixed-dim": "#ffb4aa",
+                      "surface-dim": "#131313",
+                      "on-primary-container": "#fff7f6",
+                      "secondary": "#c8c6c5",
+                      "on-secondary": "#303030",
+                      "primary-container": "#e50914",
+                      "on-secondary-container": "#b7b5b4",
+                      "outline-variant": "#5e3f3b",
+                      "surface-variant": "#353534",
+                      "on-surface": "#e5e2e1",
+                      "on-background": "#e5e2e1",
+                      "on-secondary-fixed": "#1b1b1c",
+                      "on-tertiary": "#303030",
+                      "tertiary": "#c8c6c5",
+                      "surface": "#131313",
+                      "on-tertiary-fixed-variant": "#474746",
+                      "inverse-on-surface": "#313030",
+                      "secondary-container": "#474746",
+                      "tertiary-container": "#737272",
+                      "surface-container-low": "#1c1b1b",
+                      "on-tertiary-container": "#fbf8f8",
+                      "on-primary-fixed": "#410001",
+                      "error-container": "#93000a",
+                      "inverse-primary": "#c0000c",
+                      "error": "#ffb4ab",
+                      "surface-container-highest": "#353534",
+                      "tertiary-fixed": "#e4e2e1",
+                      "background": "#131313",
+                      "on-error": "#690005",
+                      "outline": "#af8782",
+                      "surface-container-lowest": "#0e0e0e",
+                      "on-secondary-fixed-variant": "#474746",
+                      "surface-container": "#201f1f",
+                      "on-surface-variant": "#e9bcb6",
+                      "secondary-fixed-dim": "#c8c6c5",
+                      "primary-fixed": "#ffdad5",
+                      "tertiary-fixed-dim": "#c8c6c5",
+                      "inverse-surface": "#e5e2e1",
+                      "secondary-fixed": "#e5e2e1",
+                      "surface-tint": "#ffb4aa",
+                      "surface-bright": "#393939",
+                      "on-primary": "#690003",
+                      "primary": "#ffb4aa",
+                      "on-error-container": "#ffdad6"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "lg": "40px",
+                      "gutter": "24px",
+                      "sm": "12px",
+                      "base": "8px",
+                      "xs": "4px",
+                      "md": "24px",
+                      "xl": "64px",
+                      "margin": "32px"
+              },
+              "fontFamily": {
+                      "display-lg": [
+                              "Outfit"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "label-sm": [
+                              "Inter"
+                      ],
+                      "title-sm": [
+                              "Outfit"
+                      ],
+                      "headline-md": [
+                              "Outfit"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "title-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-md": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-[#121212] text-on-background min-h-screen flex flex-col font-body-md text-body-md overflow-x-hidden selection:bg-primary-container selection:text-white">
+<!-- TopNavBar (Desktop) -->
+<header class="hidden md:flex bg-black/80 backdrop-blur-md dark:bg-black/80 docked full-width top-0 sticky z-50 border-b border-white/10 shadow-none font-['Outfit'] text-sm font-medium">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
+<div class="text-2xl font-black tracking-tighter text-red-600 uppercase">AniQue</div>
+<nav class="flex gap-6 items-center">
+<a class="text-zinc-400 hover:text-red-500 transition-colors duration-200 active:scale-95 transform transition-all" href="#">Home</a>
+<a class="text-red-600 border-b-2 border-red-600 pb-1 hover:text-red-500 transition-colors duration-200 active:scale-95 transform transition-all" href="#">Watchlist</a>
+<a class="text-zinc-400 hover:text-red-500 transition-colors duration-200 active:scale-95 transform transition-all" href="#">Trending</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="bg-surface-container-high/50 border border-white/10 rounded-full py-2 pl-10 pr-4 text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all w-64" placeholder="Search anime..." type="text"/>
+</div>
+<button class="text-zinc-400 hover:text-red-500 transition-colors duration-200">
+<span class="material-symbols-outlined">logout</span>
+</button>
+<img alt="User Avatar" class="w-8 h-8 rounded-full border border-white/10" data-alt="Close-up portrait of a user avatar, stylish lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbprLZgf6CQSq9cFHw25r1RzauBc9Xk4-rBN6Tg6V7v_iSWJMw33-737HqYVxmu9OGntIUlyYLflzYh1bn0mH1j8sQirUcIz1pj7QwHOIYqsGDH-fXPqey-Lxot6w1pp_sK2RhX-f1YaUOw9v24uimmBDQBuNbqs7cAhcgbiK6RPPheiKuinmNX6Exm0a6-NpCRoIYNbq6Kn6py_rvf5dUsLu_9dWapyTUIaG0XW7HZ9C6YljbOfFNvLSTyKKRDbDmMIbrUF5A-hg"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col pt-6 md:pt-12 pb-24 md:pb-12 px-4 md:px-margin max-w-7xl mx-auto w-full relative">
+<!-- Dashboard Stats (Muted/Zeroed for Empty State) -->
+<section class="mb-12 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-gutter">
+<div class="bg-surface-container-high/30 backdrop-blur-md rounded-lg p-4 border border-white/5">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Total Series</p>
+<p class="font-headline-md text-headline-md text-on-surface">0</p>
+</div>
+<div class="bg-surface-container-high/30 backdrop-blur-md rounded-lg p-4 border border-white/5">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Episodes Watched</p>
+<p class="font-headline-md text-headline-md text-on-surface">0</p>
+</div>
+<div class="bg-surface-container-high/30 backdrop-blur-md rounded-lg p-4 border border-white/5">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Days Wasted</p>
+<p class="font-headline-md text-headline-md text-on-surface">0.0</p>
+</div>
+<div class="bg-surface-container-high/30 backdrop-blur-md rounded-lg p-4 border border-white/5">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Top Genre</p>
+<p class="font-title-sm text-title-sm text-on-surface-variant italic">N/A</p>
+</div>
+</section>
+<!-- Empty State Centerpiece -->
+<div class="flex-grow flex flex-col items-center justify-center text-center py-20 px-4">
+<div class="w-32 h-32 mb-8 relative flex items-center justify-center">
+<!-- Abstract "Ghost" representation using glowing orb and icon -->
+<div class="absolute inset-0 bg-primary-container/20 rounded-full blur-[40px] animate-pulse"></div>
+<span class="material-symbols-outlined text-[80px] text-surface-variant" style="font-variation-settings: 'FILL' 1;">mist</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-2">Your watchlist is empty</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-md mx-auto mb-8">
+                Search for an anime above to add it to your queue and start tracking your progress.
+            </p>
+<!-- Mobile Search Trigger (since top search is hidden on mobile) -->
+<button class="md:hidden flex items-center gap-2 bg-primary-container hover:bg-inverse-primary text-white px-6 py-3 rounded-full transition-colors border border-white/10 shadow-[0_0_15px_rgba(229,9,20,0.3)]">
+<span class="material-symbols-outlined text-[20px]">search</span>
+<span class="font-title-sm text-title-sm">Discover Anime</span>
+</button>
+</div>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 rounded-t-xl border-t border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.5)] bg-zinc-950/90 backdrop-blur-lg dark:bg-zinc-950/90 font-['Outfit'] text-[10px] font-bold uppercase tracking-widest pb-safe">
+<div class="flex justify-around items-center px-4 py-3">
+<a class="flex flex-col items-center justify-center text-zinc-500 hover:text-white transition-colors active:scale-90 transition-all duration-150" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+                Home
+            </a>
+<a class="flex flex-col items-center justify-center text-red-600 scale-110 transition-transform active:scale-90 transition-all duration-150" href="#">
+<span class="material-symbols-outlined mb-1 text-red-600">format_list_bulleted</span>
+                Watchlist
+            </a>
+<a class="flex flex-col items-center justify-center text-zinc-500 hover:text-white transition-colors active:scale-90 transition-all duration-150" href="#">
+<span class="material-symbols-outlined mb-1">local_fire_department</span>
+                Trending
+            </a>
+<a class="flex flex-col items-center justify-center text-zinc-500 hover:text-white transition-colors active:scale-90 transition-all duration-150" href="#">
+<span class="material-symbols-outlined mb-1">person</span>
+                Profile
+            </a>
+</div>
+</nav>
+</body></html>

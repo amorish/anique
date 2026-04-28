@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Anime Details - AniQue</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Spline+Sans:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration (Provided) -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "surface-container-highest": "#353534",
+                        "surface-tint": "#ffb4aa",
+                        "on-secondary-fixed-variant": "#474746",
+                        "tertiary-fixed": "#e4e2e1",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-container-lowest": "#0e0e0e",
+                        "primary-fixed": "#ffdad5",
+                        "inverse-on-surface": "#313030",
+                        "error": "#ffb4ab",
+                        "secondary-container": "#474746",
+                        "surface-container": "#201f1f",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "error-container": "#93000a",
+                        "on-tertiary": "#303030",
+                        "surface-variant": "#353534",
+                        "on-primary-container": "#fff7f6",
+                        "on-secondary-fixed": "#1b1b1c",
+                        "background": "#131313",
+                        "tertiary": "#c8c6c5",
+                        "surface-container-high": "#2a2a2a",
+                        "on-background": "#e5e2e1",
+                        "surface": "#131313",
+                        "outline-variant": "#5e3f3b",
+                        "secondary-fixed": "#e5e2e1",
+                        "on-surface-variant": "#e9bcb6",
+                        "on-tertiary-fixed-variant": "#474746",
+                        "tertiary-container": "#737272",
+                        "on-error-container": "#ffdad6",
+                        "surface-dim": "#131313",
+                        "on-surface": "#e5e2e1",
+                        "on-secondary-container": "#b7b5b4",
+                        "inverse-primary": "#c0000c",
+                        "on-tertiary-container": "#fbf8f8",
+                        "on-secondary": "#303030",
+                        "secondary": "#c8c6c5",
+                        "on-error": "#690005",
+                        "primary-container": "#e50914",
+                        "outline": "#af8782",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-bright": "#393939",
+                        "on-primary-fixed-variant": "#930007",
+                        "on-primary-fixed": "#410001",
+                        "primary-fixed-dim": "#ffb4aa",
+                        "primary": "#ffb4aa",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "on-primary": "#690003"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "24px",
+                        "lg": "40px",
+                        "sm": "12px",
+                        "base": "8px",
+                        "xs": "4px",
+                        "gutter": "24px",
+                        "margin": "32px",
+                        "xl": "64px"
+                    },
+                    "fontFamily": {
+                        "title-sm": ["Spline Sans"],
+                        "display-lg": ["Spline Sans"],
+                        "headline-md": ["Spline Sans"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "title-sm": ["20px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background antialiased selection:bg-primary-container/30">
+<!-- Mobile Screen Wrapper (for previewing on desktop cleanly) -->
+<div class="max-w-[430px] mx-auto min-h-screen bg-background relative overflow-x-hidden shadow-2xl pb-24">
+<!-- Top Task Navigation (Overlaid on Hero) -->
+<!-- Suppressing global navs per instructions for task-focused details screens -->
+<header class="absolute top-0 left-0 w-full z-30 px-gutter py-6 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent">
+<button class="w-10 h-10 rounded-full bg-surface-container-highest/40 backdrop-blur-lg flex items-center justify-center border border-white/10 hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-on-background">arrow_back</span>
+</button>
+<div class="flex gap-3">
+<button class="w-10 h-10 rounded-full bg-surface-container-highest/40 backdrop-blur-lg flex items-center justify-center border border-white/10 hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-on-background">share</span>
+</button>
+<button class="w-10 h-10 rounded-full bg-surface-container-highest/40 backdrop-blur-lg flex items-center justify-center border border-white/10 hover:bg-surface-container-highest transition-colors group">
+<span class="material-symbols-outlined text-on-background group-hover:text-primary-container transition-colors">bookmark</span>
+</button>
+</div>
+</header>
+<!-- Hero Poster Artwork -->
+<div class="relative w-full h-[530px]">
+<img class="w-full h-full object-cover object-top" data-alt="Cinematic wide shot of a dark cyberpunk mega-city alleyway illuminated by vibrant crimson and cool blue neon signs reflecting off wet pavement, dramatic moody shadows, highly detailed anime illustration style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQahmdVhhHGXZ_nupBLrS4ZOItBi7jFi-GsX1KJvVix6DM-gqyPXfKKAVBRK1V8FS2c-vF5gKJqDLnide0qEUVHTbmGMF7CFFLaNVzSVm9Bzy-QHlzkmpIHOkW7rrQL8ay7Zr38mJdkGPwf9yqtxKCfVy2HiFhWfXSoCXGVe7qAcWGgPcLMUOPiYSTOLZ_Ku531BVGhBN3lu7LnSBfp3uGCPaRbZA7cBa70xn784j69ZiArhpVKcB6av00U4Hcx4Pyh1y2HG2EiZ4"/>
+<!-- Depth & Transition Gradients -->
+<div class="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background z-10 pointer-events-none"></div>
+</div>
+<!-- Content Canvas (Bottom Sheet Style) -->
+<main class="relative z-20 -mt-[132px] px-gutter bg-gradient-to-b from-background/90 to-background backdrop-blur-xl pt-8 rounded-t-[32px] border-t border-white/5">
+<!-- Title Section -->
+<div class="mb-6">
+<h1 class="font-headline-md text-headline-md text-on-background mb-1 tracking-tight drop-shadow-lg">Neon Genesis: Requiem</h1>
+<h2 class="font-body-lg text-body-lg text-on-surface-variant font-medium">ネオンジェネシス：レクイエム</h2>
+</div>
+<!-- Genre & Tags Container -->
+<div class="flex flex-wrap gap-2 mb-8">
+<span class="font-label-sm text-label-sm px-4 py-2 bg-surface-container-low text-on-surface rounded-full border border-white/5 shadow-inner">Sci-Fi</span>
+<span class="font-label-sm text-label-sm px-4 py-2 bg-surface-container-low text-on-surface rounded-full border border-white/5 shadow-inner">Psychological</span>
+<span class="font-label-sm text-label-sm px-4 py-2 bg-surface-container-low text-on-surface rounded-full border border-white/5 shadow-inner">Mecha</span>
+<span class="font-label-sm text-label-sm px-4 py-2 bg-surface-container text-primary-container rounded-full border border-primary-container/30 shadow-[0_0_10px_rgba(229,9,20,0.15)]">18+</span>
+</div>
+<!-- Bento Metadata Grid -->
+<div class="grid grid-cols-4 gap-3 mb-8">
+<!-- Score Block -->
+<div class="bg-surface-container-low/80 backdrop-blur-md rounded-xl p-3 flex flex-col items-center justify-center border border-white/5 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-primary-container mb-1 text-[22px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-sm text-label-sm text-on-background">9.8</span>
+</div>
+<!-- Status Block -->
+<div class="bg-surface-container-low/80 backdrop-blur-md rounded-xl p-3 flex flex-col items-center justify-center border border-white/5 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant mb-1 text-[22px]">play_circle</span>
+<span class="font-label-sm text-label-sm text-on-background">Airing</span>
+</div>
+<!-- Episodes Block -->
+<div class="bg-surface-container-low/80 backdrop-blur-md rounded-xl p-3 flex flex-col items-center justify-center border border-white/5 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant mb-1 text-[22px]">list_alt</span>
+<span class="font-label-sm text-label-sm text-on-background">12/24</span>
+</div>
+<!-- Studio Block -->
+<div class="bg-surface-container-low/80 backdrop-blur-md rounded-xl p-3 flex flex-col items-center justify-center border border-white/5 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant mb-1 text-[22px]">brush</span>
+<span class="font-label-sm text-label-sm text-on-background">MAPPA</span>
+</div>
+</div>
+<!-- Synopsis Section -->
+<section class="mb-10">
+<h3 class="font-title-sm text-title-sm text-on-background mb-4">Synopsis</h3>
+<div class="relative">
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed opacity-90">
+                        In the year 2142, humanity has retreated into subterranean mega-structures following the "Crimson Cascade" event. When anomalous signals begin infiltrating the neural-networks of the lower sectors, elite pilot Ren Ikari is awakened from cryo-stasis. Tasked with piloting the experimental prototype unit, he must navigate a fragmented reality where memories are manufactured and the line between human consciousness and artificial singularity blurs completely. The fight for the remnants of earth has begun.
+                    </p>
+<!-- Faded read more effect -->
+<div class="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-background to-transparent flex items-end justify-center pointer-events-none">
+<span class="font-label-sm text-label-sm text-primary-container pointer-events-auto cursor-pointer drop-shadow-md pb-1 hover:opacity-80 transition-opacity">Read More</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Fixed Bottom Action Bar -->
+<div class="fixed bottom-0 left-0 w-full px-gutter py-4 bg-background/80 backdrop-blur-2xl border-t border-white/5 z-40 max-w-[430px] left-1/2 -translate-x-1/2">
+<button class="w-full h-14 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center gap-2 hover:bg-opacity-90 active:scale-95 transition-all shadow-[0_0_24px_rgba(229,9,20,0.25)]">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest">Resume Ep 12</span>
+</button>
+</div>
+</div>
+</body></html>
