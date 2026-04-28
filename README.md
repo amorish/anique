@@ -2,18 +2,19 @@
   <img src="assets/images/banner.png" alt="AniQue Banner" width="100%" />
 </p>
 
-<h1 align="center"><img src="assets/images/anique.png" alt="AniQue" height="60" /></h1>
+<p align="center">
+  <img src="assets/images/anique.png" alt="AniQue Logo" width="220" />
+</p>
 
 <p align="center">
   <strong>A sleek anime watchlist to share with your friends.</strong><br/>
   Track what you're watching, discover new anime, and keep your list organized.
 </p>
 
+<p align="center">
   <a href="https://amorish.github.io/anique"><img src="https://img.shields.io/badge/🌐_Live_Demo-Visit_Now-e50914?style=for-the-badge" alt="Live Demo" /></a>
   <img src="https://img.shields.io/badge/Firebase-Auth_%26_Firestore-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase" />
-</p>
-
-<p align="center">
+  <br/>
   <img src="https://img.shields.io/github/last-commit/amorish/anique?style=flat-square&color=e50914" alt="Last Commit" />
   <img src="https://img.shields.io/github/repo-size/amorish/anique?style=flat-square&color=333" alt="Repo Size" />
   <img src="https://img.shields.io/github/license/amorish/anique?style=flat-square&color=333" alt="License" />
