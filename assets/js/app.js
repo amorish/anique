@@ -17,7 +17,7 @@ try {
 let currentUser = null;
 let isSignupMode = false;
 
-// ── DISPOSABLE / TEMP EMAIL BLOCKLIST ──
+// DISPOSABLE / TEMP EMAIL BLOCKLIST
 const BLOCKED_EMAIL_DOMAINS = new Set([
   'tempmail.com','temp-mail.org','guerrillamail.com','guerrillamail.net','guerrillamail.org',
   'guerrillamailblock.com','grr.la','sharklasers.com','guerrillamail.de','throwaway.email',
@@ -242,13 +242,13 @@ async function loadWatchlist() {
   }
 }
 
-// ── STATE ──
+// STATE
 let watchlist = [];
 let currentFilter = 'all';
 let searchTimeout;
 let lastQuery = '';
 
-// ── SEARCH ──
+// SEARCH
 const searchInput = document.getElementById('searchInput');
 const dropdown = document.getElementById('dropdown');
 const searchStatus = document.getElementById('searchStatus');
@@ -327,7 +327,7 @@ function renderDropdown(results) {
 function openDropdown() { dropdown.classList.add('open'); }
 function closeDropdown() { dropdown.classList.remove('open'); }
 
-// ── ADD ANIME ──
+// ADD ANIME
 function addAnime(id, animeData, btn) {
   if (watchlist.some(w => w.id === id)) return;
 
@@ -355,7 +355,7 @@ function addAnime(id, animeData, btn) {
   renderGrid();
 }
 
-// ── REMOVE ──
+// REMOVE
 function removeAnime(id) {
   watchlist = watchlist.filter(w => w.id !== id);
   save();
@@ -363,7 +363,7 @@ function removeAnime(id) {
   showToast('Removed from watchlist');
 }
 
-// ── TOGGLE WATCHED ──
+// TOGGLE WATCHED
 async function toggleWatched(id) {
   const item = watchlist.find(w => w.id === id);
   if (!item) return;
@@ -372,7 +372,7 @@ async function toggleWatched(id) {
   renderGrid();
 }
 
-// ── SAVE ──
+// SAVE
 async function save() {
   updateStats();
   if (!db || !currentUser) return;
@@ -384,7 +384,7 @@ async function save() {
   }
 }
 
-// ── STATS ──
+// STATS
 function updateStats() {
   const total = watchlist.length;
   const watched = watchlist.filter(w => w.watched).length;
@@ -393,7 +393,7 @@ function updateStats() {
   document.getElementById('remainCount').textContent = total - watched;
 }
 
-// ── FILTER ──
+// FILTER
 function setFilter(f, btn) {
   currentFilter = f;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -401,7 +401,7 @@ function setFilter(f, btn) {
   renderGrid();
 }
 
-// ── RENDER GRID ──
+// RENDER GRID
 function renderGrid() {
   const grid = document.getElementById('grid');
   const empty = document.getElementById('emptyState');
@@ -446,7 +446,7 @@ function renderGrid() {
   lucide.createIcons();
 }
 
-// ── MODAL ──
+// MODAL
 async function openModal(id) {
   const backdrop = document.getElementById('modalBackdrop');
   const content = document.getElementById('modalContent');
@@ -590,7 +590,7 @@ function closeModalDirect() {
   document.getElementById('modalBackdrop').classList.remove('open');
 }
 
-// ── UTILS ──
+// UTILS
 function escHtml(str) {
   if (!str) return '';
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -604,6 +604,6 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ── INIT ──
+// INIT
 lucide.createIcons();
 renderGrid();

@@ -2,11 +2,11 @@
   <img src="assets/images/banner.png" alt="AniQue Banner" width="100%" />
 </p>
 
-<h1 align="center">🎌 AniQue</h1>
+<h1 align="center"><img src="assets/images/anique.png" alt="AniQue" height="60" /></h1>
 
 <p align="center">
-  <strong>A beautiful, modern anime watchlist for you and your friends.</strong><br/>
-  Track what you're watching, discover new anime, and keep your squad organized — all in one sleek dark-themed app.
+  <strong>A sleek anime watchlist to share with your friends.</strong><br/>
+  Track what you're watching, discover new anime, and keep your list organized.
 </p>
 
 <p align="center">
@@ -72,8 +72,6 @@ cd anique
 4. Enable **Authentication → Email/Password**
 5. Enable **Firestore Database**
 
-> 📖 See [FIREBASE_SETUP.md](FIREBASE_SETUP.md) for detailed step-by-step instructions
-
 ### 3. Set Firestore Security Rules
 Go to Firestore → Rules and paste:
 ```javascript
@@ -122,9 +120,7 @@ anique/
 │       ├── anique.png       # Logo
 │       ├── AniQueLogo.svg   # Logo (SVG)
 │       └── banner.png       # README banner
-├── FIREBASE_SETUP.md        # Firebase setup guide
-├── PUBLISHING.md            # Deployment guide
-└── README.md                # You are here!
+└── README.md                # Documentation
 ```
 
 ---

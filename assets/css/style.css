@@ -29,7 +29,7 @@
     letter-spacing: -0.01em;
   }
 
-  /* ── HEADER ── */
+  /* HEADER */
   header {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
@@ -50,7 +50,7 @@
   }
   .logo span { color: var(--text); }
 
-  /* ── SEARCH ── */
+  /* SEARCH */
   .search-wrap {
     position: relative;
     flex: 1;
@@ -90,7 +90,7 @@
     min-height: 16px;
   }
 
-  /* ── DROPDOWN ── */
+  /* DROPDOWN */
   .dropdown {
     position: absolute;
     top: calc(100% + 6px);
@@ -154,7 +154,7 @@
   .drop-add.added { background: #333; color: var(--muted); cursor: default; transform: none; }
   .drop-empty { padding: 20px; text-align: center; color: var(--muted); font-size: 13px; }
 
-  /* ── STATS BAR ── */
+  /* STATS BAR */
   .stats-bar {
     padding: 14px 32px;
     display: flex;
@@ -190,7 +190,7 @@
     color: #ffffff;
   }
 
-  /* ── GRID ── */
+  /* GRID */
   .grid-wrap { padding: 28px 32px; }
   .grid {
     display: grid;
@@ -198,7 +198,7 @@
     gap: 20px;
   }
 
-  /* ── CARD ── */
+  /* CARD */
   .card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -342,7 +342,7 @@
     transform: scale(0.96);
   }
 
-  /* ── EMPTY STATE ── */
+  /* EMPTY STATE */
   .empty-state {
     text-align: center;
     padding: 80px 20px;
@@ -352,7 +352,7 @@
   .empty-state p { font-size: 15px; }
   .empty-state small { font-size: 13px; display: block; margin-top: 6px; }
 
-  /* ── MODAL ── */
+  /* MODAL */
   .modal-backdrop {
     position: fixed;
     inset: 0;
@@ -550,12 +550,12 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ── SCROLLBAR ── */
+  /* SCROLLBAR */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
 
-  /* ── RESPONSIVE ── */
+  /* RESPONSIVE */
   @media (max-width: 600px) {
     header { padding: 14px 16px; gap: 12px; }
     .logo { font-size: 16px; }
@@ -588,7 +588,7 @@
   
   .toast.show { transform: translateX(-50%) translateY(0); }
 
-  /* ── LOGIN OVERLAY ── */
+  /* LOGIN OVERLAY */
   .auth-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000;
     display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px);
@@ -627,7 +627,7 @@
   .logout-btn:hover { color: white; border-color: white; }
   .header-logo-img { height: 24px; }
 
-  /* ── EMAIL VERIFICATION ── */
+  /* EMAIL VERIFICATION */
   .verify-icon { font-size: 48px; margin-bottom: 12px; }
   .verify-email-display {
     color: var(--accent) !important;
