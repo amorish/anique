@@ -126,7 +126,7 @@ async function checkVerification() {
     document.getElementById('verifyOverlay').style.display = 'none';
     document.getElementById('userBadge').style.display = 'flex';
     document.getElementById('userEmail').textContent = user.email;
-    showToast('Email verified! Welcome! 🎉');
+    showToast('Email verified successfully.');
     await loadWatchlist();
   } else {
     showToast('Email not verified yet. Check your inbox.');

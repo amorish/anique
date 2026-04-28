@@ -9,10 +9,8 @@
   Track what you're watching, discover new anime, and keep your list organized.
 </p>
 
-<p align="center">
   <a href="https://amorish.github.io/anique"><img src="https://img.shields.io/badge/🌐_Live_Demo-Visit_Now-e50914?style=for-the-badge" alt="Live Demo" /></a>
   <img src="https://img.shields.io/badge/Firebase-Auth_%26_Firestore-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase" />
-  <img src="https://img.shields.io/badge/Made_With-❤️-e50914?style=for-the-badge" alt="Made with love" />
 </p>
 
 <p align="center">
@@ -170,5 +168,5 @@ This project is open source and available under the [MIT License](LICENSE).
 ---
 
 <p align="center">
-  Built with ❤️ by <a href="https://github.com/amorish">@amorish</a>
+  Created by <a href="https://github.com/amorish">@amorish</a>
 </p>
