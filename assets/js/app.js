@@ -65,6 +65,19 @@ function isValidEmailFormat(email) {
   return re.test(email);
 }
 
+function togglePassword() {
+  const pwdInput = document.getElementById('authPwd');
+  const icon = document.getElementById('pwdEyeIcon');
+  if (pwdInput.type === 'password') {
+    pwdInput.type = 'text';
+    icon.setAttribute('data-lucide', 'eye-off');
+  } else {
+    pwdInput.type = 'password';
+    icon.setAttribute('data-lucide', 'eye');
+  }
+  lucide.createIcons();
+}
+
 firebase.auth().onAuthStateChanged(async (user) => {
   if (user) {
     // Check if email is verified
@@ -77,7 +90,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
     document.getElementById('authOverlay').style.display = 'none';
     document.getElementById('verifyOverlay').style.display = 'none';
     document.getElementById('userBadge').style.display = 'flex';
-    document.getElementById('userEmail').textContent = user.email;
+    document.getElementById('userEmail').textContent = user.displayName || user.email;
     await loadWatchlist();
   } else {
     currentUser = null;
@@ -125,7 +138,7 @@ async function checkVerification() {
     currentUser = user;
     document.getElementById('verifyOverlay').style.display = 'none';
     document.getElementById('userBadge').style.display = 'flex';
-    document.getElementById('userEmail').textContent = user.email;
+    document.getElementById('userEmail').textContent = user.displayName || user.email;
     showToast('Email verified successfully.');
     await loadWatchlist();
   } else {
@@ -142,12 +155,16 @@ function toggleAuthMode() {
   document.getElementById('authTitle').textContent = isSignupMode ? "Create Account" : "Sign In";
   document.getElementById('authActionBtn').textContent = isSignupMode ? "Sign Up" : "Sign In";
   document.getElementById('authToggleBtn').textContent = isSignupMode ? "Already have an account? Sign in" : "Need an account? Sign up";
+  document.getElementById('authUsername').style.display = isSignupMode ? "block" : "none";
 }
 
 async function handleAuth() {
   const email = document.getElementById('authEmail').value.trim();
   const pwd = document.getElementById('authPwd').value;
-  if (!email || !pwd) return showToast('Enter email and password');
+  const username = document.getElementById('authUsername').value.trim();
+  
+  if (isSignupMode && (!email || !pwd || !username)) return showToast('Enter username, email, and password');
+  if (!isSignupMode && (!email || !pwd)) return showToast('Enter email and password');
 
   // Validate email format
   if (!isValidEmailFormat(email)) return showToast('Please enter a valid email address');
@@ -164,6 +181,14 @@ async function handleAuth() {
   try {
     if (isSignupMode) {
       const cred = await firebase.auth().createUserWithEmailAndPassword(email, pwd);
+      await cred.user.updateProfile({ displayName: username });
+      if (db) {
+        await db.collection("users").doc(cred.user.uid).set({
+          username: username,
+          email: email,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }
       // Send verification email immediately
       await cred.user.sendEmailVerification();
       showToast("Account created! Check your email to verify.");
@@ -182,6 +207,7 @@ async function handleAuth() {
           document.getElementById('authTitle').textContent = "Create Account";
           document.getElementById('authActionBtn').textContent = "Sign Up";
           document.getElementById('authToggleBtn').textContent = "Already have an account? Sign in";
+          document.getElementById('authUsername').style.display = "block";
           showToast("No account found — sign up instead!");
         } else {
           showToast("Incorrect password. Try again.");

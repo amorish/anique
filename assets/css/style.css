@@ -557,15 +557,19 @@
 
   /* RESPONSIVE */
   @media (max-width: 600px) {
-    header { padding: 14px 16px; gap: 12px; }
-    .logo { font-size: 16px; }
+    header { padding: 16px 20px; gap: 16px; }
+    .header-logo-img { height: 32px !important; }
     .grid-wrap { padding: 16px; }
-    .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .stats-bar { padding: 10px 16px; flex-wrap: wrap; }
-    .modal-poster { width: 140px; }
-    .modal-poster img { height: 200px; }
-    .modal-title { font-size: 16px; }
-    .detail-grid { grid-template-columns: 1fr; }
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .stats-bar { padding: 14px 20px; flex-wrap: wrap; gap: 12px; }
+    .filter-btns { gap: 12px; width: 100%; justify-content: center; }
+    .filter-btn { padding: 10px 16px; flex: 1; }
+    .modal-poster { width: 120px; }
+    .modal-poster img { height: 170px; }
+    .modal-title { font-size: 18px; }
+    .detail-grid { grid-template-columns: 1fr; gap: 12px; }
+    .auth-card { padding: 24px; margin: 16px; width: calc(100% - 32px); }
+    .auth-form input { padding: 14px; }
   }
 
   /* Toast */
@@ -604,9 +608,19 @@
   .auth-form { display: flex; flex-direction: column; gap: 12px; }
   .auth-form input {
     width: 100%; padding: 12px; background: var(--card); border: 1px solid var(--border);
-    color: var(--text); border-radius: 6px; outline: none; transition: 0.2s;
+    color: var(--text); border-radius: 6px; outline: none; transition: 0.2s; box-sizing: border-box;
   }
   .auth-form input:focus { border-color: var(--accent); }
+  
+  .password-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
+  .password-wrapper input { padding-right: 48px; }
+  .pwd-toggle {
+    position: absolute; right: 8px; background: none; border: none;
+    color: var(--muted); cursor: pointer; display: flex; align-items: center;
+    padding: 6px; transition: 0.2s; outline: none;
+  }
+  .pwd-toggle:hover { color: var(--text); }
+  .pwd-toggle svg { width: 18px; height: 18px; }
   .auth-btn {
     background: var(--accent); color: white; border: none; padding: 14px;
     border-radius: 8px; font-weight: 600; font-family: var(--font-heading); font-size: 15px; cursor: pointer; transition: 0.2s;
