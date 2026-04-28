@@ -610,3 +610,34 @@
   }
   .logout-btn:hover { color: white; border-color: white; }
   .header-logo-img { height: 24px; }
+
+  /* ── EMAIL VERIFICATION ── */
+  .verify-icon { font-size: 48px; margin-bottom: 12px; }
+  .verify-email-display {
+    color: var(--accent) !important;
+    font-weight: 600;
+    font-size: 15px !important;
+    margin-bottom: 8px !important;
+    word-break: break-all;
+  }
+  .verify-hint {
+    font-size: 12px !important;
+    color: #666 !important;
+    margin-bottom: 20px !important;
+    line-height: 1.5;
+  }
+  .verify-resend-btn {
+    background: transparent !important;
+    border: 1px solid var(--border) !important;
+    color: var(--muted) !important;
+    font-size: 13px !important;
+  }
+  .verify-resend-btn:hover {
+    border-color: var(--accent) !important;
+    color: var(--text) !important;
+    background: transparent !important;
+  }
+  .verify-resend-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }

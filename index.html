@@ -79,6 +79,23 @@
     </div>
   </div>
 
+  <!-- Email Verification Overlay -->
+  <div class="auth-overlay" id="verifyOverlay" style="display:none">
+    <div class="auth-card">
+      <img src="assets/images/anique.png" alt="AniQue" class="logo-img">
+      <div class="verify-icon">📧</div>
+      <h2>Verify Your Email</h2>
+      <p>We've sent a verification link to:</p>
+      <p class="verify-email-display" id="verifyEmail"></p>
+      <p class="verify-hint">Click the link in the email, then come back and press the button below.</p>
+      <div class="auth-form">
+        <button class="auth-btn" onclick="checkVerification()">I've Verified — Let Me In</button>
+        <button class="auth-btn verify-resend-btn" id="resendBtn" onclick="resendVerification()">Resend Verification Email</button>
+      </div>
+      <button class="auth-toggle" onclick="verifyLogout()">Use a different account</button>
+    </div>
+  </div>
+
   <!-- TOAST -->
   <div class="toast" id="toast"></div>
 

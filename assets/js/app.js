@@ -17,10 +17,65 @@ try {
 let currentUser = null;
 let isSignupMode = false;
 
+// ── DISPOSABLE / TEMP EMAIL BLOCKLIST ──
+const BLOCKED_EMAIL_DOMAINS = new Set([
+  'tempmail.com','temp-mail.org','guerrillamail.com','guerrillamail.net','guerrillamail.org',
+  'guerrillamailblock.com','grr.la','sharklasers.com','guerrillamail.de','throwaway.email',
+  'yopmail.com','yopmail.fr','mailinator.com','maildrop.cc','dispostable.com',
+  'trashmail.com','trashmail.net','trashmail.me','trashmail.org','mailnesia.com',
+  'tempail.com','tempr.email','10minutemail.com','10minutemail.net','minutemail.com',
+  'mohmal.com','getnada.com','emailondeck.com','33mail.com','mailcatch.com',
+  'fakeinbox.com','fakemail.net','deadaddress.com','discard.email','discardmail.com',
+  'disposableemailaddresses.emailmiser.com','emailigo.de','emailtemporario.com.br',
+  'getairmail.com','harakirimail.com','jetable.org','mail-temporaire.fr','mailexpire.com',
+  'mailforspam.com','mailhazard.com','mailhazard.us','mailmoat.com','mailnull.com',
+  'mailscrap.com','mailshell.com','mailsiphon.com','mailslite.com','mailzilla.com',
+  'nomail.xl.cx','nowmymail.com','objectmail.com','obobbo.com','onewaymail.com',
+  'owlpic.com','proxymail.eu','punkass.com','putthisinyouremail.com','receiveee.com',
+  'regbypass.com','rejectmail.com','rklips.com','safersignup.de','sharklasers.com',
+  'shieldedmail.com','smellfear.com','snapmail.cc','sogetthis.com','soodonims.com',
+  'spambob.com','spambob.net','spambob.org','spamcero.com','spamday.com','spamfree24.com',
+  'spamfree24.de','spamfree24.eu','spamfree24.info','spamfree24.net','spamfree24.org',
+  'spamgourmet.com','spamgourmet.net','spamgourmet.org','spamherelots.com','spamhole.com',
+  'spamify.com','spaminator.de','spamkill.info','spaml.com','spaml.de','spammotel.com',
+  'spamobox.com','spamspot.com','spamthis.co.uk','spamtrail.com','speed.1s.fr',
+  'superrito.com','suremail.info','tempalias.com','temporaryemail.net','temporaryemail.us',
+  'temporaryforwarding.com','temporaryinbox.com','thanksmia.com','thisisnotmyrealemail.com',
+  'throwawayemailaddress.com','tittbit.in','tradermail.info','turual.com','uggsrock.com',
+  'veryreallyfakeemails.com','wegwerfmail.de','wegwerfmail.net','wetrainbayarea.com',
+  'whyspam.me','wilemail.com','willselfdestruct.com','winemaven.info','wronghead.com',
+  'xagloo.com','xemaps.com','xents.com','xjoi.com','xoxy.net','yapped.net',
+  'maildrop.cc','nada.email','anonbox.net','binkmail.com','bobmail.info','brefmail.com',
+  'bugmenot.com','bumpymail.com','byom.de','chogmail.com','cool.fr.nf','correo.blogos.net',
+  'cosmorph.com','courriel.fr.nf','cubiclink.com','curryworld.de','cust.in',
+  'dacoolest.com','dandikmail.com','dayrep.com','dcemail.com','deadaddress.com',
+  'despammed.com','devnullmail.com','dfgh.net','digitalsanctuary.com','dingbone.com',
+  'mail.tm','tempmailo.com','internxt.com','luxusmail.org','tmail.ws',
+]);
+
+function isDisposableEmail(email) {
+  const domain = email.split('@')[1]?.toLowerCase();
+  if (!domain) return true;
+  return BLOCKED_EMAIL_DOMAINS.has(domain);
+}
+
+function isValidEmailFormat(email) {
+  // Must have @ with something before and after, proper domain with dot
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  return re.test(email);
+}
+
 firebase.auth().onAuthStateChanged(async (user) => {
   if (user) {
+    // Check if email is verified
+    if (!user.emailVerified) {
+      currentUser = null;
+      showVerificationScreen(user.email);
+      return;
+    }
     currentUser = user;
     document.getElementById('authOverlay').style.display = 'none';
+    document.getElementById('verifyOverlay').style.display = 'none';
     document.getElementById('userBadge').style.display = 'flex';
     document.getElementById('userEmail').textContent = user.email;
     await loadWatchlist();
@@ -28,10 +83,59 @@ firebase.auth().onAuthStateChanged(async (user) => {
     currentUser = null;
     watchlist = [];
     document.getElementById('authOverlay').style.display = 'flex';
+    document.getElementById('verifyOverlay').style.display = 'none';
     document.getElementById('userBadge').style.display = 'none';
     renderGrid();
   }
 });
+
+function showVerificationScreen(email) {
+  document.getElementById('authOverlay').style.display = 'none';
+  document.getElementById('verifyOverlay').style.display = 'flex';
+  document.getElementById('verifyEmail').textContent = email;
+}
+
+async function resendVerification() {
+  const user = firebase.auth().currentUser;
+  if (!user) return showToast('No user logged in');
+  const btn = document.getElementById('resendBtn');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  try {
+    await user.sendEmailVerification();
+    showToast('Verification email sent! Check your inbox & spam.');
+  } catch (e) {
+    if (e.code === 'auth/too-many-requests') {
+      showToast('Too many attempts. Wait a few minutes.');
+    } else {
+      showToast('Failed to send. Try again later.');
+    }
+  } finally {
+    btn.textContent = 'Resend Verification Email';
+    // Cooldown: disable for 30 seconds to prevent spam
+    setTimeout(() => { btn.disabled = false; }, 30000);
+  }
+}
+
+async function checkVerification() {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+  await user.reload();
+  if (user.emailVerified) {
+    currentUser = user;
+    document.getElementById('verifyOverlay').style.display = 'none';
+    document.getElementById('userBadge').style.display = 'flex';
+    document.getElementById('userEmail').textContent = user.email;
+    showToast('Email verified! Welcome! 🎉');
+    await loadWatchlist();
+  } else {
+    showToast('Email not verified yet. Check your inbox.');
+  }
+}
+
+function verifyLogout() {
+  firebase.auth().signOut();
+}
 
 function toggleAuthMode() {
   isSignupMode = !isSignupMode;
@@ -45,26 +149,35 @@ async function handleAuth() {
   const pwd = document.getElementById('authPwd').value;
   if (!email || !pwd) return showToast('Enter email and password');
 
+  // Validate email format
+  if (!isValidEmailFormat(email)) return showToast('Please enter a valid email address');
+
+  // Block disposable/temp emails on signup
+  if (isSignupMode && isDisposableEmail(email)) {
+    return showToast('Temporary/disposable emails are not allowed. Use a real email.');
+  }
+
   const btn = document.getElementById('authActionBtn');
   btn.textContent = "Please wait...";
   btn.disabled = true;
 
   try {
     if (isSignupMode) {
-      await firebase.auth().createUserWithEmailAndPassword(email, pwd);
+      const cred = await firebase.auth().createUserWithEmailAndPassword(email, pwd);
+      // Send verification email immediately
+      await cred.user.sendEmailVerification();
+      showToast("Account created! Check your email to verify.");
     } else {
       await firebase.auth().signInWithEmailAndPassword(email, pwd);
+      // onAuthStateChanged will handle the verified check
     }
-    showToast("Welcome! 🎉");
   } catch (e) {
     const code = e.code || '';
     // Smart auth: auto-switch to sign up if the account doesn't exist
     if (!isSignupMode && (code === 'auth/user-not-found' || code === 'auth/invalid-credential')) {
-      // Check if this email truly doesn't exist, then offer sign-up
       try {
         const methods = await firebase.auth().fetchSignInMethodsForEmail(email);
         if (methods.length === 0) {
-          // No account exists — switch to sign-up mode automatically
           isSignupMode = true;
           document.getElementById('authTitle').textContent = "Create Account";
           document.getElementById('authActionBtn').textContent = "Sign Up";
