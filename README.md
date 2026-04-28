@@ -1,0 +1,178 @@
+<p align="center">
+  <img src="assets/images/banner.png" alt="AniQue Banner" width="100%" />
+</p>
+
+<h1 align="center">🎌 AniQue</h1>
+
+<p align="center">
+  <strong>A beautiful, modern anime watchlist for you and your friends.</strong><br/>
+  Track what you're watching, discover new anime, and keep your squad organized — all in one sleek dark-themed app.
+</p>
+
+<p align="center">
+  <a href="https://amorish.github.io/anique"><img src="https://img.shields.io/badge/🌐_Live_Demo-Visit_Now-e50914?style=for-the-badge" alt="Live Demo" /></a>
+  <img src="https://img.shields.io/badge/Firebase-Auth_%26_Firestore-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase" />
+  <img src="https://img.shields.io/badge/Made_With-❤️-e50914?style=for-the-badge" alt="Made with love" />
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/github/last-commit/amorish/anique?style=flat-square&color=e50914" alt="Last Commit" />
+  <img src="https://img.shields.io/github/repo-size/amorish/anique?style=flat-square&color=333" alt="Repo Size" />
+  <img src="https://img.shields.io/github/license/amorish/anique?style=flat-square&color=333" alt="License" />
+</p>
+
+---
+
+## ✨ Features
+
+| Feature | Description |
+|---------|-------------|
+| 🔐 **Secure Auth** | Email/password login & signup with Firebase — smart auto-detection for new users |
+| 🔍 **Instant Search** | Search 25,000+ anime via the Jikan (MyAnimeList) API with live dropdown results |
+| 📋 **Personal Watchlist** | Add, remove, and mark anime as watched — synced to the cloud in real-time |
+| 📊 **Live Stats** | Track total, watched, and remaining anime at a glance |
+| 🎬 **Rich Details** | Click any anime card to see synopsis, watch order, director, studio, score, and more |
+| 🔄 **Filter & Sort** | Quick filter between All / Watching / Watched views |
+| 🔑 **Password Reset** | Forgot your password? Reset it with one click |
+| 📱 **Responsive** | Looks great on desktop, tablet, and mobile |
+| 🎨 **Premium Dark UI** | Sleek dark theme with Outfit + Inter fonts, smooth animations, and glassmorphism |
+
+---
+
+## 🖼️ Screenshots
+
+<details>
+<summary><strong>Click to expand</strong></summary>
+
+### Login Screen
+> Clean auth overlay with sign in / sign up toggle and forgot password
+
+### Watchlist Grid
+> Anime cards with poster art, watched badges, and hover effects
+
+### Anime Details Modal
+> Full details with synopsis, watch order, score, studio, and more
+
+</details>
+
+---
+
+## 🚀 Quick Start
+
+### 1. Clone the Repo
+```bash
+git clone https://github.com/amorish/anique.git
+cd anique
+```
+
+### 2. Set Up Firebase (Free)
+1. Go to [Firebase Console](https://console.firebase.google.com/) and create a new project
+2. Add a **Web App** and copy the `firebaseConfig`
+3. Paste it into `assets/js/app.js` (line 1-9)
+4. Enable **Authentication → Email/Password**
+5. Enable **Firestore Database**
+
+> 📖 See [FIREBASE_SETUP.md](FIREBASE_SETUP.md) for detailed step-by-step instructions
+
+### 3. Set Firestore Security Rules
+Go to Firestore → Rules and paste:
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /watchlists/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+```
+
+### 4. Open & Enjoy
+Just open `index.html` in your browser — or deploy for free on GitHub Pages / Netlify / Vercel!
+
+---
+
+## 🏗️ Tech Stack
+
+| Tech | Purpose |
+|------|---------|
+| **HTML5 / CSS3 / JS** | Core frontend — zero frameworks, ultra-lightweight |
+| **Firebase Auth** | Secure user authentication |
+| **Cloud Firestore** | Real-time database for watchlists |
+| **Jikan API v4** | Anime data from MyAnimeList |
+| **Lucide Icons** | Beautiful SVG icons |
+| **Google Fonts** | Outfit (headings) + Inter (body) |
+
+---
+
+## 📁 Project Structure
+
+```
+anique/
+├── index.html              # Main app entry
+├── assets/
+│   ├── css/
+│   │   └── style.css       # Complete styling (610+ lines)
+│   ├── js/
+│   │   └── app.js          # App logic, Firebase, search, UI
+│   └── images/
+│       ├── anique.png       # Logo
+│       ├── AniQueLogo.svg   # Logo (SVG)
+│       └── banner.png       # README banner
+├── FIREBASE_SETUP.md        # Firebase setup guide
+├── PUBLISHING.md            # Deployment guide
+└── README.md                # You are here!
+```
+
+---
+
+## 🛡️ Security
+
+- ✅ Firebase Authentication with friendly error handling
+- ✅ Per-user data isolation (users can only access their own watchlist)
+- ✅ XSS protection on all user-facing content
+- ✅ Safe-for-work search filter enabled
+- ✅ No raw error messages exposed to users
+- ✅ Firestore security rules enforce server-side access control
+
+---
+
+## 🗺️ Roadmap
+
+- [ ] Episode-by-episode progress tracking
+- [ ] Personal ratings (1-10 stars)
+- [ ] Sort by score, year, name, date added
+- [ ] Search within your own watchlist
+- [ ] Google Sign-In (one-click login)
+- [ ] Statistics dashboard (hours watched, genre breakdown)
+- [ ] Friend system & shared watchlists
+- [ ] PWA support (install on phone)
+- [ ] Light mode toggle
+- [ ] Import from MyAnimeList
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to fork and submit a PR.
+
+1. Fork the repo
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+---
+
+<p align="center">
+  Built with ❤️ by <a href="https://github.com/amorish">@amorish</a>
+</p>
