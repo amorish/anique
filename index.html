@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anime Watchlist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@0.263.1"></script>
+  <link rel="stylesheet" href="assets/css/style.css">
+
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo"><img src="assets/images/anique.png" alt="AniQue" class="header-logo-img"></div>
+    <div class="search-wrap">
+      <input type="text" id="searchInput" placeholder="Search anime to add..." autocomplete="off" />
+      <i data-lucide="search" class="search-icon" style="width:16px; height:16px;"></i>
+      <div class="dropdown" id="dropdown"></div>
+      <div class="search-status" id="searchStatus"></div>
+    </div>
+    <div class="user-badge" id="userBadge">
+      <span id="userEmail"></span>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <span class="stat">Total: <strong id="totalCount">0</strong></span>
+    <span class="stat">Watched: <strong id="watchedCount">0</strong></span>
+    <span class="stat">Remaining: <strong id="remainCount">0</strong></span>
+    <div class="filter-btns">
+      <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+      <button class="filter-btn" onclick="setFilter('watching', this)">Watching</button>
+      <button class="filter-btn" onclick="setFilter('watched', this)">Watched</button>
+    </div>
+  </div>
+
+  <!-- GRID -->
+  <div class="grid-wrap">
+    <div class="grid" id="grid"></div>
+    <div class="empty-state" id="emptyState" style="display:none">
+      <div class="icon" style="display:flex; justify-content:center; margin-bottom:16px;">
+        <i data-lucide="ghost" style="width:48px;height:48px;color:#444;"></i>
+      </div>
+      <p>Your watchlist is empty</p>
+      <small>Search for an anime above to add it</small>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-backdrop" id="modalBackdrop" onclick="closeModal(event)">
+    <div class="modal" id="modal">
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+
+  <!-- Auth Overlay -->
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-card">
+      <img src="assets/images/anique.png" alt="AniQue" class="logo-img">
+      <h2 id="authTitle">Sign In</h2>
+      <p>Sign in to sync your Anime watchlist.</p>
+      <div class="auth-form">
+        <input type="email" id="authEmail" placeholder="Email address" autocomplete="email" />
+        <input type="password" id="authPwd" placeholder="Password" />
+        <button class="auth-btn" id="authActionBtn" onclick="handleAuth()">Sign In</button>
+      </div>
+      <button class="auth-toggle" onclick="toggleAuthMode()" id="authToggleBtn">Need an account? Sign up</button>
+      <button class="auth-toggle forgot-link" onclick="forgotPassword()">Forgot password?</button>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Firebase SDK Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
+
+  <script src="assets/js/app.js"></script>
+</body>
+
+</html>
