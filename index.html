@@ -1,21 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>AniQue | Your Personal Anime Watchlist</title>
-  
-  <!-- SEO Meta Tags -->
   <meta name="google-site-verification" content="03EDOy8AtfDcatjA5S7GplMELrpaCznZet9YwLjz9u0" />
   <meta name="description" content="A beautiful, modern anime watchlist to share with your friends. Track what you're watching, discover new anime, and keep your list organized." />
   <meta name="keywords" content="anime, watchlist, anime tracker, myanimelist, AniQue, anime database" />
   <meta name="author" content="amorish" />
   <meta name="robots" content="index, follow" />
-
-  <!-- Open Graph / Social Media Preview -->
   <meta property="og:title" content="AniQue | Your Personal Anime Watchlist" />
-  <meta property="og:description" content="A beautiful, modern anime watchlist to share with your friends. Track what you're watching, discover new anime, and keep your list organized." />
+  <meta property="og:description" content="A beautiful, modern anime watchlist to share with your friends." />
   <meta property="og:image" content="https://amorish.github.io/anique/assets/images/banner.png" />
   <meta property="og:url" content="https://amorish.github.io/anique" />
   <meta property="og:type" content="website" />
@@ -24,51 +19,82 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@0.263.1"></script>
   <link rel="stylesheet" href="assets/css/style.css">
-
 </head>
-
 <body>
 
-  <!-- HEADER -->
-  <header>
-    <div class="logo"><img src="assets/images/anique.png" alt="AniQue" class="header-logo-img"></div>
-    <div class="search-wrap">
-      <input type="text" id="searchInput" placeholder="Search anime to add..." autocomplete="off" />
-      <i data-lucide="search" class="search-icon" style="width:16px; height:16px;"></i>
-      <div class="dropdown" id="dropdown"></div>
-      <div class="search-status" id="searchStatus"></div>
+  <!-- ===== TOP APP BAR ===== -->
+  <header class="app-header">
+    <div class="header-left">
+      <button class="icon-btn" id="avatarBtn" onclick="toggleProfileMenu()" aria-label="Profile">
+        <i data-lucide="user"></i>
+      </button>
     </div>
-    <div class="user-badge" id="userBadge">
-      <span id="userEmail"></span>
-      <button class="logout-btn" onclick="logout()">Logout</button>
+    <img src="assets/images/anique.png" alt="AniQue" class="logo-img" />
+    <div class="header-right">
+      <button class="icon-btn" onclick="toggleSearch()" id="searchToggleBtn" aria-label="Search">
+        <i data-lucide="search"></i>
+      </button>
+    </div>
+
+    <!-- Profile Dropdown -->
+    <div class="profile-menu" id="profileMenu" style="display:none;">
+      <div class="user-info" id="userBadge"><span id="userEmail"></span></div>
+      <button class="logout-btn" onclick="logout()">Sign Out</button>
     </div>
   </header>
 
-  <!-- STATS BAR -->
-  <div class="stats-bar">
-    <span class="stat">Total: <strong id="totalCount">0</strong></span>
-    <span class="stat">Watched: <strong id="watchedCount">0</strong></span>
-    <span class="stat">Remaining: <strong id="remainCount">0</strong></span>
-    <div class="filter-btns">
-      <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
-      <button class="filter-btn" onclick="setFilter('watching', this)">Watching</button>
-      <button class="filter-btn" onclick="setFilter('watched', this)">Watched</button>
+  <!-- ===== SEARCH OVERLAY ===== -->
+  <div class="search-overlay" id="searchOverlay" style="display:none;">
+    <div class="search-bar">
+      <i data-lucide="search" class="search-icon" style="width:18px;height:18px;"></i>
+      <input type="text" id="searchInput" placeholder="Search anime..." autocomplete="off" />
+      <button class="icon-btn close-search" onclick="toggleSearch()"><i data-lucide="x"></i></button>
+      <div class="dropdown" id="dropdown"></div>
+      <div class="search-status" id="searchStatus"></div>
     </div>
   </div>
 
-  <!-- GRID -->
-  <div class="grid-wrap">
-    <div class="grid" id="grid"></div>
-    <div class="empty-state" id="emptyState" style="display:none">
-      <div class="icon" style="display:flex; justify-content:center; margin-bottom:16px;">
-        <i data-lucide="ghost" style="width:48px;height:48px;color:#444;"></i>
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content">
+    <!-- Stats Strip -->
+    <section class="stats-card">
+      <div class="stat-item">
+        <span class="stat-label">Total</span>
+        <span class="stat-value" id="totalCount">0</span>
       </div>
-      <p>Your watchlist is empty</p>
-      <small>Search for an anime above to add it</small>
-    </div>
-  </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-label">Watched</span>
+        <span class="stat-value highlight" id="watchedCount">0</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-label">Remaining</span>
+        <span class="stat-value" id="remainCount">0</span>
+      </div>
+    </section>
 
-  <!-- MODAL -->
+    <!-- Filter Pills -->
+    <nav class="filter-nav scrollbar-hide">
+      <button class="filter-pill active" onclick="setFilter('all', this)">All</button>
+      <button class="filter-pill" onclick="setFilter('watching', this)">Watching</button>
+      <button class="filter-pill" onclick="setFilter('watched', this)">Watched</button>
+    </nav>
+
+    <!-- Anime Grid -->
+    <div class="grid-wrap">
+      <div class="grid" id="grid"></div>
+      <div class="empty-state" id="emptyState" style="display:none">
+        <div style="display:flex;justify-content:center;margin-bottom:16px;">
+          <i data-lucide="film" style="width:48px;height:48px;color:var(--muted);"></i>
+        </div>
+        <p>Your watchlist is empty</p>
+        <small>Tap the search icon to find and add anime</small>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== DETAIL MODAL ===== -->
   <div class="modal-backdrop" id="modalBackdrop" onclick="closeModal(event)">
     <div class="modal" id="modal">
       <button class="modal-close" onclick="closeModalDirect()">✕</button>
@@ -76,39 +102,36 @@
     </div>
   </div>
 
-
-  <!-- Auth Overlay -->
+  <!-- ===== AUTH OVERLAY ===== -->
   <div class="auth-overlay" id="authOverlay">
     <div class="auth-card">
       <img src="assets/images/anique.png" alt="AniQue" class="logo-img">
       <h2 id="authTitle">Sign In</h2>
-      
+
       <div class="auth-form">
         <!-- Username -->
         <div class="input-group" id="authUsernameGroup" style="display:none;">
           <label for="authUsername">Username</label>
           <div class="input-wrapper">
             <i data-lucide="user" class="input-icon"></i>
-            <input type="text" id="authUsername" placeholder="Enter your username" />
+            <input type="text" id="authUsername" placeholder="Choose a username" />
           </div>
         </div>
-
         <!-- Email -->
         <div class="input-group">
           <label for="authEmail">Email</label>
           <div class="input-wrapper">
             <i data-lucide="mail" class="input-icon"></i>
-            <input type="email" id="authEmail" placeholder="Enter your email" autocomplete="email" />
+            <input type="email" id="authEmail" placeholder="you@example.com" autocomplete="email" />
           </div>
         </div>
-
         <!-- Password -->
         <div class="input-group">
           <label for="authPwd">Password</label>
-          <div class="input-wrapper password-wrapper">
+          <div class="input-wrapper">
             <i data-lucide="lock" class="input-icon"></i>
-            <input type="password" id="authPwd" placeholder="Enter your password" />
-            <button class="pwd-toggle" type="button" onclick="togglePassword()" id="pwdToggleBtn" aria-label="Toggle password visibility">
+            <input type="password" id="authPwd" placeholder="••••••••" />
+            <button class="pwd-toggle" type="button" onclick="togglePassword()" id="pwdToggleBtn" aria-label="Toggle password">
               <i data-lucide="eye-off" id="pwdEyeIcon"></i>
             </button>
           </div>
@@ -120,43 +143,41 @@
         <button class="auth-btn" id="authActionBtn" onclick="handleAuth()">Sign In</button>
       </div>
 
-      <div class="auth-footer border-top">
-        <span class="auth-footer-text" id="authFooterText">Need an account?</span>
-        <button class="auth-toggle-inline" onclick="toggleAuthMode()" id="authToggleBtn">Sign up</button>
+      <div class="auth-footer">
+        <span class="auth-footer-text" id="authFooterText">New here?</span>
+        <button class="auth-toggle-inline" onclick="toggleAuthMode()" id="authToggleBtn">Sign Up</button>
       </div>
     </div>
   </div>
 
-  <!-- Email Verification Overlay -->
+  <!-- ===== EMAIL VERIFICATION ===== -->
   <div class="auth-overlay" id="verifyOverlay" style="display:none">
     <div class="auth-card">
       <img src="assets/images/anique.png" alt="AniQue" class="logo-img">
-      <div class="verify-icon"><i data-lucide="mail" style="width:48px;height:48px;color:var(--accent);"></i></div>
+      <div class="verify-icon"><i data-lucide="mail" style="width:40px;height:40px;color:var(--accent);"></i></div>
       <h2>Verify Your Email</h2>
-      <p class="verify-hint" style="margin-bottom:8px !important;">We've sent a verification link to:</p>
+      <p class="verify-hint">We sent a verification link to:</p>
       <p class="verify-email-display" id="verifyEmail"></p>
-      <p class="verify-hint">Click the link in the email, then come back and press the button below.</p>
-      
-      <div class="auth-form" style="margin-top: 16px;">
+      <p class="verify-hint">Click the link in the email, then press below.</p>
+
+      <div class="auth-form" style="margin-top:12px;">
         <button class="auth-btn" onclick="checkVerification()">I've Verified — Let Me In</button>
-        <button class="auth-btn verify-resend-btn" id="resendBtn" onclick="resendVerification()">Resend Verification Email</button>
+        <button class="auth-btn verify-resend-btn" id="resendBtn" onclick="resendVerification()">Resend Email</button>
       </div>
-      
-      <div class="auth-footer border-top">
+
+      <div class="auth-footer">
         <button class="auth-toggle-inline" onclick="verifyLogout()">Use a different account</button>
       </div>
     </div>
   </div>
 
-  <!-- TOAST -->
+  <!-- Toast -->
   <div class="toast" id="toast"></div>
 
-  <!-- Firebase SDK Compat -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
-
   <script src="assets/js/app.js"></script>
 </body>
-
 </html>

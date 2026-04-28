@@ -154,7 +154,7 @@ function toggleAuthMode() {
   isSignupMode = !isSignupMode;
   document.getElementById('authTitle').textContent = isSignupMode ? "Create Account" : "Sign In";
   document.getElementById('authActionBtn').textContent = isSignupMode ? "Sign Up" : "Sign In";
-  document.getElementById('authFooterText').textContent = isSignupMode ? "Already have an account?" : "Need an account?";
+  document.getElementById('authFooterText').textContent = isSignupMode ? "Already have an account?" : "New here?";
   document.getElementById('authToggleBtn').textContent = isSignupMode ? "Sign in" : "Sign up";
   document.getElementById('authUsernameGroup').style.display = isSignupMode ? "block" : "none";
 }
@@ -421,10 +421,36 @@ function updateStats() {
   document.getElementById('remainCount').textContent = total - watched;
 }
 
+// SEARCH AND PROFILE TOGGLES
+function toggleSearch() {
+  const overlay = document.getElementById('searchOverlay');
+  const input = document.getElementById('searchInput');
+  if (overlay.style.display === 'none') {
+    overlay.style.display = 'flex';
+    input.focus();
+  } else {
+    overlay.style.display = 'none';
+  }
+}
+
+function toggleProfileMenu() {
+  const menu = document.getElementById('profileMenu');
+  menu.style.display = menu.style.display === 'none' ? 'flex' : 'none';
+}
+
+// Close profile menu on outside click
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('profileMenu');
+  const btn = document.getElementById('avatarBtn');
+  if (menu && menu.style.display !== 'none' && !menu.contains(e.target) && !btn.contains(e.target)) {
+    menu.style.display = 'none';
+  }
+});
+
 // FILTER
 function setFilter(f, btn) {
   currentFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderGrid();
 }
@@ -447,29 +473,26 @@ function renderGrid() {
   empty.style.display = 'none';
 
   grid.innerHTML = items.map((a, i) => `
-    <div class="card ${a.watched ? 'watched' : ''}" id="card-${a.id}">
-      <div class="sl-badge">#${watchlist.indexOf(a) + 1}</div>
+    <article class="card ${a.watched ? 'watched' : ''}" id="card-${a.id}">
+      <img class="poster-img" src="${a.poster || ''}" alt="${escHtml(a.title)}" loading="lazy" onerror="this.src=''" />
+      <div class="card-gradient"></div>
+      
       <button class="watched-btn ${a.watched ? 'checked' : ''}" onclick="toggleWatched(${a.id})" title="${a.watched ? 'Mark unwatched' : 'Mark watched'}">
-        <i data-lucide="check" style="width:13px; height:13px; stroke-width: 3;"></i>
+        <i data-lucide="check" style="width:16px; height:16px; stroke-width: 3;"></i>
       </button>
-      <div class="poster-wrap" onclick="openModal(${a.id})">
-        ${a.poster
-      ? `<img class="poster-img" src="${a.poster}" alt="${escHtml(a.title)}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'poster-placeholder\\'>🎌</div>'"/>`
-      : `<div class="poster-placeholder">🎌</div>`}
-        <div class="poster-overlay">
-          <span class="overlay-hint">View details</span>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="card-title">${escHtml(a.title)}</div>
+      
+      <button class="remove-btn" onclick="removeAnime(${a.id})" title="Remove">
+        <i data-lucide="trash-2" style="width:14px; height:14px;"></i>
+      </button>
+      
+      <div class="card-content" onclick="openModal(${a.id})">
         <div class="card-meta">
           <span class="type-pill">${a.type || 'TV'}</span>
-          ${a.year ? `<span>${a.year}</span>` : ''}
-          ${a.episodes ? `<span>${a.episodes} eps</span>` : ''}
+          <span class="meta-text">${a.episodes ? `Ep ${a.episodes}` : (a.year || '')}</span>
         </div>
-        <button class="remove-btn" onclick="removeAnime(${a.id})">Remove</button>
+        <h3 class="card-title">${escHtml(a.title)}</h3>
       </div>
-    </div>
+    </article>
   `).join('');
   lucide.createIcons();
 }
