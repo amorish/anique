@@ -272,7 +272,7 @@ async function loadWatchlist() {
 
 // STATE
 let watchlist = [];
-let currentFilter = 'all';
+let currentFilter = 'watching';
 let searchTimeout;
 let lastQuery = '';
 let deleteMode = false;
@@ -472,7 +472,7 @@ document.addEventListener('click', (e) => {
 // FILTER & DELETE MODE
 function setFilter(f, btn) {
   currentFilter = f;
-  document.querySelectorAll('#normalFilters .filter-pill').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#normalFilters .tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderGrid();
 }
@@ -530,31 +530,31 @@ function renderGrid() {
   empty.style.display = 'none';
 
   grid.innerHTML = items.map((a, i) => `
-    <article class="card ${a.watched ? 'watched' : ''} ${deleteMode ? 'delete-mode' : ''} ${selectedForDelete.has(a.id) ? 'selected' : ''}" id="card-${a.id}" onclick="openModal(${a.id}, event)">
-      <img class="poster-img" src="${a.poster || ''}" alt="${escHtml(a.title)}" loading="lazy" onerror="this.src=''" />
-      <div class="card-gradient"></div>
-      
-      <div class="card-sl">#${i + 1}</div>
-      
-      <div class="card-select-overlay"></div>
-      <div class="card-checkbox"><i data-lucide="check" style="width:14px;height:14px;stroke-width:3;"></i></div>
-      
-      <button class="watched-btn ${a.watched ? 'checked' : ''}" onclick="toggleWatched(${a.id}, event)" title="${a.watched ? 'Mark unwatched' : 'Mark watched'}">
-        <i data-lucide="check" style="width:14px; height:14px; stroke-width: 3;"></i>
-      </button>
-      
-      <button class="remove-btn" onclick="removeAnime(${a.id}, event)" title="Remove">
-        <i data-lucide="trash-2" style="width:13px; height:13px;"></i>
-      </button>
-      
-      <div class="card-content">
-        <div class="card-meta">
-          <span class="type-pill">${a.type || 'TV'}</span>
-          <span class="meta-text">${a.episodes ? `Ep ${a.episodes}` : (a.year || '')}</span>
+    <div class="card-wrapper">
+      <article class="card ${a.watched ? 'watched' : ''} ${deleteMode ? 'delete-mode' : ''} ${selectedForDelete.has(a.id) ? 'selected' : ''}" id="card-${a.id}" onclick="openModal(${a.id}, event)">
+        <img class="poster-img" src="${a.poster || ''}" alt="${escHtml(a.title)}" loading="lazy" onerror="this.src=''" />
+        <div class="card-gradient"></div>
+        
+        <div class="card-select-overlay"></div>
+        
+        <button class="watched-btn ${a.watched ? 'checked' : ''}" onclick="toggleWatched(${a.id}, event)" title="${a.watched ? 'Mark unwatched' : 'Mark watched'}">
+          <i data-lucide="check" style="width:14px; height:14px; stroke-width: 3;"></i>
+        </button>
+        
+        <button class="remove-btn" onclick="removeAnime(${a.id}, event)" title="Remove">
+          <i data-lucide="trash-2" style="width:13px; height:13px;"></i>
+        </button>
+        
+        <div class="card-content">
+          <div class="card-meta">
+            <span class="type-pill">${a.type || 'TV'}</span>
+            <span class="meta-text">${a.episodes ? `Ep ${a.episodes}` : (a.year || '')}</span>
+          </div>
+          <h3 class="card-title">${escHtml(a.title)}</h3>
         </div>
-        <h3 class="card-title">${escHtml(a.title)}</h3>
-      </div>
-    </article>
+      </article>
+      ${!deleteMode ? `<div class="card-sl">${i + 1}</div>` : ''}
+    </div>
   `).join('');
   lucide.createIcons();
 }
@@ -745,3 +745,30 @@ function undoDelete() {
 // INIT
 lucide.createIcons();
 renderGrid();
+
+function confirmDeleteAccount() {
+  if (confirm("Are you sure you want to delete your account?\n\nAll your watchlist data will be permanently cleared. This action cannot be undone.")) {
+    deleteAccount();
+  }
+}
+
+async function deleteAccount() {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+  try {
+    // Delete user data first
+    await db.collection('users').doc(user.uid).delete();
+    // Delete auth account
+    await user.delete();
+    alert("Account deleted successfully.");
+    window.location.reload();
+  } catch (error) {
+    if (error.code === 'auth/requires-recent-login') {
+      alert("Security requirement: Please sign out and sign back in to delete your account.");
+      logout();
+    } else {
+      console.error("Error deleting account", error);
+      alert("Failed to delete account: " + error.message);
+    }
+  }
+}

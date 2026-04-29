@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="assets/images/banner.png" alt="AniQue Banner" width="100%" />
+  <img src="assets/images/screenshot.png" alt="AniQue Screenshot" width="100%" />
 </p>
 
 <p align="center">
-  <img src="assets/images/anique.png" alt="AniQue Logo" width="220" />
+  <img src="assets/images/aniqueTitleLogo.png" alt="AniQue Logo" width="220" />
 </p>
 
 <p align="center">
@@ -116,9 +116,9 @@ anique/
 │   ├── js/
 │   │   └── app.js          # App logic, Firebase, search, UI
 │   └── images/
-│       ├── anique.png       # Logo
+│       ├── aniqueTitleLogo.png       # Logo
 │       ├── AniQueLogo.svg   # Logo (SVG)
-│       └── banner.png       # README banner
+│       └── screenshot.png       # App screenshot
 └── README.md                # Documentation
 ```
 

@@ -11,7 +11,7 @@
   <meta name="robots" content="index, follow" />
   <meta property="og:title" content="AniQue | Your Personal Anime Watchlist" />
   <meta property="og:description" content="A beautiful, modern anime watchlist to share with your friends." />
-  <meta property="og:image" content="https://amorish.github.io/anique/assets/images/banner.png" />
+  <meta property="og:image" content="https://amorish.github.io/anique/assets/images/screenshot.png" />
   <meta property="og:url" content="https://amorish.github.io/anique" />
   <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,7 +30,7 @@
           <i data-lucide="user"></i>
         </button>
       </div>
-      <img src="assets/images/anique.png" alt="AniQue" class="logo-img" />
+      <img src="assets/images/aniqueTitleLogo.png" alt="AniQue" class="logo-img" />
       <div class="header-right">
         <button class="icon-btn" onclick="toggleSearch()" id="searchToggleBtn" aria-label="Search">
           <i data-lucide="search"></i>
@@ -41,6 +41,7 @@
       <div class="profile-menu" id="profileMenu" style="display:none;">
         <div class="user-info" id="userBadge"><span id="userEmail"></span></div>
         <button class="logout-btn" onclick="logout()">Sign Out</button>
+        <button onclick="confirmDeleteAccount()" style="background:transparent;border:none;color:var(--muted);text-decoration:underline;font-size:11px;margin-top:8px;cursor:pointer;">Delete Account</button>
       </div>
     </div>
   </header>
@@ -80,18 +81,17 @@
     </section>
 
     <!-- Filter Pills -->
-    <nav class="filter-nav scrollbar-hide" id="filterNav">
-      <div style="display:flex;gap:8px;align-items:center;flex:1;" id="normalFilters">
-        <button class="filter-pill active" onclick="setFilter('all', this)">All</button>
-        <button class="filter-pill" onclick="setFilter('watching', this)">Watching</button>
-        <button class="filter-pill" onclick="setFilter('watched', this)">Watched</button>
+    <nav class="tabs-nav scrollbar-hide" id="filterNav">
+      <div class="tabs-container" id="normalFilters">
+        <button class="tab-btn active" onclick="setFilter('watching', this)">List</button>
+        <button class="tab-btn" onclick="setFilter('watched', this)">Watched</button>
         <div style="flex:1"></div>
-        <button class="icon-btn" id="deleteModeToggleBtn" onclick="toggleDeleteMode()" title="Delete Anime"><i data-lucide="trash-2"></i></button>
+        <button class="icon-btn" id="deleteModeToggleBtn" onclick="toggleDeleteMode()" title="Delete Anime" style="margin-bottom:8px;"><i data-lucide="trash-2"></i></button>
       </div>
-      <div style="display:none; gap:8px; align-items:center; width:100%;" id="deleteFilters">
+      <div class="tabs-container" id="deleteFilters" style="display:none; align-items:center;">
         <span style="font-size:13px; color:var(--accent); font-weight:600; flex:1;" id="deleteCountText">0 Selected</span>
-        <button class="filter-pill" onclick="toggleDeleteMode()">Cancel</button>
-        <button class="filter-pill active" style="background:var(--accent);border-color:var(--accent);" onclick="confirmDelete()">Delete</button>
+        <button class="tab-btn" onclick="toggleDeleteMode()">Cancel</button>
+        <button class="tab-btn" style="color:var(--accent);" onclick="confirmDelete()">Delete</button>
       </div>
     </nav>
 

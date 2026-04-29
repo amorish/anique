@@ -145,24 +145,35 @@ button{font-family:inherit;cursor:pointer}
 .stat-value.highlight{color:var(--accent);text-shadow:0 0 12px var(--accent-glow)}
 .stat-divider{width:1px;height:20px;background:var(--border)}
 
-/* ===== FILTER PILLS ===== */
-.filter-nav{display:flex;gap:8px;overflow-x:auto;padding:16px 0}
-.filter-pill{
-  height:34px;padding:0 18px;border-radius:var(--radius-full);
-  font-size:12px;font-weight:600;white-space:nowrap;
-  background:transparent;color:var(--text-secondary);
-  border:1px solid var(--border);transition:all .2s ease;
+/* ===== FILTER TABS ===== */
+.tabs-nav {
+  display: flex; align-items: center; width: 100%;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px; padding: 0; background: transparent;
+  overflow-x: auto; scroll-snap-type: x mandatory;
 }
-.filter-pill:hover{border-color:var(--border-hover);color:var(--text)}
-.filter-pill:active{transform:scale(.95)}
-.filter-pill.active{
-  background:var(--accent);color:#fff;border-color:var(--accent);
-  box-shadow:0 0 16px var(--accent-glow);
+.tabs-container {
+  display: flex; width: 100%;
 }
+.tab-btn {
+  background: transparent; border: none; color: var(--muted); font-size: 15px; font-weight: 600;
+  padding: 12px 24px; position: relative; cursor: pointer; transition: color 0.2s;
+  font-family: var(--font-heading); scroll-snap-align: start; white-space: nowrap;
+}
+.tab-btn.active { color: #fff; }
+.tab-btn::after {
+  content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 3px;
+  background: transparent; border-radius: 3px 3px 0 0; transition: background 0.2s;
+}
+.tab-btn.active::after { background: var(--accent); }
 
 /* ===== ANIME GRID ===== */
-.grid-wrap{padding:0}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:16px;
+}
+.card-wrapper{
+  position:relative;width:100%;display:flex;flex-direction:column;
+}
 
 /* ===== ANIME CARD — Redesigned ===== */
 .card{
@@ -188,18 +199,20 @@ button{font-family:inherit;cursor:pointer}
   pointer-events:none;
 }
 
-/* Serial Number Badge */
+/* Serial Number Badge (Letterboxd Style) */
 .card-sl{
-  position:absolute;top:0;left:0;
-  min-width:32px;height:32px;
-  display:flex;align-items:flex-start;justify-content:flex-start;
-  background:radial-gradient(circle at top left, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
-  border-radius:var(--radius-md) 0 0 0;
-  font-size:14px;font-weight:800;
-  color:rgba(255,255,255,.9);
-  z-index:5;padding:6px 0 0 8px;
+  position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);
+  width:24px;height:24px;
+  display:flex;align-items:center;justify-content:center;
+  background:#3f4752;
+  border-radius:50%;
+  font-size:11px;font-weight:700;
+  color:#899aa9;
+  z-index:20;
   font-family:var(--font-heading);
+  border:2px solid var(--background);
   transition: opacity .2s ease;
+  pointer-events:none;
 }
 
 /* Watched Toggle */
@@ -226,8 +239,8 @@ button{font-family:inherit;cursor:pointer}
   opacity:0;pointer-events:none;
 }
 /* When hover, hide SL and show remove */
-.card:hover .card-sl{opacity:0;pointer-events:none}
-.card:hover .remove-btn{opacity:1;pointer-events:auto}
+.card-wrapper:hover .card-sl{opacity:0;}
+.card-wrapper:hover .card .remove-btn{opacity:1;pointer-events:auto;}
 
 .remove-btn:active{transform:scale(.85)}
 
@@ -235,18 +248,11 @@ button{font-family:inherit;cursor:pointer}
 .delete-mode .card-sl, .delete-mode .watched-btn, .delete-mode .remove-btn { display: none !important; }
 .card-select-overlay {
   position: absolute; inset: 0; z-index: 10; display: none;
-  border: 2px solid transparent; border-radius: var(--radius-md); background: rgba(0,0,0,0.2);
+  border: 3px solid transparent; border-radius: var(--radius-lg); background: rgba(0,0,0,0.2);
+  pointer-events: none;
 }
 .delete-mode .card-select-overlay { display: block; }
 .card.selected .card-select-overlay { border-color: var(--accent); background: rgba(229,9,20,0.2); }
-.card-checkbox {
-  position: absolute; top: 12px; left: 12px; width: 24px; height: 24px;
-  border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center;
-  background: rgba(0,0,0,0.5);
-}
-.card.selected .card-checkbox { background: var(--accent); border-color: var(--accent); }
-.card-checkbox svg { width: 14px; height: 14px; color: #fff; opacity: 0; }
-.card.selected .card-checkbox svg { opacity: 1; }
 
 /* Card Bottom Content */
 .card-content{
@@ -428,8 +434,8 @@ button{font-family:inherit;cursor:pointer}
   .main-content{padding:120px 32px 40px}
   .profile-menu{top:104px}
   .card:hover{transform:translateY(-4px);border-color:var(--border-hover);box-shadow:0 12px 32px rgba(0,0,0,.4)}
-  .card:hover .remove-btn{opacity:1;pointer-events:auto}
-  .card:hover .card-sl{opacity:0;pointer-events:none}
+  .card-wrapper:hover .remove-btn{opacity:1;pointer-events:auto}
+  .card-wrapper:hover .card-sl{opacity:0;}
 }
 @media(min-width:1200px){
   .grid{grid-template-columns:repeat(5,1fr)}
@@ -438,5 +444,5 @@ button{font-family:inherit;cursor:pointer}
 @media(hover:none){
   .remove-btn{opacity:1;pointer-events:auto;top:auto;bottom:8px;left:auto;right:8px;}
   .watched-btn{top:8px;right:8px;}
-  .card-sl{opacity:1 !important;pointer-events:auto;}
+  .card-wrapper .card-sl{opacity:1 !important;}
 }
