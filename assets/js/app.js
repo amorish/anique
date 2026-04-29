@@ -477,12 +477,14 @@ function renderGrid() {
       <img class="poster-img" src="${a.poster || ''}" alt="${escHtml(a.title)}" loading="lazy" onerror="this.src=''" />
       <div class="card-gradient"></div>
       
+      <div class="card-sl">${i + 1}</div>
+      
       <button class="watched-btn ${a.watched ? 'checked' : ''}" onclick="toggleWatched(${a.id})" title="${a.watched ? 'Mark unwatched' : 'Mark watched'}">
-        <i data-lucide="check" style="width:16px; height:16px; stroke-width: 3;"></i>
+        <i data-lucide="check" style="width:14px; height:14px; stroke-width: 3;"></i>
       </button>
       
       <button class="remove-btn" onclick="removeAnime(${a.id})" title="Remove">
-        <i data-lucide="trash-2" style="width:14px; height:14px;"></i>
+        <i data-lucide="trash-2" style="width:13px; height:13px;"></i>
       </button>
       
       <div class="card-content" onclick="openModal(${a.id})">
