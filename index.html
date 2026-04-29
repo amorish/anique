@@ -24,33 +24,38 @@
 
   <!-- ===== TOP APP BAR ===== -->
   <header class="app-header">
-    <div class="header-left">
-      <button class="icon-btn" id="avatarBtn" onclick="toggleProfileMenu()" aria-label="Profile">
-        <i data-lucide="user"></i>
-      </button>
-    </div>
-    <img src="assets/images/anique.png" alt="AniQue" class="logo-img" />
-    <div class="header-right">
-      <button class="icon-btn" onclick="toggleSearch()" id="searchToggleBtn" aria-label="Search">
-        <i data-lucide="search"></i>
-      </button>
-    </div>
+    <div class="header-container">
+      <div class="header-left">
+        <button class="icon-btn" id="avatarBtn" onclick="toggleProfileMenu()" aria-label="Profile">
+          <i data-lucide="user"></i>
+        </button>
+      </div>
+      <img src="assets/images/anique.png" alt="AniQue" class="logo-img" />
+      <div class="header-right">
+        <button class="icon-btn" onclick="toggleSearch()" id="searchToggleBtn" aria-label="Search">
+          <i data-lucide="search"></i>
+        </button>
+      </div>
 
-    <!-- Profile Dropdown -->
-    <div class="profile-menu" id="profileMenu" style="display:none;">
-      <div class="user-info" id="userBadge"><span id="userEmail"></span></div>
-      <button class="logout-btn" onclick="logout()">Sign Out</button>
+      <!-- Profile Dropdown -->
+      <div class="profile-menu" id="profileMenu" style="display:none;">
+        <div class="user-info" id="userBadge"><span id="userEmail"></span></div>
+        <button class="logout-btn" onclick="logout()">Sign Out</button>
+      </div>
     </div>
   </header>
 
   <!-- ===== SEARCH OVERLAY ===== -->
   <div class="search-overlay" id="searchOverlay" style="display:none;">
-    <div class="search-bar">
-      <i data-lucide="search" class="search-icon" style="width:18px;height:18px;"></i>
-      <input type="text" id="searchInput" placeholder="Search anime..." autocomplete="off" />
-      <button class="icon-btn close-search" onclick="toggleSearch()"><i data-lucide="x"></i></button>
-      <div class="dropdown" id="dropdown"></div>
-      <div class="search-status" id="searchStatus"></div>
+    <div class="search-header">
+      <button class="icon-btn" onclick="toggleSearch()" title="Go Back"><i data-lucide="arrow-left"></i></button>
+      <div class="search-bar">
+        <i data-lucide="search" class="search-icon" style="width:18px;height:18px;"></i>
+        <input type="text" id="searchInput" placeholder="Search anime..." autocomplete="off" />
+        <button class="icon-btn close-search" onclick="clearSearch()"><i data-lucide="x"></i></button>
+        <div class="dropdown" id="dropdown"></div>
+        <div class="search-status" id="searchStatus"></div>
+      </div>
     </div>
   </div>
 
@@ -75,10 +80,19 @@
     </section>
 
     <!-- Filter Pills -->
-    <nav class="filter-nav scrollbar-hide">
-      <button class="filter-pill active" onclick="setFilter('all', this)">All</button>
-      <button class="filter-pill" onclick="setFilter('watching', this)">Watching</button>
-      <button class="filter-pill" onclick="setFilter('watched', this)">Watched</button>
+    <nav class="filter-nav scrollbar-hide" id="filterNav">
+      <div style="display:flex;gap:8px;align-items:center;flex:1;" id="normalFilters">
+        <button class="filter-pill active" onclick="setFilter('all', this)">All</button>
+        <button class="filter-pill" onclick="setFilter('watching', this)">Watching</button>
+        <button class="filter-pill" onclick="setFilter('watched', this)">Watched</button>
+        <div style="flex:1"></div>
+        <button class="icon-btn" id="deleteModeToggleBtn" onclick="toggleDeleteMode()" title="Delete Anime"><i data-lucide="trash-2"></i></button>
+      </div>
+      <div style="display:none; gap:8px; align-items:center; width:100%;" id="deleteFilters">
+        <span style="font-size:13px; color:var(--accent); font-weight:600; flex:1;" id="deleteCountText">0 Selected</span>
+        <button class="filter-pill" onclick="toggleDeleteMode()">Cancel</button>
+        <button class="filter-pill active" style="background:var(--accent);border-color:var(--accent);" onclick="confirmDelete()">Delete</button>
+      </div>
     </nav>
 
     <!-- Anime Grid -->

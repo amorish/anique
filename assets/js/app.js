@@ -275,6 +275,9 @@ let watchlist = [];
 let currentFilter = 'all';
 let searchTimeout;
 let lastQuery = '';
+let deleteMode = false;
+let selectedForDelete = new Set();
+let recentlyDeletedItems = [];
 
 // SEARCH
 const searchInput = document.getElementById('searchInput');
@@ -298,8 +301,16 @@ searchInput.addEventListener('focus', () => {
 });
 
 document.addEventListener('click', (e) => {
-  if (!e.target.closest('.search-wrap')) closeDropdown();
+  if (!e.target.closest('.search-overlay')) closeDropdown();
 });
+
+function clearSearch() {
+  searchInput.value = '';
+  dropdown.innerHTML = '';
+  searchStatus.textContent = '';
+  closeDropdown();
+  searchInput.focus();
+}
 
 async function fetchSearch(q) {
   lastQuery = q;
@@ -355,6 +366,11 @@ function renderDropdown(results) {
 function openDropdown() { dropdown.classList.add('open'); }
 function closeDropdown() { dropdown.classList.remove('open'); }
 
+let currentModalAnime = null;
+function addAnimeFromModal(btn) {
+  if (currentModalAnime) addAnime(currentModalAnime.mal_id, currentModalAnime, btn);
+}
+
 // ADD ANIME
 function addAnime(id, animeData, btn) {
   if (watchlist.some(w => w.id === id)) return;
@@ -384,15 +400,21 @@ function addAnime(id, animeData, btn) {
 }
 
 // REMOVE
-function removeAnime(id) {
-  watchlist = watchlist.filter(w => w.id !== id);
-  save();
-  renderGrid();
-  showToast('Removed from watchlist');
+function removeAnime(id, event) {
+  if (event) event.stopPropagation();
+  const index = watchlist.findIndex(w => w.id === id);
+  if (index !== -1) {
+    recentlyDeletedItems = [watchlist[index]];
+    watchlist.splice(index, 1);
+    save();
+    renderGrid();
+    showToast(`Removed "${recentlyDeletedItems[0].title}"`, true);
+  }
 }
 
 // TOGGLE WATCHED
-async function toggleWatched(id) {
+async function toggleWatched(id, event) {
+  if (event) event.stopPropagation();
   const item = watchlist.find(w => w.id === id);
   if (!item) return;
   item.watched = !item.watched;
@@ -447,12 +469,47 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// FILTER
+// FILTER & DELETE MODE
 function setFilter(f, btn) {
   currentFilter = f;
-  document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#normalFilters .filter-pill').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderGrid();
+}
+
+function toggleDeleteMode() {
+  deleteMode = !deleteMode;
+  selectedForDelete.clear();
+  document.getElementById('normalFilters').style.display = deleteMode ? 'none' : 'flex';
+  document.getElementById('deleteFilters').style.display = deleteMode ? 'flex' : 'none';
+  renderGrid();
+  updateDeleteModeUI();
+}
+
+function updateDeleteModeUI() {
+  const countText = document.getElementById('deleteCountText');
+  if (deleteMode) countText.textContent = `${selectedForDelete.size} Selected`;
+}
+
+function toggleSelection(id) {
+  if (selectedForDelete.has(id)) selectedForDelete.delete(id);
+  else selectedForDelete.add(id);
+  updateDeleteModeUI();
+  // Toggle class on specific card without full re-render
+  const card = document.getElementById(`card-${id}`);
+  if (card) card.classList.toggle('selected', selectedForDelete.has(id));
+}
+
+function confirmDelete() {
+  if (selectedForDelete.size === 0) {
+    toggleDeleteMode();
+    return;
+  }
+  recentlyDeletedItems = watchlist.filter(w => selectedForDelete.has(w.id));
+  watchlist = watchlist.filter(w => !selectedForDelete.has(w.id));
+  save();
+  toggleDeleteMode();
+  showToast(`Deleted ${recentlyDeletedItems.length} anime`, true);
 }
 
 // RENDER GRID
@@ -473,21 +530,24 @@ function renderGrid() {
   empty.style.display = 'none';
 
   grid.innerHTML = items.map((a, i) => `
-    <article class="card ${a.watched ? 'watched' : ''}" id="card-${a.id}">
+    <article class="card ${a.watched ? 'watched' : ''} ${deleteMode ? 'delete-mode' : ''} ${selectedForDelete.has(a.id) ? 'selected' : ''}" id="card-${a.id}" onclick="openModal(${a.id}, event)">
       <img class="poster-img" src="${a.poster || ''}" alt="${escHtml(a.title)}" loading="lazy" onerror="this.src=''" />
       <div class="card-gradient"></div>
       
-      <div class="card-sl">${i + 1}</div>
+      <div class="card-sl">#${i + 1}</div>
       
-      <button class="watched-btn ${a.watched ? 'checked' : ''}" onclick="toggleWatched(${a.id})" title="${a.watched ? 'Mark unwatched' : 'Mark watched'}">
+      <div class="card-select-overlay"></div>
+      <div class="card-checkbox"><i data-lucide="check" style="width:14px;height:14px;stroke-width:3;"></i></div>
+      
+      <button class="watched-btn ${a.watched ? 'checked' : ''}" onclick="toggleWatched(${a.id}, event)" title="${a.watched ? 'Mark unwatched' : 'Mark watched'}">
         <i data-lucide="check" style="width:14px; height:14px; stroke-width: 3;"></i>
       </button>
       
-      <button class="remove-btn" onclick="removeAnime(${a.id})" title="Remove">
+      <button class="remove-btn" onclick="removeAnime(${a.id}, event)" title="Remove">
         <i data-lucide="trash-2" style="width:13px; height:13px;"></i>
       </button>
       
-      <div class="card-content" onclick="openModal(${a.id})">
+      <div class="card-content">
         <div class="card-meta">
           <span class="type-pill">${a.type || 'TV'}</span>
           <span class="meta-text">${a.episodes ? `Ep ${a.episodes}` : (a.year || '')}</span>
@@ -500,7 +560,13 @@ function renderGrid() {
 }
 
 // MODAL
-async function openModal(id) {
+async function openModal(id, event) {
+  if (deleteMode) {
+    if (event) event.preventDefault();
+    toggleSelection(id);
+    return;
+  }
+  
   const backdrop = document.getElementById('modalBackdrop');
   const content = document.getElementById('modalContent');
   backdrop.classList.add('open');
@@ -513,6 +579,7 @@ async function openModal(id) {
       fetch(`https://api.jikan.moe/v4/anime/${id}/relations`)
     ]);
     const detail = (await detailRes.json()).data;
+    currentModalAnime = detail;
     const staffData = (await staffRes.json()).data || [];
     const relData = (await relRes.json()).data || [];
 
@@ -524,6 +591,12 @@ async function openModal(id) {
 
     // Detect sub/dub from title or status (Jikan doesn't give explicit dub/sub; we note availability)
     const subDub = detail.rating ? detectSubDub(detail) : '—';
+    
+    let syn = detail.synopsis || 'No synopsis available.';
+    syn = syn.replace(/\[Written by MAL Rewrite\]/gi, '').trim();
+    syn = escHtml(syn).replace(/\n/g, '<br>');
+    
+    const inList = watchlist.some(w => w.id === id);
 
     content.innerHTML = `
       <div class="modal-hero">
@@ -542,6 +615,7 @@ async function openModal(id) {
             ${detail.rating ? `<span class="tag">${detail.rating}</span>` : ''}
             ${detail.genres?.slice(0, 3).map(g => `<span class="tag">${g.name}</span>`).join('') || ''}
           </div>
+          ${!inList ? `<button class="auth-btn" style="padding:0 16px; height:32px; font-size:11px; margin-top:12px; width:fit-content;" onclick="addAnimeFromModal(this)">+ Add to Watchlist</button>` : ''}
         </div>
       </div>
 
@@ -583,7 +657,7 @@ async function openModal(id) {
 
         <div class="section-label">Synopsis</div>
         <div class="synopsis" id="synopsisBox">
-          ${detail.synopsis ? escHtml(detail.synopsis).replace(/\n/g, '<br>') : 'No synopsis available.'}
+          ${syn}
           <div class="synopsis-fade"></div>
         </div>
         <button class="read-more" onclick="toggleSynopsis()">Read more ↓</button>
@@ -650,11 +724,22 @@ function escHtml(str) {
 }
 function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
 
-function showToast(msg) {
+function showToast(msg, isUndo = false) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
+  t.innerHTML = `<span>${escHtml(msg)}</span>` + (isUndo ? `<span onclick="undoDelete()" style="color:var(--accent); text-decoration:underline; margin-left:16px; cursor:pointer; font-weight:bold;">Undo</span>` : '');
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  clearTimeout(t.timeout);
+  t.timeout = setTimeout(() => t.classList.remove('show'), isUndo ? 4000 : 2500);
+}
+
+function undoDelete() {
+  if (recentlyDeletedItems.length > 0) {
+    watchlist.push(...recentlyDeletedItems);
+    save();
+    renderGrid();
+    recentlyDeletedItems = [];
+    document.getElementById('toast').classList.remove('show');
+  }
 }
 
 // INIT
