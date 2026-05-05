@@ -777,10 +777,10 @@ function renderGrid() {
         <div class="card-content">
           <div class="card-meta"><span class="type-pill">${a.type || 'TV'}</span></div>
           <h3 class="card-title">${escHtml(a.title)}</h3>
-          ${showEpCounter ? `<div class="card-ep-counter">
-            <button class="ep-btn" onclick="updateProgress(${a.id},-1,event)">−</button>
+          ${showEpCounter ? `<div class="card-ep-counter" onclick="event.stopPropagation()">
+            <button class="ep-btn" onmousedown="startProgress(${a.id},-1,event)" onmouseup="stopProgress(event)" onmouseleave="stopProgress(event)" ontouchstart="startProgress(${a.id},-1,event)" ontouchend="stopProgress(event)">−</button>
             <span class="ep-text" id="ep-text-${a.id}">Ep ${a.episodesWatched||0}/${a.episodes||'?'}</span>
-            <button class="ep-btn" onclick="updateProgress(${a.id},1,event)">+</button>
+            <button class="ep-btn" onmousedown="startProgress(${a.id},1,event)" onmouseup="stopProgress(event)" onmouseleave="stopProgress(event)" ontouchstart="startProgress(${a.id},1,event)" ontouchend="stopProgress(event)">+</button>
           </div>` : ''}
         </div>
       </article>
@@ -851,8 +851,8 @@ async function openModal(id, event) {
             ${detail.genres?.slice(0, 3).map(g => `<span class="tag">${g.name}</span>`).join('') || ''}
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
-            ${!inList ? `<button class="modal-add-btn" onclick="addAnimeFromModal(this)">+ Add</button>` : `<span style="font-size:11px;color:var(--muted);align-self:center;">&#10003; In list</span>`}
-            ${(!existingItem?.watched) ? `<button class="modal-watched-btn" onclick="markWatchedFromModal(${detail.mal_id})">&#10003; Mark Watched</button>` : ''}
+            ${!inList ? `<button class="modal-add-btn" onclick="addAnimeFromModal(this)">+ Add</button>` : `<span style="font-size:11px;color:var(--muted);align-self:center;">In list</span>`}
+            ${(!existingItem?.watched) ? `<button class="modal-watched-btn" onclick="markWatchedFromModal(${detail.mal_id})"><i data-lucide="eye" style="width:12px;height:12px;"></i> Mark Watched</button>` : ''}
             <button class="modal-cal-btn" onclick="openSchedule(${detail.mal_id})"><i data-lucide="calendar" style="width:12px;height:12px;"></i> Schedule</button>
           </div>
         </div>
@@ -896,9 +896,9 @@ async function openModal(id, event) {
           <div class="detail-item" style="grid-column: 1 / -1; background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: var(--radius-md); border: 1px solid var(--border);">
             <div class="detail-label">Episodes Watched</div>
             <div class="progress-controls">
-              <button class="progress-btn" onclick="updateProgress(${id}, -1)">-</button>
+              <button class="progress-btn" onmousedown="startProgress(${id},-1,event)" onmouseup="stopProgress(event)" onmouseleave="stopProgress(event)" ontouchstart="startProgress(${id},-1,event)" ontouchend="stopProgress(event)">−</button>
               <span class="progress-text">${existingItem.episodesWatched || 0} / ${detail.episodes || '?'}</span>
-              <button class="progress-btn" onclick="updateProgress(${id}, 1)">+</button>
+              <button class="progress-btn" onmousedown="startProgress(${id},1,event)" onmouseup="stopProgress(event)" onmouseleave="stopProgress(event)" ontouchstart="startProgress(${id},1,event)" ontouchend="stopProgress(event)">+</button>
             </div>
           </div>
           ` : ''}
@@ -1024,7 +1024,30 @@ function undoDelete() {
 lucide.createIcons();
 renderGrid();
 
-async function updateProgress(id, change, event) {
+let progressInterval = null;
+let progressTimeout = null;
+
+function startProgress(id, change, event) {
+  if (event) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+  updateProgress(id, change, null, true);
+  progressTimeout = setTimeout(() => {
+    progressInterval = setInterval(() => {
+      updateProgress(id, change, null, true);
+    }, 100);
+  }, 400);
+}
+
+function stopProgress(event) {
+  if (event) event.stopPropagation();
+  clearTimeout(progressTimeout);
+  clearInterval(progressInterval);
+  save(); // Save once when released
+}
+
+async function updateProgress(id, change, event, skipSave = false) {
   if (event) event.stopPropagation();
   const item = watchlist.find(i => i.id === id);
   if (!item) return;
@@ -1033,11 +1056,13 @@ async function updateProgress(id, change, event) {
   if (item.episodes && newProgress > item.episodes) newProgress = item.episodes;
   item.episodesWatched = newProgress;
   if (item.episodes && item.episodesWatched === item.episodes) item.watched = true;
-  await save();
+  if (!skipSave) await save();
+  
   // Update card ep counter in-place
   const epText = document.getElementById(`ep-text-${id}`);
   if (epText) epText.textContent = `Ep ${item.episodesWatched}/${item.episodes || '?'}`;
-  if (item.watched) renderGrid();
+  if (item.watched && !skipSave) renderGrid();
+  
   // Update modal progress text if open
   const modal = document.getElementById('modalBackdrop');
   if (modal && modal.classList.contains('open')) {
