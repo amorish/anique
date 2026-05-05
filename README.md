@@ -22,25 +22,25 @@
 
 ---
 
-## <img src="https://unpkg.com/lucide-static@0.320.0/icons/sparkles.svg" width="24" height="24" style="vertical-align: bottom;"> Features
+## <img src="https://api.iconify.design/lucide/sparkles.svg?color=white" width="24" height="24" style="vertical-align: bottom;"> Features
 
 | Feature | Description |
 |---------|-------------|
-| <img src="https://unpkg.com/lucide-static@0.320.0/icons/lock.svg" width="16" height="16" style="vertical-align: middle;"> **Secure Auth** | Email/password login & signup with Firebase — smart auto-detection for new users |
-| <img src="https://unpkg.com/lucide-static@0.320.0/icons/search.svg" width="16" height="16" style="vertical-align: middle;"> **Instant Search** | Search 25,000+ anime via the Jikan (MyAnimeList) API with live dropdown results |
-| <img src="https://unpkg.com/lucide-static@0.320.0/icons/clipboard-list.svg" width="16" height="16" style="vertical-align: middle;"> **Personal Watchlist** | Add, remove, and mark anime as watched — synced to the cloud in real-time |
-| <img src="https://unpkg.com/lucide-static@0.320.0/icons/calendar.svg" width="16" height="16" style="vertical-align: middle;"> **Google Calendar** | Schedule watch times directly to your Google Calendar |
-| <img src="https://unpkg.com/lucide-static@0.320.0/icons/dices.svg" width="16" height="16" style="vertical-align: middle;"> **Random Pick** | Get high quality anime suggestions instantly |
-| <img src="https://unpkg.com/lucide-static@0.320.0/icons/bar-chart-2.svg" width="16" height="16" style="vertical-align: middle;"> **Live Stats** | Track total, watched, and remaining anime at a glance |
-| <img src="https://unpkg.com/lucide-static@0.320.0/icons/clapperboard.svg" width="16" height="16" style="vertical-align: middle;"> **Rich Details** | Click any anime card to see synopsis, watch order, director, studio, score, and more |
-| <img src="https://unpkg.com/lucide-static@0.320.0/icons/sliders-horizontal.svg" width="16" height="16" style="vertical-align: middle;"> **Filter & Sort** | Quick filter between All / Watching / Watched views |
-| <img src="https://unpkg.com/lucide-static@0.320.0/icons/key.svg" width="16" height="16" style="vertical-align: middle;"> **Password Reset** | Forgot your password? Reset it with one click |
-| <img src="https://unpkg.com/lucide-static@0.320.0/icons/smartphone.svg" width="16" height="16" style="vertical-align: middle;"> **Responsive** | Looks great on desktop, tablet, and mobile |
-| <img src="https://unpkg.com/lucide-static@0.320.0/icons/palette.svg" width="16" height="16" style="vertical-align: middle;"> **Premium Dark UI** | Sleek dark theme with Outfit + Inter fonts, video backgrounds, and glassmorphism |
+| <img src="https://api.iconify.design/lucide/lock.svg?color=white" width="16" height="16" style="vertical-align: middle;"> **Secure Auth** | Email/password login & signup with Firebase — smart auto-detection for new users |
+| <img src="https://api.iconify.design/lucide/search.svg?color=white" width="16" height="16" style="vertical-align: middle;"> **Instant Search** | Search 25,000+ anime via the Jikan (MyAnimeList) API with live dropdown results |
+| <img src="https://api.iconify.design/lucide/clipboard-list.svg?color=white" width="16" height="16" style="vertical-align: middle;"> **Personal Watchlist** | Add, remove, and mark anime as watched — synced to the cloud in real-time |
+| <img src="https://api.iconify.design/lucide/calendar.svg?color=white" width="16" height="16" style="vertical-align: middle;"> **Google Calendar** | Schedule watch times directly to your Google Calendar |
+| <img src="https://api.iconify.design/lucide/dices.svg?color=white" width="16" height="16" style="vertical-align: middle;"> **Random Pick** | Get high quality anime suggestions instantly |
+| <img src="https://api.iconify.design/lucide/bar-chart-2.svg?color=white" width="16" height="16" style="vertical-align: middle;"> **Live Stats** | Track total, watched, and remaining anime at a glance |
+| <img src="https://api.iconify.design/lucide/clapperboard.svg?color=white" width="16" height="16" style="vertical-align: middle;"> **Rich Details** | Click any anime card to see synopsis, watch order, director, studio, score, and more |
+| <img src="https://api.iconify.design/lucide/sliders-horizontal.svg?color=white" width="16" height="16" style="vertical-align: middle;"> **Filter & Sort** | Quick filter between All / Watching / Watched views |
+| <img src="https://api.iconify.design/lucide/key.svg?color=white" width="16" height="16" style="vertical-align: middle;"> **Password Reset** | Forgot your password? Reset it with one click |
+| <img src="https://api.iconify.design/lucide/smartphone.svg?color=white" width="16" height="16" style="vertical-align: middle;"> **Responsive** | Looks great on desktop, tablet, and mobile |
+| <img src="https://api.iconify.design/lucide/palette.svg?color=white" width="16" height="16" style="vertical-align: middle;"> **Premium Dark UI** | Sleek dark theme with Outfit + Inter fonts, video backgrounds, and glassmorphism |
 
 ---
 
-## <img src="https://unpkg.com/lucide-static@0.320.0/icons/image.svg" width="24" height="24" style="vertical-align: bottom;"> Screenshots
+## <img src="https://api.iconify.design/lucide/image.svg?color=white" width="24" height="24" style="vertical-align: bottom;"> Screenshots
 
 <details>
 <summary><strong>Click to expand</strong></summary>
@@ -58,7 +58,7 @@
 
 ---
 
-## <img src="https://unpkg.com/lucide-static@0.320.0/icons/rocket.svg" width="24" height="24" style="vertical-align: bottom;"> Quick Start
+## <img src="https://api.iconify.design/lucide/rocket.svg?color=white" width="24" height="24" style="vertical-align: bottom;"> Quick Start
 
 ### 1. Clone the Repo
 ```bash
@@ -94,7 +94,7 @@ Just open `index.html` in your browser — or deploy for free on GitHub Pages / 
 
 ---
 
-## <img src="https://unpkg.com/lucide-static@0.320.0/icons/layers.svg" width="24" height="24" style="vertical-align: bottom;"> Tech Stack
+## <img src="https://api.iconify.design/lucide/layers.svg?color=white" width="24" height="24" style="vertical-align: bottom;"> Tech Stack
 
 | Tech | Purpose |
 |------|---------|
@@ -107,7 +107,7 @@ Just open `index.html` in your browser — or deploy for free on GitHub Pages / 
 
 ---
 
-## <img src="https://unpkg.com/lucide-static@0.320.0/icons/folder-tree.svg" width="24" height="24" style="vertical-align: bottom;"> Project Structure
+## <img src="https://api.iconify.design/lucide/folder-tree.svg?color=white" width="24" height="24" style="vertical-align: bottom;"> Project Structure
 
 ```
 anique/
@@ -126,18 +126,18 @@ anique/
 
 ---
 
-## <img src="https://unpkg.com/lucide-static@0.320.0/icons/shield-check.svg" width="24" height="24" style="vertical-align: bottom;"> Security
+## <img src="https://api.iconify.design/lucide/shield-check.svg?color=white" width="24" height="24" style="vertical-align: bottom;"> Security
 
-- <img src="https://unpkg.com/lucide-static@0.320.0/icons/check-circle-2.svg" width="16" height="16" style="vertical-align: middle;"> Firebase Authentication with friendly error handling
-- <img src="https://unpkg.com/lucide-static@0.320.0/icons/check-circle-2.svg" width="16" height="16" style="vertical-align: middle;"> Per-user data isolation (users can only access their own watchlist)
-- <img src="https://unpkg.com/lucide-static@0.320.0/icons/check-circle-2.svg" width="16" height="16" style="vertical-align: middle;"> XSS protection on all user-facing content
-- <img src="https://unpkg.com/lucide-static@0.320.0/icons/check-circle-2.svg" width="16" height="16" style="vertical-align: middle;"> Safe-for-work search filter enabled
-- <img src="https://unpkg.com/lucide-static@0.320.0/icons/check-circle-2.svg" width="16" height="16" style="vertical-align: middle;"> No raw error messages exposed to users
-- <img src="https://unpkg.com/lucide-static@0.320.0/icons/check-circle-2.svg" width="16" height="16" style="vertical-align: middle;"> Firestore security rules enforce server-side access control
+- <img src="https://api.iconify.design/lucide/check-circle-2.svg?color=white" width="16" height="16" style="vertical-align: middle;"> Firebase Authentication with friendly error handling
+- <img src="https://api.iconify.design/lucide/check-circle-2.svg?color=white" width="16" height="16" style="vertical-align: middle;"> Per-user data isolation (users can only access their own watchlist)
+- <img src="https://api.iconify.design/lucide/check-circle-2.svg?color=white" width="16" height="16" style="vertical-align: middle;"> XSS protection on all user-facing content
+- <img src="https://api.iconify.design/lucide/check-circle-2.svg?color=white" width="16" height="16" style="vertical-align: middle;"> Safe-for-work search filter enabled
+- <img src="https://api.iconify.design/lucide/check-circle-2.svg?color=white" width="16" height="16" style="vertical-align: middle;"> No raw error messages exposed to users
+- <img src="https://api.iconify.design/lucide/check-circle-2.svg?color=white" width="16" height="16" style="vertical-align: middle;"> Firestore security rules enforce server-side access control
 
 ---
 
-## <img src="https://unpkg.com/lucide-static@0.320.0/icons/map.svg" width="24" height="24" style="vertical-align: bottom;"> Roadmap
+## <img src="https://api.iconify.design/lucide/map.svg?color=white" width="24" height="24" style="vertical-align: bottom;"> Roadmap
 
 - [ ] Episode-by-episode progress tracking
 - [ ] Personal ratings (1-10 stars)
@@ -152,7 +152,7 @@ anique/
 
 ---
 
-## <img src="https://unpkg.com/lucide-static@0.320.0/icons/users.svg" width="24" height="24" style="vertical-align: bottom;"> Contributing
+## <img src="https://api.iconify.design/lucide/users.svg?color=white" width="24" height="24" style="vertical-align: bottom;"> Contributing
 
 Contributions are welcome! Feel free to fork and submit a PR.
 
@@ -164,7 +164,7 @@ Contributions are welcome! Feel free to fork and submit a PR.
 
 ---
 
-## <img src="https://unpkg.com/lucide-static@0.320.0/icons/file-text.svg" width="24" height="24" style="vertical-align: bottom;"> License
+## <img src="https://api.iconify.design/lucide/file-text.svg?color=white" width="24" height="24" style="vertical-align: bottom;"> License
 
 This project is open source and available under the [MIT License](LICENSE).
 
