@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/images/ScreenshotDesktop.png" alt="AniQue Screenshot" width="100%" />
+  <img src="assets/images/ScreenshotDesktop.png" alt="AniQue Screenshot" height="100%" />
 </p>
 
 <p align="center">
