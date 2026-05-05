@@ -1,4 +1,6 @@
-
+<p align="center">
+  <img src="assets/images/ScreenshotDesktop.png" alt="AniQue Screenshot" width="100%" />
+</p>
 
 <p align="center">
   <img src="assets/images/aniqueTitleLogo.png" alt="AniQue Logo" width="220" />
