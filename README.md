@@ -29,12 +29,14 @@
 | 🔐 **Secure Auth** | Email/password login & signup with Firebase — smart auto-detection for new users |
 | 🔍 **Instant Search** | Search 25,000+ anime via the Jikan (MyAnimeList) API with live dropdown results |
 | 📋 **Personal Watchlist** | Add, remove, and mark anime as watched — synced to the cloud in real-time |
+| 📅 **Google Calendar** | Schedule watch times directly to your Google Calendar |
+| 🎲 **Random Pick** | Get high quality anime suggestions instantly |
 | 📊 **Live Stats** | Track total, watched, and remaining anime at a glance |
 | 🎬 **Rich Details** | Click any anime card to see synopsis, watch order, director, studio, score, and more |
 | 🔄 **Filter & Sort** | Quick filter between All / Watching / Watched views |
 | 🔑 **Password Reset** | Forgot your password? Reset it with one click |
 | 📱 **Responsive** | Looks great on desktop, tablet, and mobile |
-| 🎨 **Premium Dark UI** | Sleek dark theme with Outfit + Inter fonts, smooth animations, and glassmorphism |
+| 🎨 **Premium Dark UI** | Sleek dark theme with Outfit + Inter fonts, video backgrounds, and glassmorphism |
 
 ---
 
@@ -118,7 +120,7 @@ anique/
 │   └── images/
 │       ├── aniqueTitleLogo.png       # Logo
 │       ├── AniQueLogo.svg   # Logo (SVG)
-│       └── screenshot.png       # App screenshot
+│       └── screenshotDesktop.png       # App screenshot
 └── README.md                # Documentation
 ```
 

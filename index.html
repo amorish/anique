@@ -4,23 +4,44 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>AniQue | Your Personal Anime Watchlist</title>
-  <meta name="google-site-verification" content="03EDOy8AtfDcatjA5S7GplMELrpaCznZet9YwLjz9u0" />
-  <meta name="description" content="A beautiful, modern anime watchlist to share with your friends. Track what you're watching, discover new anime, and keep your list organized." />
-  <meta name="keywords" content="anime, watchlist, anime tracker, myanimelist, AniQue, anime database" />
+  <link rel="icon" href="assets/images/aniqueTabLogo.png" type="image/png" sizes="64x64" />
+  <link rel="apple-touch-icon" href="assets/images/aniqueTabLogo.png" />
+  <meta name="description" content="A beautiful, modern anime watchlist. Track what you're watching, discover new anime, and keep your list organized." />
+  <meta name="keywords" content="anime, watchlist, anime tracker, AniQue" />
   <meta name="author" content="amorish" />
   <meta name="robots" content="index, follow" />
   <meta property="og:title" content="AniQue | Your Personal Anime Watchlist" />
   <meta property="og:description" content="A beautiful, modern anime watchlist to share with your friends." />
-  <meta property="og:image" content="https://amorish.github.io/anique/assets/images/screenshot.png" />
+  <meta property="og:image" content="https://amorish.github.io/anique/assets/images/screenshotDesktop.png" />
   <meta property="og:url" content="https://amorish.github.io/anique" />
   <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.10/dist/dotlottie-wc.js" type="module"></script>
+  <script src="https://apis.google.com/js/api.js" async onload="gapiLoaded()"></script>
+  <script src="https://accounts.google.com/gsi/client" async onload="gisLoaded()"></script>
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
+
+  <!-- Sort Panel Backdrop -->
+  <div class="sort-panel-backdrop" id="sortPanelBackdrop" onclick="toggleSortPanel()" style="display:none;"></div>
+  <!-- Sort Panel -->
+  <div class="sort-panel" id="sortPanel" style="display:none;">
+    <div class="sort-panel-inner">
+      <div class="sort-panel-header">
+        <span class="sort-panel-title">Sort By</span>
+        <button class="icon-btn" onclick="toggleSortPanel()" style="width:32px;height:32px;"><i data-lucide="x" style="width:16px;height:16px;"></i></button>
+      </div>
+      <div class="sort-pills" id="sortPills"></div>
+      <button class="flowmode-btn" id="flowModeBtn" onclick="activateFlowMode()">
+        <i data-lucide="sparkles" style="width:16px;height:16px;"></i>
+        <span>FlowMode</span>
+      </button>
+    </div>
+  </div>
 
   <!-- ===== TOP APP BAR ===== -->
   <header class="app-header">
@@ -30,14 +51,12 @@
           <i data-lucide="user"></i>
         </button>
       </div>
-      <img src="assets/images/aniqueTitleLogo.png" alt="AniQue" class="logo-img" />
+      <img src="assets/images/aniqueTitleLogo.png" alt="AniQue" class="logo-img" draggable="false" oncontextmenu="return false" />
       <div class="header-right">
         <button class="icon-btn" onclick="toggleSearch()" id="searchToggleBtn" aria-label="Search">
           <i data-lucide="search"></i>
         </button>
       </div>
-
-      <!-- Profile Dropdown -->
       <div class="profile-menu" id="profileMenu" style="display:none;">
         <div class="user-info" id="userBadge"><span id="userEmail"></span></div>
         <button class="logout-btn" onclick="logout()">Sign Out</button>
@@ -62,48 +81,85 @@
 
   <!-- ===== MAIN CONTENT ===== -->
   <main class="main-content">
-    <!-- Stats Strip — Compact Inline -->
     <section class="stats-card">
-      <div class="stat-item">
-        <span class="stat-label">Total</span>
-        <span class="stat-value" id="totalCount">0</span>
-      </div>
+      <div class="stat-item"><span class="stat-label">Total</span><span class="stat-value" id="totalCount">0</span></div>
       <div class="stat-divider"></div>
-      <div class="stat-item">
-        <span class="stat-label">Watched</span>
-        <span class="stat-value highlight" id="watchedCount">0</span>
-      </div>
+      <div class="stat-item"><span class="stat-label">Watched</span><span class="stat-value highlight" id="watchedCount">0</span></div>
       <div class="stat-divider"></div>
-      <div class="stat-item">
-        <span class="stat-label">Remaining</span>
-        <span class="stat-value" id="remainCount">0</span>
-      </div>
+      <div class="stat-item"><span class="stat-label">Remaining</span><span class="stat-value" id="remainCount">0</span></div>
     </section>
 
-    <!-- Filter Pills -->
+    <!-- Filter Tabs -->
     <nav class="tabs-nav scrollbar-hide" id="filterNav">
       <div class="tabs-container" id="normalFilters">
-        <button class="tab-btn active" onclick="setFilter('watching', this)">List</button>
-        <button class="tab-btn" onclick="setFilter('watched', this)">Watched</button>
+        <button class="tab-btn active" onclick="setFilter('list', this)" id="tabList">List</button>
+        <button class="tab-btn" onclick="setFilter('watching', this)" id="tabWatching">Watching</button>
+        <button class="tab-btn" onclick="setFilter('watched', this)" id="tabWatched">Watched</button>
+        <button class="tab-btn" onclick="setFilter('explore', this)" id="tabExplore">Explore</button>
         <div style="flex:1"></div>
-        <button class="icon-btn" id="deleteModeToggleBtn" onclick="toggleDeleteMode()" title="Delete Anime" style="margin-bottom:8px;"><i data-lucide="trash-2"></i></button>
+        <button class="icon-btn sort-filter-btn" id="sortFilterBtn" onclick="toggleSortPanel()" title="Sort" style="margin-bottom:8px;">
+          <i data-lucide="sliders-horizontal"></i>
+        </button>
+        <button class="icon-btn" id="selectModeToggleBtn" onclick="toggleSelectMode()" title="Select" style="margin-bottom:8px;margin-left:8px;">
+          <i data-lucide="list-checks"></i>
+        </button>
       </div>
-      <div class="tabs-container" id="deleteFilters" style="display:none; align-items:center;">
-        <span style="font-size:13px; color:var(--accent); font-weight:600; flex:1;" id="deleteCountText">0 Selected</span>
-        <button class="tab-btn" onclick="toggleDeleteMode()">Cancel</button>
-        <button class="tab-btn" style="color:var(--accent);" onclick="confirmDelete()">Delete</button>
+      <div class="tabs-container select-bar" id="selectFilters" style="display:none;align-items:center;gap:8px;">
+        <span style="font-size:13px;color:var(--accent);font-weight:600;flex:1;" id="selectCountText">0 Selected</span>
+        <button class="sel-action-btn sel-watched" onclick="markSelectedWatched()">
+          <i data-lucide="check-circle" style="width:15px;height:15px;"></i> Watched
+        </button>
+        <button class="sel-action-btn sel-remove" onclick="confirmRemoveSelected()">
+          <i data-lucide="trash-2" style="width:15px;height:15px;"></i> Remove
+        </button>
+        <button class="icon-btn sel-close-btn" onclick="toggleSelectMode()" title="Cancel">
+          <i data-lucide="x"></i>
+        </button>
       </div>
     </nav>
 
-    <!-- Anime Grid -->
-    <div class="grid-wrap">
+    <!-- Main Anime Grid -->
+    <div class="grid-wrap" id="gridWrap">
       <div class="grid" id="grid"></div>
       <div class="empty-state" id="emptyState" style="display:none">
-        <div style="display:flex;justify-content:center;margin-bottom:16px;">
-          <i data-lucide="film" style="width:48px;height:48px;color:var(--muted);"></i>
-        </div>
+        <div style="display:flex;justify-content:center;margin-bottom:16px;"><i data-lucide="film" style="width:48px;height:48px;color:var(--muted);"></i></div>
         <p>Your watchlist is empty</p>
         <small>Tap the search icon to find and add anime</small>
+      </div>
+    </div>
+
+    <!-- ===== EXPLORE SECTION ===== -->
+    <div id="exploreSection" style="display:none;">
+      <!-- Random Pick -->
+      <div class="explore-random-section">
+        <div class="explore-random-header">
+          <div>
+            <h2>Random Pick</h2>
+            <p>Don't know what to watch?</p>
+          </div>
+          <button class="random-action-btn" id="randomPickBtn" onclick="fetchRandomAnime(true)">
+            <i data-lucide="shuffle"></i> Suggest Another <span id="randomLimitText"></span>
+          </button>
+        </div>
+        <div class="explore-random-grid" id="randomAnimeGrid"></div>
+      </div>
+
+      <!-- 4 Carousels -->
+      <div class="explore-carousel-section">
+        <div class="explore-list-header"><i data-lucide="flame" style="width:16px;height:16px;color:var(--accent);"></i><span>Trending Now</span></div>
+        <div class="explore-carousel" id="carousel-trending"></div>
+      </div>
+      <div class="explore-carousel-section">
+        <div class="explore-list-header"><i data-lucide="star" style="width:16px;height:16px;color:#f59e0b;"></i><span>Most Popular</span></div>
+        <div class="explore-carousel" id="carousel-popular"></div>
+      </div>
+      <div class="explore-carousel-section">
+        <div class="explore-list-header"><i data-lucide="calendar" style="width:16px;height:16px;color:#3b82f6;"></i><span>Upcoming</span></div>
+        <div class="explore-carousel" id="carousel-upcoming"></div>
+      </div>
+      <div class="explore-carousel-section">
+        <div class="explore-list-header"><i data-lucide="clock" style="width:16px;height:16px;color:#8b5cf6;"></i><span>Latest Airing</span></div>
+        <div class="explore-carousel" id="carousel-toprated"></div>
       </div>
     </div>
   </main>
@@ -116,47 +172,54 @@
     </div>
   </div>
 
+  <!-- ===== POSTER LIGHTBOX ===== -->
+  <div class="lightbox-backdrop" id="lightboxBackdrop" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()"><i data-lucide="x"></i></button>
+    <img class="lightbox-img" id="lightboxImg" src="" alt="Poster" draggable="false" oncontextmenu="return false" onclick="event.stopPropagation()" />
+  </div>
+
+  <!-- ===== FLOWMODE LOADING OVERLAY ===== -->
+  <div class="flowmode-overlay" id="flowmodeOverlay" style="display:none;">
+    <div class="flowmode-overlay-inner">
+      <i data-lucide="loader-2" style="width:48px;height:48px;color:var(--accent);animation:spin 1s linear infinite;"></i>
+      <div class="flowmode-overlay-text" id="flowmodeStatus">Scanning your list...</div>
+    </div>
+  </div>
+
+  <!-- ===== SCHEDULE MODAL ===== -->
+  <div class="modal-backdrop" id="scheduleBackdrop" onclick="closeSchedule(event)" style="display:none;">
+    <div class="modal schedule-modal" id="scheduleModal">
+      <button class="modal-close" onclick="closeScheduleDirect()">✕</button>
+      <div id="scheduleContent"></div>
+    </div>
+  </div>
+
   <!-- ===== AUTH OVERLAY ===== -->
   <div class="auth-overlay" id="authOverlay">
+    <video autoplay loop muted playsinline class="auth-bg-video"><source src="assets/images/signupsigninbg.mp4" type="video/mp4"></video>
     <div class="auth-card">
-      <img src="assets/images/aniqueTitleLogo.png" alt="AniQue" class="logo-img">
+      <img src="assets/images/aniqueTitleLogo.png" alt="AniQue" class="logo-img" draggable="false" oncontextmenu="return false">
       <h2 id="authTitle">Sign In</h2>
-
       <div class="auth-form">
-        <!-- Username -->
         <div class="input-group" id="authUsernameGroup" style="display:none;">
           <label for="authUsername">Username</label>
-          <div class="input-wrapper">
-            <i data-lucide="user" class="input-icon"></i>
-            <input type="text" id="authUsername" placeholder="Choose a username" />
-          </div>
+          <div class="input-wrapper"><i data-lucide="user" class="input-icon"></i><input type="text" id="authUsername" placeholder="Choose a username" /></div>
         </div>
-        <!-- Email -->
         <div class="input-group">
           <label for="authEmail">Email</label>
-          <div class="input-wrapper">
-            <i data-lucide="mail" class="input-icon"></i>
-            <input type="email" id="authEmail" placeholder="you@example.com" autocomplete="email" />
-          </div>
+          <div class="input-wrapper"><i data-lucide="mail" class="input-icon"></i><input type="email" id="authEmail" placeholder="you@example.com" autocomplete="email" /></div>
         </div>
-        <!-- Password -->
         <div class="input-group">
           <label for="authPwd">Password</label>
           <div class="input-wrapper">
             <i data-lucide="lock" class="input-icon"></i>
             <input type="password" id="authPwd" placeholder="••••••••" />
-            <button class="pwd-toggle" type="button" onclick="togglePassword()" id="pwdToggleBtn" aria-label="Toggle password">
-              <i data-lucide="eye-off" id="pwdEyeIcon"></i>
-            </button>
+            <button class="pwd-toggle" type="button" onclick="togglePassword()" id="pwdToggleBtn"><i data-lucide="eye-off" id="pwdEyeIcon"></i></button>
           </div>
-          <div class="forgot-link-wrapper" id="forgotLinkWrapper">
-            <button class="forgot-link" type="button" onclick="forgotPassword()">Forgot password?</button>
-          </div>
+          <div class="forgot-link-wrapper" id="forgotLinkWrapper"><button class="forgot-link" type="button" onclick="forgotPassword()">Forgot password?</button></div>
         </div>
-
         <button class="auth-btn" id="authActionBtn" onclick="handleAuth()">Sign In</button>
       </div>
-
       <div class="auth-footer">
         <span class="auth-footer-text" id="authFooterText">New here?</span>
         <button class="auth-toggle-inline" onclick="toggleAuthMode()" id="authToggleBtn">Sign Up</button>
@@ -164,31 +227,26 @@
     </div>
   </div>
 
-  <!-- ===== EMAIL VERIFICATION ===== -->
+  <!-- ===== EMAIL VERIFICATION OVERLAY ===== -->
   <div class="auth-overlay" id="verifyOverlay" style="display:none">
+    <video autoplay loop muted playsinline class="auth-bg-video"><source src="assets/images/signupsigninbg.mp4" type="video/mp4"></video>
     <div class="auth-card">
-      <img src="assets/images/aniqueTitleLogo.png" alt="AniQue" class="logo-img">
+      <img src="assets/images/aniqueTitleLogo.png" alt="AniQue" class="logo-img" draggable="false" oncontextmenu="return false">
       <div class="verify-icon"><i data-lucide="mail" style="width:40px;height:40px;color:var(--accent);"></i></div>
       <h2>Verify Your Email</h2>
       <p class="verify-hint">We sent a verification link to:</p>
       <p class="verify-email-display" id="verifyEmail"></p>
       <p class="verify-hint">Click the link in the email, then press below.</p>
-
       <div class="auth-form" style="margin-top:12px;">
         <button class="auth-btn" onclick="checkVerification()">I've Verified — Let Me In</button>
         <button class="auth-btn verify-resend-btn" id="resendBtn" onclick="resendVerification()">Resend Email</button>
       </div>
-
-      <div class="auth-footer">
-        <button class="auth-toggle-inline" onclick="verifyLogout()">Use a different account</button>
-      </div>
+      <div class="auth-footer"><button class="auth-toggle-inline" onclick="verifyLogout()">Use a different account</button></div>
     </div>
   </div>
 
-  <!-- Toast -->
   <div class="toast" id="toast"></div>
 
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>

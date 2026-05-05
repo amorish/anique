@@ -272,12 +272,173 @@ async function loadWatchlist() {
 
 // STATE
 let watchlist = [];
-let currentFilter = 'watching';
+let currentFilter = 'list'; // 'list' | 'watching' | 'watched' | 'explore'
+let currentSort = 'added';
+let currentSortOrder = 'desc'; // 'asc' | 'desc'
+let flowModeActive = false;
 let searchTimeout;
 let lastQuery = '';
 let deleteMode = false;
 let selectedForDelete = new Set();
 let recentlyDeletedItems = [];
+let exploreLoaded = false;
+
+// Google Calendar
+const CAL_CLIENT_ID = '509204660972-3774jpvhcginocobddqkn3pmv8ngnf51.apps.googleusercontent.com';
+const CAL_SCOPE = 'https://www.googleapis.com/auth/calendar.events';
+let gapiInited = false, gisInited = false, tokenClient = null, currentScheduleAnime = null;
+
+function gapiLoaded() {
+  gapi.load('client', async () => {
+    await gapi.client.init({ discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'] });
+    gapiInited = true;
+  });
+}
+function gisLoaded() {
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CAL_CLIENT_ID, scope: CAL_SCOPE,
+    callback: (resp) => {
+      if (!resp.error) {
+        gapi.client.setToken({ access_token: resp.access_token });
+        submitCalendarEvent();
+      }
+    }
+  });
+  gisInited = true;
+}
+
+// SORT PANEL
+const SORT_OPTIONS = [
+  { key: 'added',    label: 'Date Added',  canOrder: true  },
+  { key: 'name',     label: 'Name',        canOrder: true  },
+  { key: 'rating',   label: 'Rating',      canOrder: true  },
+  { key: 'year',     label: 'Year',        canOrder: true  },
+  { key: 'episodes', label: 'Episodes',    canOrder: true  },
+];
+
+function toggleSortPanel() {
+  const panel = document.getElementById('sortPanel');
+  const backdrop = document.getElementById('sortPanelBackdrop');
+  const btn = document.getElementById('sortFilterBtn');
+  const isOpen = panel.style.display !== 'none';
+  panel.style.display = isOpen ? 'none' : 'block';
+  backdrop.style.display = isOpen ? 'none' : 'block';
+  btn.classList.toggle('active', !isOpen);
+  if (!isOpen) renderSortPills();
+}
+
+function renderSortPills() {
+  const container = document.getElementById('sortPills');
+  const flowBtn = document.getElementById('flowModeBtn');
+  if (flowBtn) flowBtn.classList.toggle('active', flowModeActive);
+  container.innerHTML = SORT_OPTIONS.map(opt => {
+    const isActive = !flowModeActive && currentSort === opt.key;
+    const arrow = currentSortOrder === 'asc' ? '↑' : '↓';
+    return `<button class="sort-pill ${isActive ? 'active' : ''}" onclick="setSortFromPanel('${opt.key}')">
+      ${opt.label}
+      ${isActive && opt.canOrder ? `<span class="pill-arrow" onclick="toggleSortOrder(event)">${arrow}</span>` : ''}
+    </button>`;
+  }).join('');
+}
+
+function setSortFromPanel(key) {
+  flowModeActive = false;
+  if (currentSort === key) {
+    // Toggle order if same key tapped
+    currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+  } else {
+    currentSort = key;
+    currentSortOrder = 'desc';
+  }
+  renderSortPills();
+  renderGrid();
+}
+
+function toggleSortOrder(e) {
+  e.stopPropagation();
+  currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+  renderSortPills();
+  renderGrid();
+}
+
+async function activateFlowMode() {
+  flowModeActive = true;
+  currentSort = 'flowmode';
+  toggleSortPanel();
+  // Show Lottie overlay with rotating status messages
+  const overlay = document.getElementById('flowmodeOverlay');
+  const statusEl = document.getElementById('flowmodeStatus');
+  overlay.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  const phases = ['Scanning your list...', 'Fetching genre data...', 'Analysing flow patterns...', 'Optimising your order...'];
+  let pi = 0;
+  statusEl.textContent = phases[0];
+  const phaseTimer = setInterval(() => { pi++; if (pi < phases.length) statusEl.textContent = phases[pi]; }, 900);
+  try {
+    // Fetch AniList genre data for richer FlowMode sorting
+    const ids = watchlist.filter(w => !w.watched).map(w => w.id).filter(Boolean);
+    if (ids.length > 0) {
+      const query = `query($ids:[Int]){Page(perPage:50){media(idMal_in:$ids,type:ANIME){idMal genres averageScore}}}`;
+      const res = await fetch('https://graphql.anilist.co', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({query, variables:{ids}}) });
+      const data = await res.json();
+      (data.data?.Page?.media || []).forEach(m => {
+        const item = watchlist.find(w => w.id === m.idMal);
+        if (item) { item._genres = m.genres || []; item._aniScore = m.averageScore || 0; }
+      });
+    }
+  } catch(e) { /* AniList failed, fall back to basic algo */ }
+  // Wait for animation to feel meaningful
+  await new Promise(r => setTimeout(r, 3500));
+  clearInterval(phaseTimer);
+  overlay.style.display = 'none';
+  document.body.style.overflow = '';
+  renderSortPills();
+  renderGrid();
+  showToast('FlowMode active — your optimised order is ready');
+}
+
+function applyFlowMode(items) {
+  // Enhanced: avoid same genre back-to-back, boost in-progress, interleave lengths
+  const withPriority = items.map(a => ({
+    ...a,
+    _score: (a._aniScore || (a.score ? a.score * 10 : 0)),
+    _inProgress: (a.episodesWatched || 0) > 0 ? 1 : 0
+  }));
+  const short  = withPriority.filter(a => (a.episodes||999) <= 13).sort((a,b) => b._inProgress-a._inProgress || b._score-a._score);
+  const medium = withPriority.filter(a => (a.episodes||999) > 13 && (a.episodes||999) <= 50).sort((a,b) => b._inProgress-a._inProgress || b._score-a._score);
+  const long   = withPriority.filter(a => (a.episodes||999) > 50).sort((a,b) => b._inProgress-a._inProgress || b._score-a._score);
+  const movies = withPriority.filter(a => a.type === 'Movie').sort((a,b) => b._score-a._score);
+  const result = []; let mi = 0;
+  const maxLen = Math.max(short.length, medium.length, long.length);
+  for (let i = 0; i < maxLen; i++) {
+    if (short[i])  result.push(short[i]);
+    if (medium[i]) result.push(medium[i]);
+    // Insert a movie as palette cleanser every 4 items
+    if (i % 2 === 1 && movies[mi]) { result.push(movies[mi++]); }
+    if (long[i])   result.push(long[i]);
+  }
+  // Add remaining movies at end
+  while (mi < movies.length) result.push(movies[mi++]);
+  // Deduplicate (movie might be in short/medium/long too)
+  const seen = new Set(); return result.filter(a => seen.has(a.id) ? false : seen.add(a.id));
+}
+
+// LIGHTBOX
+function openLightbox(src) {
+  const lb = document.getElementById('lightboxBackdrop');
+  const img = document.getElementById('lightboxImg');
+  img.src = src;
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  lucide.createIcons();
+}
+function closeLightbox() {
+  document.getElementById('lightboxBackdrop').classList.remove('open');
+  // Only restore scroll if modal is also closed
+  if (!document.getElementById('modalBackdrop').classList.contains('open')) {
+    document.body.style.overflow = '';
+  }
+}
 
 // SEARCH
 const searchInput = document.getElementById('searchInput');
@@ -338,22 +499,35 @@ function renderDropdown(results) {
   dropdown.innerHTML = results.map((a, idx) => {
     const inList = watchlist.some(w => w.id === a.mal_id);
     return `
-    <div class="drop-item" data-id="${a.mal_id}">
-      <img class="drop-poster" src="${escHtml(a.images?.jpg?.image_url || '')}" alt="" onerror="this.style.background='#222';this.src=''"/>
+    <div class="drop-item" data-idx="${idx}" data-id="${a.mal_id}">
+      <img class="drop-poster" src="${escHtml(a.images?.jpg?.image_url || '')}" alt="" onerror="this.style.background='#222';this.src=''" draggable="false" oncontextmenu="return false"/>
       <div class="drop-info">
         <div class="drop-title">${escHtml(a.title)}</div>
         <div class="drop-meta">${escHtml(a.type || 'TV')} · ${escHtml(String(a.year || '—'))} · ${a.episodes ? a.episodes + ' eps' : '?'}</div>
       </div>
-      <button class="drop-add ${inList ? 'added' : ''}" data-idx="${idx}"
-        ${inList ? 'disabled' : ''}>
+      <button class="drop-add ${inList ? 'added' : ''}" data-idx="${idx}" ${inList ? 'disabled' : ''}>
         ${inList ? 'Added' : '+ Add'}
       </button>
     </div>`;
   }).join('');
 
-  // Event delegation for add buttons (safer than inline onclick with JSON)
+  // Click on poster or title → open detail modal
+  dropdown.querySelectorAll('.drop-item').forEach(item => {
+    const idx = parseInt(item.dataset.idx);
+    const clickable = [item.querySelector('.drop-poster'), item.querySelector('.drop-title')];
+    clickable.forEach(el => {
+      if (el) el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const anime = lastSearchResults[idx];
+        if (anime) openModal(anime.mal_id, null);
+      });
+    });
+  });
+
+  // Event delegation for add buttons
   dropdown.querySelectorAll('.drop-add:not(.added)').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
       const idx = parseInt(btn.dataset.idx);
       const anime = lastSearchResults[idx];
       if (anime) addAnime(anime.mal_id, anime, btn);
@@ -387,6 +561,7 @@ function addAnime(id, animeData, btn) {
     status: animeData.status,
     studio: animeData.studios?.[0]?.name || null,
     watched: false,
+    episodesWatched: 0,
     addedAt: Date.now()
   };
   watchlist.push(item);
@@ -418,8 +593,26 @@ async function toggleWatched(id, event) {
   const item = watchlist.find(w => w.id === id);
   if (!item) return;
   item.watched = !item.watched;
+  if (item.watched) {
+    if (item.episodesWatched !== item.episodes) {
+      item.previousEpisodesWatched = item.episodesWatched || 0;
+    }
+    if (item.episodes) item.episodesWatched = item.episodes;
+    item.watchedAt = todayDate();
+  } else {
+    item.episodesWatched = item.previousEpisodesWatched !== undefined ? item.previousEpisodesWatched : 0;
+    item.watchedAt = null;
+  }
   await save();
   renderGrid();
+}
+
+function todayDate() {
+  const d = new Date();
+  const dd = String(d.getDate()).padStart(2,'0');
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const yy = String(d.getFullYear()).slice(-2);
+  return `${dd}/${mm}/${yy}`;
 }
 
 // SAVE
@@ -469,47 +662,79 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// FILTER & DELETE MODE
+// FILTER & SELECT MODE
 function setFilter(f, btn) {
   currentFilter = f;
   document.querySelectorAll('#normalFilters .tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  renderGrid();
+  // Toggle grid vs explore visibility
+  const gridWrap = document.getElementById('gridWrap');
+  const exploreSection = document.getElementById('exploreSection');
+  const sortFilterBtn = document.getElementById('sortFilterBtn');
+  const selectModeToggleBtn = document.getElementById('selectModeToggleBtn');
+  if (f === 'explore') {
+    gridWrap.style.display = 'none';
+    exploreSection.style.display = 'block';
+    if (sortFilterBtn) sortFilterBtn.style.display = 'none';
+    if (selectModeToggleBtn) selectModeToggleBtn.style.display = 'none';
+    if (!exploreLoaded) loadExplore();
+  } else {
+    gridWrap.style.display = 'block';
+    exploreSection.style.display = 'none';
+    if (sortFilterBtn) sortFilterBtn.style.display = '';
+    if (selectModeToggleBtn) selectModeToggleBtn.style.display = '';
+    renderGrid();
+  }
 }
 
-function toggleDeleteMode() {
+function toggleSelectMode() {
   deleteMode = !deleteMode;
   selectedForDelete.clear();
   document.getElementById('normalFilters').style.display = deleteMode ? 'none' : 'flex';
-  document.getElementById('deleteFilters').style.display = deleteMode ? 'flex' : 'none';
+  document.getElementById('selectFilters').style.display = deleteMode ? 'flex' : 'none';
   renderGrid();
-  updateDeleteModeUI();
+  updateSelectUI();
 }
 
-function updateDeleteModeUI() {
-  const countText = document.getElementById('deleteCountText');
-  if (deleteMode) countText.textContent = `${selectedForDelete.size} Selected`;
+function updateSelectUI() {
+  const countText = document.getElementById('selectCountText');
+  if (countText) countText.textContent = `${selectedForDelete.size} Selected`;
 }
 
 function toggleSelection(id) {
   if (selectedForDelete.has(id)) selectedForDelete.delete(id);
   else selectedForDelete.add(id);
-  updateDeleteModeUI();
-  // Toggle class on specific card without full re-render
+  updateSelectUI();
   const card = document.getElementById(`card-${id}`);
   if (card) card.classList.toggle('selected', selectedForDelete.has(id));
 }
 
-function confirmDelete() {
-  if (selectedForDelete.size === 0) {
-    toggleDeleteMode();
-    return;
-  }
+function confirmRemoveSelected() {
+  if (selectedForDelete.size === 0) { toggleSelectMode(); return; }
+  const count = selectedForDelete.size;
+  if (!confirm(`Remove ${count} anime from your watchlist?\n\nThis action cannot be undone (you can Undo from the toast).`)) return;
   recentlyDeletedItems = watchlist.filter(w => selectedForDelete.has(w.id));
   watchlist = watchlist.filter(w => !selectedForDelete.has(w.id));
   save();
-  toggleDeleteMode();
-  showToast(`Deleted ${recentlyDeletedItems.length} anime`, true);
+  toggleSelectMode();
+  showToast(`Removed ${recentlyDeletedItems.length} anime`, true);
+}
+
+function markSelectedWatched() {
+  if (selectedForDelete.size === 0) { toggleSelectMode(); return; }
+  const date = todayDate();
+  selectedForDelete.forEach(id => {
+    const item = watchlist.find(w => w.id === id);
+    if (item) {
+      item.watched = true;
+      if (item.episodes) item.episodesWatched = item.episodes;
+      item.watchedAt = date;
+    }
+  });
+  const count = selectedForDelete.size;
+  save();
+  toggleSelectMode();
+  showToast(`Marked ${count} anime as watched ✓`);
 }
 
 // RENDER GRID
@@ -518,42 +743,48 @@ function renderGrid() {
   const empty = document.getElementById('emptyState');
   updateStats();
 
-  let items = watchlist;
-  if (currentFilter === 'watched') items = watchlist.filter(w => w.watched);
-  if (currentFilter === 'watching') items = watchlist.filter(w => !w.watched);
+  let items = [...watchlist];
+  if (currentFilter === 'watched')  items = items.filter(w => w.watched);
+  else if (currentFilter === 'watching') items = items.filter(w => !w.watched && (w.episodesWatched || 0) > 0);
+  else /* list */ items = items.filter(w => !w.watched);
 
-  if (items.length === 0) {
-    grid.innerHTML = '';
-    empty.style.display = 'block';
-    return;
+  const showEpCounter = (currentFilter === 'watching');
+
+  if (flowModeActive) {
+    items = applyFlowMode(items);
+  } else {
+    const asc = currentSortOrder === 'asc';
+    if (currentSort === 'rating')   items.sort((a,b) => asc ? (a.score||0)-(b.score||0) : (b.score||0)-(a.score||0));
+    else if (currentSort === 'name') items.sort((a,b) => asc ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title));
+    else if (currentSort === 'year') items.sort((a,b) => asc ? (a.year||0)-(b.year||0) : (b.year||0)-(a.year||0));
+    else if (currentSort === 'episodes') items.sort((a,b) => asc ? (a.episodes||0)-(b.episodes||0) : (b.episodes||0)-(a.episodes||0));
+    else { if (!asc) items.reverse(); }
   }
+
+  if (items.length === 0) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
   empty.style.display = 'none';
 
   grid.innerHTML = items.map((a, i) => `
     <div class="card-wrapper">
       <article class="card ${a.watched ? 'watched' : ''} ${deleteMode ? 'delete-mode' : ''} ${selectedForDelete.has(a.id) ? 'selected' : ''}" id="card-${a.id}" onclick="openModal(${a.id}, event)">
-        <img class="poster-img" src="${a.poster || ''}" alt="${escHtml(a.title)}" loading="lazy" onerror="this.src=''" />
+        <img class="poster-img" src="${a.poster || ''}" alt="${escHtml(a.title)}" loading="lazy" onerror="this.src=''" draggable="false" oncontextmenu="return false" />
         <div class="card-gradient"></div>
-        
         <div class="card-select-overlay"></div>
-        
         <button class="watched-btn ${a.watched ? 'checked' : ''}" onclick="toggleWatched(${a.id}, event)" title="${a.watched ? 'Mark unwatched' : 'Mark watched'}">
-          <i data-lucide="check" style="width:14px; height:14px; stroke-width: 3;"></i>
+          <i data-lucide="check" style="width:14px;height:14px;stroke-width:3;"></i>
         </button>
-        
-        <button class="remove-btn" onclick="removeAnime(${a.id}, event)" title="Remove">
-          <i data-lucide="trash-2" style="width:13px; height:13px;"></i>
-        </button>
-        
+        ${currentFilter !== 'watched' ? `<button class="remove-btn" onclick="removeAnime(${a.id}, event)" title="Remove"><i data-lucide="trash-2" style="width:13px;height:13px;"></i></button>` : ''}
         <div class="card-content">
-          <div class="card-meta">
-            <span class="type-pill">${a.type || 'TV'}</span>
-            <span class="meta-text">${a.episodes ? `Ep ${a.episodes}` : (a.year || '')}</span>
-          </div>
+          <div class="card-meta"><span class="type-pill">${a.type || 'TV'}</span></div>
           <h3 class="card-title">${escHtml(a.title)}</h3>
+          ${showEpCounter ? `<div class="card-ep-counter">
+            <button class="ep-btn" onclick="updateProgress(${a.id},-1,event)">−</button>
+            <span class="ep-text" id="ep-text-${a.id}">Ep ${a.episodesWatched||0}/${a.episodes||'?'}</span>
+            <button class="ep-btn" onclick="updateProgress(${a.id},1,event)">+</button>
+          </div>` : ''}
         </div>
       </article>
-      ${!deleteMode ? `<div class="card-sl">${i + 1}</div>` : ''}
+      ${(!deleteMode && currentSort === 'added' && !flowModeActive) ? `<div class="card-sl">${i + 1}</div>` : ''}
     </div>
   `).join('');
   lucide.createIcons();
@@ -566,7 +797,7 @@ async function openModal(id, event) {
     toggleSelection(id);
     return;
   }
-  
+  document.body.style.overflow = 'hidden';
   const backdrop = document.getElementById('modalBackdrop');
   const content = document.getElementById('modalContent');
   backdrop.classList.add('open');
@@ -596,12 +827,16 @@ async function openModal(id, event) {
     syn = syn.replace(/\[Written by MAL Rewrite\]/gi, '').trim();
     syn = escHtml(syn).replace(/\n/g, '<br>');
     
-    const inList = watchlist.some(w => w.id === id);
+    const existingItem = watchlist.find(w => w.id === id);
+    const inList = !!existingItem;
 
     content.innerHTML = `
       <div class="modal-hero">
         <div class="modal-poster">
-          <img src="${detail.images?.jpg?.large_image_url || ''}" alt="" onerror="this.src=''" />
+          <img src="${escHtml(detail.images?.jpg?.large_image_url || '')}" alt="" onerror="this.src=''" draggable="false" oncontextmenu="return false" />
+          <button class="modal-poster-expand" onclick="openLightbox('${escHtml(detail.images?.jpg?.large_image_url || detail.images?.jpg?.image_url || '')}')" title="View poster">
+            <i data-lucide="maximize-2"></i>
+          </button>
         </div>
         <div class="modal-hero-info">
           ${detail.score ? `<div class="modal-score">★ ${detail.score}</div>` : ''}
@@ -615,7 +850,11 @@ async function openModal(id, event) {
             ${detail.rating ? `<span class="tag">${detail.rating}</span>` : ''}
             ${detail.genres?.slice(0, 3).map(g => `<span class="tag">${g.name}</span>`).join('') || ''}
           </div>
-          ${!inList ? `<button class="auth-btn" style="padding:0 16px; height:32px; font-size:11px; margin-top:12px; width:fit-content;" onclick="addAnimeFromModal(this)">+ Add to Watchlist</button>` : ''}
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+            ${!inList ? `<button class="modal-add-btn" onclick="addAnimeFromModal(this)">+ Add</button>` : `<span style="font-size:11px;color:var(--muted);align-self:center;">&#10003; In list</span>`}
+            ${(!existingItem?.watched) ? `<button class="modal-watched-btn" onclick="markWatchedFromModal(${detail.mal_id})">&#10003; Mark Watched</button>` : ''}
+            <button class="modal-cal-btn" onclick="openSchedule(${detail.mal_id})"><i data-lucide="calendar" style="width:12px;height:12px;"></i> Schedule</button>
+          </div>
         </div>
       </div>
 
@@ -653,6 +892,16 @@ async function openModal(id, event) {
             <div class="detail-label">Score Rank</div>
             <div class="detail-val">${detail.rank ? '#' + detail.rank : '—'}</div>
           </div>
+          ${(inList && !existingItem.watched) ? `
+          <div class="detail-item" style="grid-column: 1 / -1; background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: var(--radius-md); border: 1px solid var(--border);">
+            <div class="detail-label">Episodes Watched</div>
+            <div class="progress-controls">
+              <button class="progress-btn" onclick="updateProgress(${id}, -1)">-</button>
+              <span class="progress-text">${existingItem.episodesWatched || 0} / ${detail.episodes || '?'}</span>
+              <button class="progress-btn" onclick="updateProgress(${id}, 1)">+</button>
+            </div>
+          </div>
+          ` : ''}
         </div>
 
         <div class="section-label">Synopsis</div>
@@ -675,6 +924,7 @@ async function openModal(id, event) {
         </div>` : ''}
       </div>
     `;
+    lucide.createIcons();
   } catch (e) {
     content.innerHTML = `<div class="modal-loading" style="height:200px">Failed to load details. Try again.</div>`;
   }
@@ -715,6 +965,34 @@ function closeModal(e) {
 }
 function closeModalDirect() {
   document.getElementById('modalBackdrop').classList.remove('open');
+  if (!document.getElementById('lightboxBackdrop').classList.contains('open')) {
+    document.body.style.overflow = '';
+  }
+}
+
+function markWatchedFromModal(id) {
+  let item = watchlist.find(w => w.id === id);
+  if (!item && currentModalAnime) {
+    // Add to list first (inline, avoiding dummy button)
+    const a = currentModalAnime;
+    const newItem = {
+      id: a.mal_id, title: a.title, title_en: a.title_english || '',
+      poster: a.images?.jpg?.large_image_url || a.images?.jpg?.image_url || '',
+      type: a.type || 'TV', episodes: a.episodes,
+      year: a.year || a.aired?.prop?.from?.year || null,
+      score: a.score, status: a.status,
+      studio: a.studios?.[0]?.name || null,
+      watched: false, episodesWatched: 0, addedAt: Date.now()
+    };
+    watchlist.push(newItem);
+    item = newItem;
+  }
+  if (item) {
+    item.watched = true;
+    if (item.episodes) item.episodesWatched = item.episodes;
+    item.watchedAt = todayDate();
+    save(); renderGrid(); showToast('Marked as watched ✓');
+  }
 }
 
 // UTILS
@@ -746,6 +1024,29 @@ function undoDelete() {
 lucide.createIcons();
 renderGrid();
 
+async function updateProgress(id, change, event) {
+  if (event) event.stopPropagation();
+  const item = watchlist.find(i => i.id === id);
+  if (!item) return;
+  let newProgress = (item.episodesWatched || 0) + change;
+  if (newProgress < 0) newProgress = 0;
+  if (item.episodes && newProgress > item.episodes) newProgress = item.episodes;
+  item.episodesWatched = newProgress;
+  if (item.episodes && item.episodesWatched === item.episodes) item.watched = true;
+  await save();
+  // Update card ep counter in-place
+  const epText = document.getElementById(`ep-text-${id}`);
+  if (epText) epText.textContent = `Ep ${item.episodesWatched}/${item.episodes || '?'}`;
+  if (item.watched) renderGrid();
+  // Update modal progress text if open
+  const modal = document.getElementById('modalBackdrop');
+  if (modal && modal.classList.contains('open')) {
+    const textEl = modal.querySelector('.progress-text');
+    if (textEl) textEl.textContent = `${item.episodesWatched} / ${item.episodes || '?'}`;
+  }
+  updateStats();
+}
+
 function confirmDeleteAccount() {
   if (confirm("Are you sure you want to delete your account?\n\nAll your watchlist data will be permanently cleared. This action cannot be undone.")) {
     deleteAccount();
@@ -770,5 +1071,245 @@ async function deleteAccount() {
       console.error("Error deleting account", error);
       alert("Failed to delete account: " + error.message);
     }
+  }
+}
+
+// ===== EXPLORE SECTION =====
+async function loadExplore() {
+  exploreLoaded = true;
+  await fetchExploreList('https://api.jikan.moe/v4/top/anime?filter=airing&limit=10', 'carousel-trending');
+  await new Promise(r => setTimeout(r, 400));
+  await fetchExploreList('https://api.jikan.moe/v4/top/anime?filter=bypopularity&limit=10', 'carousel-popular');
+  await new Promise(r => setTimeout(r, 400));
+  await fetchExploreList('https://api.jikan.moe/v4/seasons/upcoming?limit=10', 'carousel-upcoming');
+  await new Promise(r => setTimeout(r, 400));
+  await fetchExploreList('https://api.jikan.moe/v4/seasons/now?limit=10', 'carousel-toprated');
+  await new Promise(r => setTimeout(r, 400));
+  await fetchRandomAnime();
+}
+
+async function fetchExploreList(url, containerId, retries = 3) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = `<div class="explore-loading"><i data-lucide="loader" style="width:20px;height:20px;animation:spin 2s linear infinite;"></i></div>`;
+  lucide.createIcons();
+  
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) {
+        if (res.status === 429 && attempt < retries) {
+          await new Promise(r => setTimeout(r, 1000));
+          continue;
+        }
+        throw new Error(`HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      const items = data.data || [];
+      container.innerHTML = items.map(a => `
+        <div class="explore-card" onclick="openModal(${a.mal_id}, event)">
+          <img class="explore-card-img" src="${escHtml(a.images?.jpg?.large_image_url || a.images?.jpg?.image_url || '')}" onerror="this.src=''" alt="" draggable="false" oncontextmenu="return false"/>
+          <div class="explore-card-title">${escHtml(a.title)}</div>
+          <div class="explore-card-meta">${escHtml(a.type || 'TV')} · ★ ${a.score || 'N/A'}</div>
+        </div>
+      `).join('');
+      return; // Success, exit function
+    } catch(e) {
+      if (attempt === retries) {
+        container.innerHTML = `<div class="explore-loading">Failed to load list. Please try again later.</div>`;
+      }
+    }
+  }
+}
+
+async function fetchRandomAnime(forceNew = false) {
+  const container = document.getElementById('randomAnimeGrid');
+  const limitText = document.getElementById('randomLimitText');
+  const btn = document.getElementById('randomPickBtn');
+  if (!container) return;
+
+  const todayStr = todayDate();
+  let state = { count: 0, items: [] };
+  try {
+    const stored = localStorage.getItem('random_pick_state');
+    if (stored) state = JSON.parse(stored);
+  } catch(e) { console.error('Error parsing random_pick_state', e); }
+  
+  if (state.date !== todayStr) { state = { date: todayStr, count: 0, items: [] }; }
+
+  if (!forceNew && state.items && state.items.length === 3) {
+    renderRandomAnime(state.items);
+    updateRandomLimit(state.count);
+    return;
+  }
+
+  if (forceNew && state.count >= 6) {
+    showToast('Daily limit reached (6/6). Come back tomorrow!');
+    return;
+  }
+
+  container.innerHTML = `<div class="explore-loading" style="grid-column:1/-1;"><div class="spinner" style="border-top-color:var(--accent);"></div></div>`;
+  if (btn) btn.classList.add('loading');
+  lucide.createIcons();
+
+  try {
+    const page = Math.floor(Math.random() * 20) + 1;
+    const res = await fetch(`https://api.jikan.moe/v4/top/anime?page=${page}`);
+    if (!res.ok) throw new Error('Failed to fetch');
+    const data = await res.json();
+    let candidates = data.data.filter(a => a.score >= 7.5 && !watchlist.some(w => w.id === a.mal_id));
+    
+    // Shuffle candidates
+    candidates = candidates.sort(() => 0.5 - Math.random());
+    
+    const newItems = [];
+    for (const a of candidates) {
+      if (newItems.length >= 3) break;
+      const aGenres = (a.genres || []).map(g => g.name);
+      // Try to avoid genre overlap if possible
+      const overlap = newItems.some(ex => {
+        const exGenres = (ex.genres || []).map(g => g.name);
+        return aGenres.some(g => exGenres.includes(g));
+      });
+      if (!overlap || candidates.length < 5) newItems.push(a);
+    }
+
+    if (newItems.length >= 3) {
+      if (forceNew) state.count++;
+      state.items = newItems.slice(0, 3);
+      localStorage.setItem('random_pick_state', JSON.stringify(state));
+      renderRandomAnime(state.items);
+      updateRandomLimit(state.count);
+    } else {
+      throw new Error('Not enough items');
+    }
+  } catch(e) {
+    container.innerHTML = `<div class="explore-loading" style="grid-column:1/-1;">Failed to fetch</div>`;
+  } finally {
+    if (btn) btn.classList.remove('loading');
+  }
+}
+
+function updateRandomLimit(count) {
+  const limitText = document.getElementById('randomLimitText');
+  if (limitText) limitText.textContent = `${6 - count}/6 remaining`;
+}
+
+function renderRandomAnime(items) {
+  const container = document.getElementById('randomAnimeGrid');
+  if (!container) return;
+  container.innerHTML = items.map(a => `
+    <div class="explore-card" style="width: 100%; flex-shrink: 1;" onclick="openModal(${a.mal_id}, event)">
+      <div style="width:100%;aspect-ratio:2/3;position:relative;border-radius:var(--radius-md);overflow:hidden;margin-bottom:8px;">
+        <img class="explore-card-img" src="${escHtml(a.images?.jpg?.large_image_url || a.images?.jpg?.image_url || '')}" onerror="this.src=''" alt="" draggable="false" oncontextmenu="return false" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/>
+      </div>
+      <div class="explore-card-title" style="font-size:14px;">${escHtml(a.title)}</div>
+      <div class="explore-card-meta" style="font-size:12px;">${escHtml(a.type || 'TV')} · ★ ${a.score || 'N/A'}</div>
+    </div>
+  `).join('');
+}
+
+// ===== GOOGLE CALENDAR SCHEDULE =====
+function openSchedule(animeId) {
+  if (!currentModalAnime || currentModalAnime.mal_id !== animeId) return;
+  currentScheduleAnime = currentModalAnime;
+  const isMovie = currentScheduleAnime.type === 'Movie';
+  
+  const content = document.getElementById('scheduleContent');
+  content.innerHTML = `
+    <div class="schedule-content">
+      <div class="schedule-title">Schedule Watch</div>
+      <div class="schedule-subtitle">${escHtml(currentScheduleAnime.title)}</div>
+      <form id="scheduleForm" onsubmit="event.preventDefault(); handleScheduleSubmit();">
+        <div class="schedule-row">
+          <div class="schedule-field">
+            <label>Start Date</label>
+            <input type="date" id="schStartDate" required />
+          </div>
+          <div class="schedule-field">
+            <label>Time</label>
+            <input type="time" id="schTime" required />
+          </div>
+        </div>
+        ${!isMovie ? `
+        <div class="schedule-row">
+          <div class="schedule-field">
+            <label>Frequency</label>
+            <select id="schFreq">
+              <option value="1">Daily (1 ep/day)</option>
+              <option value="2">Every 2 days</option>
+              <option value="7">Weekly (1 ep/week)</option>
+            </select>
+          </div>
+          <div class="schedule-field">
+            <label>Episodes</label>
+            <input type="number" id="schEps" min="1" max="${currentScheduleAnime.episodes || 999}" value="${currentScheduleAnime.episodes || 12}" required />
+          </div>
+        </div>` : ''}
+        <div class="schedule-actions">
+          <button type="button" class="schedule-cancel" onclick="closeScheduleDirect()">Cancel</button>
+          <button type="submit" class="schedule-submit">Add to Calendar</button>
+        </div>
+      </form>
+    </div>
+  `;
+  
+  // Set default date to today
+  document.getElementById('schStartDate').valueAsDate = new Date();
+  document.getElementById('scheduleBackdrop').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSchedule(e) { if (e.target === document.getElementById('scheduleBackdrop')) closeScheduleDirect(); }
+function closeScheduleDirect() {
+  document.getElementById('scheduleBackdrop').style.display = 'none';
+  if (!document.getElementById('modalBackdrop').classList.contains('open') && !document.getElementById('lightboxBackdrop').classList.contains('open')) {
+    document.body.style.overflow = '';
+  }
+}
+
+function handleScheduleSubmit() {
+  if (!gapiInited || !gisInited) return showToast('Calendar API not ready yet. Try again in a moment.');
+  tokenClient.requestAccessToken({prompt: 'consent'});
+}
+
+async function submitCalendarEvent() {
+  const form = document.getElementById('scheduleForm');
+  const startDate = document.getElementById('schStartDate').value;
+  const time = document.getElementById('schTime').value;
+  const isMovie = currentScheduleAnime.type === 'Movie';
+  
+  const startDateTime = new Date(`${startDate}T${time}`);
+  const endDateTime = new Date(startDateTime.getTime() + (isMovie ? 120 : 25) * 60000); // 2 hours for movie, 25m for ep
+  
+  const event = {
+    summary: `Watch ${currentScheduleAnime.title}`,
+    description: `Scheduled via AniQue\n\n${currentScheduleAnime.url || ''}`,
+    start: { dateTime: startDateTime.toISOString(), timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
+    end: { dateTime: endDateTime.toISOString(), timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
+  };
+
+  if (!isMovie) {
+    const freqVal = parseInt(document.getElementById('schFreq').value);
+    const count = parseInt(document.getElementById('schEps').value);
+    const byDayMap = {1: 'DAILY', 2: 'DAILY', 7: 'WEEKLY'};
+    const intervalStr = freqVal === 2 ? ';INTERVAL=2' : '';
+    event.recurrence = [`RRULE:FREQ=${byDayMap[freqVal]}${intervalStr};COUNT=${count}`];
+  }
+
+  try {
+    const btn = document.querySelector('.schedule-submit');
+    const oldTxt = btn.textContent;
+    btn.textContent = 'Saving...'; btn.disabled = true;
+    
+    await gapi.client.calendar.events.insert({
+      calendarId: 'primary',
+      resource: event,
+    });
+    showToast('Successfully scheduled in Google Calendar!');
+    closeScheduleDirect();
+  } catch (err) {
+    console.error(err);
+    showToast('Failed to add to calendar.');
   }
 }
