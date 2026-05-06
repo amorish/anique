@@ -176,9 +176,11 @@
 
   <!-- ===== DETAIL MODAL ===== -->
   <div class="modal-backdrop" id="modalBackdrop" onclick="closeModal(event)">
-    <div class="modal" id="modal">
+    <div class="modal-wrapper">
       <button class="modal-close" onclick="closeModalDirect()"><i data-lucide="x" style="width: 18px; height: 18px;"></i></button>
-      <div id="modalContent"></div>
+      <div class="modal" id="modal">
+        <div id="modalContent"></div>
+      </div>
     </div>
   </div>
 

@@ -850,10 +850,13 @@ async function openModal(id, event) {
             ${detail.rating ? `<span class="tag">${detail.rating}</span>` : ''}
             ${detail.genres?.slice(0, 3).map(g => `<span class="tag">${g.name}</span>`).join('') || ''}
           </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
-            ${!inList ? `<button class="modal-add-btn" onclick="addAnimeFromModal(this)">+ Add</button>` : `<span style="font-size:11px;color:var(--muted);align-self:center;">In list</span>`}
-            ${(!existingItem?.watched) ? `<button class="modal-watched-btn" onclick="markWatchedFromModal(${detail.mal_id})"><i data-lucide="eye" style="width:12px;height:12px;"></i> Mark Watched</button>` : ''}
-            <button class="modal-cal-btn" onclick="openSchedule(${detail.mal_id})"><i data-lucide="calendar" style="width:12px;height:12px;"></i> Schedule</button>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
+            ${inList ? `<div style="font-size:11px;color:var(--muted);">In list</div>` : ''}
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              ${!inList ? `<button class="modal-add-btn" onclick="addAnimeFromModal(this)">+ Add</button>` : ''}
+              ${(!existingItem?.watched) ? `<button class="modal-watched-btn" onclick="markWatchedFromModal(${detail.mal_id})"><i data-lucide="eye" style="width:12px;height:12px;"></i> Mark Watched</button>` : ''}
+              <button class="modal-cal-btn" onclick="openSchedule(${detail.mal_id})"><i data-lucide="calendar" style="width:12px;height:12px;"></i> Schedule</button>
+            </div>
           </div>
         </div>
       </div>
@@ -892,7 +895,7 @@ async function openModal(id, event) {
             <div class="detail-label">Score Rank</div>
             <div class="detail-val">${detail.rank ? '#' + detail.rank : '—'}</div>
           </div>
-          ${(inList && !existingItem.watched) ? `
+          ${(inList && !existingItem.watched && detail.type !== 'Movie') ? `
           <div style="grid-column: 1 / -1; background: #111; padding: 12px 16px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border);">
             <div class="detail-label" style="margin: 0;">Episodes Watched</div>
             <div class="progress-controls">
