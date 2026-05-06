@@ -665,6 +665,10 @@ document.addEventListener('click', (e) => {
 // FILTER & SELECT MODE
 function setFilter(f, btn) {
   currentFilter = f;
+  if (f === 'explore') {
+    btn.classList.remove('new');
+    localStorage.setItem('exploreClicked', 'true');
+  }
   document.querySelectorAll('#normalFilters .tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   // Toggle grid vs explore visibility
@@ -1340,4 +1344,10 @@ async function submitCalendarEvent() {
     console.error(err);
     showToast('Failed to add to calendar.');
   }
+}
+
+// Initialize Explore Indicator
+if (!localStorage.getItem('exploreClicked')) {
+  const tab = document.getElementById('tabExplore');
+  if (tab) tab.classList.add('new');
 }
