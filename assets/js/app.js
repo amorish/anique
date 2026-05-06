@@ -146,13 +146,6 @@ async function checkVerification() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (localStorage.getItem('explore_clicked') === 'true') {
-    const tabExplore = document.getElementById('tabExplore');
-    if (tabExplore) tabExplore.classList.add('hide-dot');
-  }
-});
-
 function verifyLogout() {
   firebase.auth().signOut();
 }
@@ -674,10 +667,6 @@ function setFilter(f, btn) {
   currentFilter = f;
   document.querySelectorAll('#normalFilters .tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  if (f === 'explore') {
-    localStorage.setItem('explore_clicked', 'true');
-    btn.classList.add('hide-dot');
-  }
   // Toggle grid vs explore visibility
   const gridWrap = document.getElementById('gridWrap');
   const exploreSection = document.getElementById('exploreSection');

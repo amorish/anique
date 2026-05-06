@@ -112,7 +112,7 @@ button{font-family:inherit;cursor:pointer}
 .drop-empty{padding:32px;text-align:center;color:var(--muted);font-size:14px}
 
 /* ===== MAIN CONTENT ===== */
-.main-content{padding:90px 16px 32px;width:100%;max-width:1200px;margin:0 auto}
+.main-content{padding:100px 16px 32px;width:100%;max-width:1200px;margin:0 auto}
 
 /* ===== STATS STRIP ===== */
 .stats-card{
@@ -815,18 +815,16 @@ button{font-family:inherit;cursor:pointer}
 
 /* ===== MEDIA QUERIES ===== */
 @media (max-width: 500px) {
-  .main-content { padding-top: 86px; }
-  .tab-btn { padding: 10px 14px; font-size: 13.5px; }
-  #tabExplore { padding-right: 24px; }
-  #tabExplore::before { right: 8px; width: 6px; height: 6px; top: 11px; }
-  #tabExplore.hide-dot::before { display: none; }
-  .stats-card { gap: 8px; padding: 10px 4px; }
-  .stat-pill { gap: 6px; padding: 4px 12px 4px 4px; }
-  .stat-icon-wrap { width: 24px; height: 24px; }
-  .stat-icon-wrap svg { width: 14px; height: 14px; }
-  .stat-label { font-size: 11px; }
-  .stat-value { font-size: 13px; }
-  #sortFilterBtn { right: 38px; margin-left: 4px; width: 30px; height: 30px; }
-  #selectModeToggleBtn { margin-left: 4px; width: 30px; height: 30px; }
-  .sort-filter-btn svg { width: 15px; height: 15px; }
+  .tab-btn { padding: 10px 12px; font-size: 12px; }
+  #tabExplore { padding-right: 22px; }
+  #tabExplore::before { right: 8px; width: 5px; height: 5px; top: 10px; }
+  .stats-card { gap: 4px; padding: 10px 4px; }
+  .stat-pill { gap: 4px; padding: 4px 10px 4px 4px; }
+  .stat-icon-wrap { width: 22px; height: 22px; }
+  .stat-icon-wrap svg { width: 12px; height: 12px; }
+  .stat-label { font-size: 10px; }
+  .stat-value { font-size: 12px; }
+  #sortFilterBtn { right: 36px; margin-left: 4px; width: 28px; height: 28px; }
+  #selectModeToggleBtn { margin-left: 4px; width: 28px; height: 28px; }
+  .sort-filter-btn svg { width: 14px; height: 14px; }
 }
