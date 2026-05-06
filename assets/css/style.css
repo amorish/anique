@@ -47,6 +47,11 @@ button{font-family:inherit;cursor:pointer}
 .icon-btn:active{transform:scale(.88)}
 .icon-btn svg{width:20px;height:20px}
 
+#avatarBtn {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
 /* Profile Menu */
 .profile-menu{
   position:absolute;top:88px;left:16px;
@@ -109,41 +114,59 @@ button{font-family:inherit;cursor:pointer}
 /* ===== MAIN CONTENT ===== */
 .main-content{padding:100px 16px 32px;width:100%;max-width:1200px;margin:0 auto}
 
-/* ===== STATS STRIP — Compact Single Line ===== */
+/* ===== STATS STRIP ===== */
 .stats-card{
   margin-top:8px;
-  padding:10px 16px;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius-sm);
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:0;
+  gap:12px;
+  flex-wrap:wrap;
 }
-.stat-item{
+.stat-pill{
   display:flex;
   align-items:center;
-  gap:6px;
-  padding:0 16px;
+  gap:8px;
+  padding:4px 14px 4px 4px;
+  background:rgba(255,255,255,0.03);
+  border-radius:30px;
+  border:1px solid rgba(255,255,255,0.06);
+}
+.stat-pill.highlight-pill{
+  background:rgba(229,9,20,.05);
+  border-color:rgba(229,9,20,.3);
+}
+.stat-icon-wrap{
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.08);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--muted);
+}
+.stat-icon-wrap.highlight-icon{
+  background:rgba(229,9,20,.2);
+  color:var(--accent);
 }
 .stat-label{
-  font-size:11px;
-  font-weight:600;
-  text-transform:uppercase;
-  letter-spacing:.06em;
+  font-size:12px;
+  font-weight:500;
   color:var(--muted);
-  line-height:1;
+}
+.stat-label.highlight-label{
+  color:rgba(229,9,20,.9);
 }
 .stat-value{
-  font-size:18px;
+  font-size:14px;
   font-weight:700;
+  color:#fff;
   font-family:var(--font-heading);
-  color:var(--text);
-  line-height:1;
 }
-.stat-value.highlight{color:var(--accent);text-shadow:0 0 12px var(--accent-glow)}
-.stat-divider{width:1px;height:20px;background:var(--border)}
+.stat-value.highlight-value{
+  color:var(--accent);
+}
 
 /* ===== FILTER TABS ===== */
 .tabs-nav {
@@ -170,13 +193,18 @@ button{font-family:inherit;cursor:pointer}
 #sortFilterBtn, #selectModeToggleBtn, .sel-close-btn {
   flex-shrink: 0; position: sticky; right: 0;
   background: var(--bg); z-index: 10;
+  border-radius: 8px;
+  width: 32px; height: 32px;
+  background-color: #161616;
+  border: 1px solid #2a2a2a;
+  box-shadow: -8px 0 12px var(--bg); /* To cover text scrolling under */
 }
-#selectModeToggleBtn, .sel-close-btn { right: 0; }
-#sortFilterBtn { right: 40px; } /* Assuming select btn is 40px wide */
+#selectModeToggleBtn, .sel-close-btn { right: 0; margin-left: 8px; }
+#sortFilterBtn { right: 40px; margin-left: auto; } /* Assuming select btn is 40px wide */
 
 /* ===== SORT FILTER BUTTON ===== */
-.sort-filter-btn svg { width: 18px; height: 18px; }
-.sort-filter-btn.active { color: var(--accent); background: var(--accent-soft); }
+.sort-filter-btn svg { width: 16px; height: 16px; }
+.sort-filter-btn.active { color: var(--accent); border-color: rgba(229,9,20,.3); background: rgba(229,9,20,.1); }
 
 /* ===== SELECT BAR ===== */
 .select-bar { padding: 4px 0; }
@@ -383,12 +411,13 @@ button{font-family:inherit;cursor:pointer}
 }
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
 .modal-close{
-  position:absolute;top:-48px;right:0;width:36px;height:36px;
-  border-radius:var(--radius-full);background:rgba(20,20,20,.8);backdrop-filter:blur(8px);
+  position:absolute;top:12px;right:12px;width:32px;height:32px;
+  border-radius:var(--radius-full);background:rgba(0,0,0,.6);backdrop-filter:blur(8px);
   border:1px solid rgba(255,255,255,.1);
-  color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;
-  z-index:2;transition:.2s;
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  z-index:10;transition:.2s;
 }
+.modal-close:hover{background:rgba(0,0,0,.8); transform:scale(1.05)}
 .modal-close:active{transform:scale(.9)}
 .modal-hero{display:flex;gap:0}
 .modal-poster{width:140px;flex-shrink:0;display:flex;position:relative;}

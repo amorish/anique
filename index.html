@@ -82,11 +82,21 @@
   <!-- ===== MAIN CONTENT ===== -->
   <main class="main-content">
     <section class="stats-card">
-      <div class="stat-item"><span class="stat-label">Total</span><span class="stat-value" id="totalCount">0</span></div>
-      <div class="stat-divider"></div>
-      <div class="stat-item"><span class="stat-label">Watched</span><span class="stat-value highlight" id="watchedCount">0</span></div>
-      <div class="stat-divider"></div>
-      <div class="stat-item"><span class="stat-label">Remaining</span><span class="stat-value" id="remainCount">0</span></div>
+      <div class="stat-pill">
+        <div class="stat-icon-wrap"><i data-lucide="layers" style="width:14px;height:14px;"></i></div>
+        <span class="stat-label">Total</span>
+        <span class="stat-value" id="totalCount">0</span>
+      </div>
+      <div class="stat-pill highlight-pill">
+        <div class="stat-icon-wrap highlight-icon"><i data-lucide="eye" style="width:14px;height:14px;"></i></div>
+        <span class="stat-label highlight-label">Watched</span>
+        <span class="stat-value highlight-value" id="watchedCount">0</span>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-icon-wrap"><i data-lucide="clock" style="width:14px;height:14px;"></i></div>
+        <span class="stat-label">Remaining</span>
+        <span class="stat-value" id="remainCount">0</span>
+      </div>
     </section>
 
     <!-- Filter Tabs -->

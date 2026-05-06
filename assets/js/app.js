@@ -893,8 +893,8 @@ async function openModal(id, event) {
             <div class="detail-val">${detail.rank ? '#' + detail.rank : '—'}</div>
           </div>
           ${(inList && !existingItem.watched) ? `
-          <div class="detail-item" style="grid-column: 1 / -1; background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: var(--radius-md); border: 1px solid var(--border);">
-            <div class="detail-label">Episodes Watched</div>
+          <div style="grid-column: 1 / -1; background: #111; padding: 12px 16px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border);">
+            <div class="detail-label" style="margin: 0;">Episodes Watched</div>
             <div class="progress-controls">
               <button class="progress-btn" onmousedown="startProgress(${id},-1,event)" onmouseup="stopProgress(event)" onmouseleave="stopProgress(event)" ontouchstart="startProgress(${id},-1,event)" ontouchend="stopProgress(event)">−</button>
               <span class="progress-text">${existingItem.episodesWatched || 0} / ${detail.episodes || '?'}</span>
