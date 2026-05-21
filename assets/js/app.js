@@ -354,7 +354,11 @@ function toggleSortPanel() {
 function renderSortPills() {
   const container = document.getElementById('sortPills');
   const flowBtn = document.getElementById('flowModeBtn');
-  if (flowBtn) flowBtn.classList.toggle('active', flowModeActive);
+  // FlowMode makes no sense in Watched tab — hide it there
+  if (flowBtn) {
+    flowBtn.classList.toggle('active', flowModeActive);
+    flowBtn.style.display = (currentFilter === 'watched') ? 'none' : '';
+  }
   container.innerHTML = SORT_OPTIONS.map(opt => {
     const isActive = !flowModeActive && currentSort === opt.key;
     const arrow = currentSortOrder === 'asc' ? '↑' : '↓';
@@ -386,6 +390,8 @@ function toggleSortOrder(e) {
 }
 
 async function activateFlowMode() {
+  // FlowMode is not available on the Watched tab
+  if (currentFilter === 'watched') return;
   flowModeActive = true;
   currentSort = 'flowmode';
   toggleSortPanel();
@@ -573,16 +579,20 @@ function addAnimeFromModal(btn) {
 function addAnime(id, animeData, btn) {
   if (watchlist.some(w => w.id === id)) return;
 
+  // For airing/ongoing anime, episodes may be null from the API.
+  // We store what we have; it will be refreshed when user opens the modal.
+  const episodeCount = animeData.episodes || null;
+
   const item = {
     id: animeData.mal_id,
     title: animeData.title,
     title_en: animeData.title_english || '',
     poster: animeData.images?.jpg?.large_image_url || animeData.images?.jpg?.image_url || '',
     type: animeData.type || 'TV',
-    episodes: animeData.episodes,
+    episodes: episodeCount,
     year: animeData.year || animeData.aired?.prop?.from?.year || null,
     score: animeData.score,
-    status: animeData.status,
+    status: animeData.status || null,
     studio: animeData.studios?.[0]?.name || null,
     watched: false,
     episodesWatched: 0,
@@ -707,6 +717,12 @@ function setFilter(f, btn) {
     if (selectModeToggleBtn) selectModeToggleBtn.style.display = 'none';
     if (!exploreLoaded) loadExplore();
   } else {
+    // FlowMode is meaningless on Watched tab — auto-deactivate it
+    if (f === 'watched' && flowModeActive) {
+      flowModeActive = false;
+      currentSort = userSettings.defaultSort || 'added';
+      currentSortOrder = userSettings.defaultSortOrder || 'desc';
+    }
     gridWrap.style.display = 'block';
     exploreSection.style.display = 'none';
     if (sortFilterBtn) sortFilterBtn.style.display = '';
@@ -792,6 +808,13 @@ function renderGrid() {
   if (items.length === 0) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
   empty.style.display = 'none';
 
+  // Show ep count: for airing anime with null episodes, show '?' with a note
+  const epDisplay = (item) => {
+    if (item.episodes) return item.episodes;
+    if (item.status === 'Currently Airing' || item.status === 'Airing') return '?';
+    return '?';
+  };
+
   grid.innerHTML = items.map((a, i) => `
     <div class="card-wrapper">
       <article class="card ${a.watched ? 'watched' : ''} ${deleteMode ? 'delete-mode' : ''} ${selectedForDelete.has(a.id) ? 'selected' : ''}" id="card-${a.id}" onclick="openModal(${a.id}, event)">
@@ -807,12 +830,12 @@ function renderGrid() {
           <h3 class="card-title">${escHtml(a.title)}</h3>
           ${showEpCounter ? `<div class="card-ep-counter" onclick="event.stopPropagation()">
             <button class="ep-btn" onmousedown="startProgress(${a.id},-1,event)" onmouseup="stopProgress(event)" onmouseleave="stopProgress(event)" ontouchstart="startProgress(${a.id},-1,event)" ontouchend="stopProgress(event)">−</button>
-            <span class="ep-text" id="ep-text-${a.id}">Ep ${a.episodesWatched||0}/${a.episodes||'?'}</span>
+            <span class="ep-text" id="ep-text-${a.id}">Ep ${a.episodesWatched||0}/${epDisplay(a)}</span>
             <button class="ep-btn" onmousedown="startProgress(${a.id},1,event)" onmouseup="stopProgress(event)" onmouseleave="stopProgress(event)" ontouchstart="startProgress(${a.id},1,event)" ontouchend="stopProgress(event)">+</button>
           </div>` : ''}
         </div>
       </article>
-      ${(!deleteMode && currentSort === 'added' && !flowModeActive) ? `<div class="card-sl">${i + 1}</div>` : ''}
+      ${!deleteMode ? `<div class="card-sl">${i + 1}</div>` : ''}
     </div>
   `).join('');
   lucide.createIcons();
@@ -839,6 +862,12 @@ async function openModal(id, event) {
     ]);
     const detail = (await detailRes.json()).data;
     currentModalAnime = detail;
+    // Refresh episode count for airing/ongoing anime in our watchlist
+    const wlItem = watchlist.find(w => Number(w.id) === Number(id));
+    if (wlItem && detail.episodes && wlItem.episodes !== detail.episodes) {
+      wlItem.episodes = detail.episodes;
+      save(); // Persist updated episode count silently
+    }
     const staffData = (await staffRes.json()).data || [];
     const relData = (await relRes.json()).data || [];
 
@@ -1092,14 +1121,15 @@ async function updateProgress(id, change, event, skipSave = false) {
   
   // Update card ep counter in-place
   const epText = document.getElementById(`ep-text-${id}`);
-  if (epText) epText.textContent = `Ep ${item.episodesWatched}/${item.episodes || '?'}`;
+  const epTotal = item.episodes || (item.status === 'Currently Airing' || item.status === 'Airing' ? '?' : '?');
+  if (epText) epText.textContent = `Ep ${item.episodesWatched}/${epTotal}`;
   if (item.watched && !skipSave) renderGrid();
   
   // Update modal progress text if open
   const modal = document.getElementById('modalBackdrop');
   if (modal && modal.classList.contains('open')) {
     const textEl = modal.querySelector('.progress-text');
-    if (textEl) textEl.textContent = `${item.episodesWatched} / ${item.episodes || '?'}`;
+    if (textEl) textEl.textContent = `${item.episodesWatched} / ${epTotal}`;
   }
   updateStats();
 }
@@ -1163,9 +1193,12 @@ async function fetchExploreList(url, containerId, retries = 3) {
       }
       const data = await res.json();
       const items = data.data || [];
-      container.innerHTML = items.map(a => `
-        <div class="explore-card" onclick="openModal(${a.mal_id}, event)">
-          <img class="explore-card-img" src="${escHtml(a.images?.jpg?.large_image_url || a.images?.jpg?.image_url || '')}" onerror="this.src=''" alt="" draggable="false" oncontextmenu="return false"/>
+      container.innerHTML = items.map((a, idx) => `
+        <div class="explore-card-wrap" onclick="openModal(${a.mal_id}, event)">
+          <div class="explore-card">
+            <img class="explore-card-img" src="${escHtml(a.images?.jpg?.large_image_url || a.images?.jpg?.image_url || '')}" onerror="this.src=''" alt="" draggable="false" oncontextmenu="return false"/>
+          </div>
+          <div class="explore-card-rank">${idx + 1}</div>
           <div class="explore-card-title">${escHtml(a.title)}</div>
           <div class="explore-card-meta">${escHtml(a.type || 'TV')} · ★ ${a.score || 'N/A'}</div>
         </div>

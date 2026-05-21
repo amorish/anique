@@ -1696,17 +1696,14 @@ body.light-theme .settings-select {
 }
 
 /* Hover or Active states for Shuffle Button */
-#randomPickBtn:hover .shuffle-custom-icon {
+#randomPickBtn:hover .shuffle-custom-icon,
+#randomPickBtn.loading .shuffle-custom-icon {
   color: #e50914;
 }
-#randomPickBtn.loading .shuffle-custom-icon,
-#randomPickBtn:hover .shuffle-custom-icon {
-  color: #e50914;
-}
+/* Only animate on click/loading — NOT on hover */
 #randomPickBtn.loading .shuffle-custom-icon g,
-#randomPickBtn:hover .shuffle-custom-icon g,
 #randomPickBtn:active .shuffle-custom-icon g {
-  animation: rotate-center 2s ease-in-out infinite both;
+  animation: rotate-center 0.7s ease-in-out both;
 }
 
 @keyframes rotate-center {
@@ -1714,3 +1711,45 @@ body.light-theme .settings-select {
   100% { transform: rotate(360deg); }
 }
 
+/* ===== EXPLORE CAROUSEL RANK BADGE ===== */
+.explore-card-wrap {
+  flex-shrink: 0;
+  width: 120px;
+  scroll-snap-align: start;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.explore-card-wrap .explore-card {
+  width: 120px;
+  position: relative;
+  flex-shrink: 0;
+  /* small bottom margin to accommodate the rank badge overlapping */
+  margin-bottom: 2px;
+}
+.explore-card-rank {
+  /* Sits centered just below the image, overlapping the gap */
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #3f4752;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  color: #c4cdd6;
+  z-index: 5;
+  font-family: var(--font-heading);
+  border: 2px solid var(--bg);
+  pointer-events: none;
+  transition: background 0.2s, color 0.2s;
+  align-self: center;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+.explore-card-wrap:hover .explore-card-rank {
+  background: var(--accent);
+  color: #fff;
+}
