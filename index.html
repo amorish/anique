@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>AniQue | Your Personal Anime Watchlist</title>
-  <link rel="icon" href="assets/images/aniqueTabLogo.png" type="image/png" sizes="64x64" />
-  <link rel="apple-touch-icon" href="assets/images/aniqueTabLogo.png" />
+  <link rel="icon" href="assets/images/aniqueTabLogoNew.png" type="image/png" sizes="64x64" />
+  <link rel="apple-touch-icon" href="assets/images/aniqueTabLogoNew.png" />
   <meta name="description" content="A beautiful, modern anime watchlist. Track what you're watching, discover new anime, and keep your list organized." />
   <meta name="keywords" content="anime, watchlist, anime tracker, AniQue" />
   <meta name="author" content="amorish" />
@@ -46,8 +46,8 @@
   <!-- ===== INITIAL SPLASH SCREEN ===== -->
   <div class="splash-screen" id="splashScreen" style="position:fixed; inset:0; z-index:10000; display:flex; align-items:center; justify-content:center; background:var(--bg, #0a0a0a); transition: opacity 0.4s ease, visibility 0.4s ease;">
     <div class="splash-content" style="display:flex; flex-direction:column; align-items:center; gap:20px; text-align:center;">
-      <img src="assets/images/aniqueTitleLogo.png" alt="AniQue" class="splash-logo" draggable="false" oncontextmenu="return false" style="height:64px; width:auto;" />
-      <div class="spinner" style="border: 3px solid rgba(255,255,255,0.1); border-radius: 50%; border-top: 3px solid var(--accent, #ff3e3e); width: 24px; height: 24px; animation: spin 1s linear infinite;"></div>
+      <img src="assets/images/aniqueTitleLogoNew.png" alt="AniQue" class="splash-logo" draggable="false" oncontextmenu="return false" style="height:64px; width:auto;" />
+      <img src="assets/images/blocks_shuffle_loading.svg" alt="Loading..." class="blocks-loading splash-loading" style="width: 48px; height: 48px;" />
     </div>
   </div>
 
@@ -76,7 +76,7 @@
           <i data-lucide="user"></i>
         </button>
       </div>
-      <img src="assets/images/aniqueTitleLogo.png" alt="AniQue" class="logo-img" draggable="false" oncontextmenu="return false" />
+      <img src="assets/images/aniqueTitleLogoNew.png" alt="AniQue" class="logo-img" draggable="false" oncontextmenu="return false" />
       <div class="header-right">
         <button class="icon-btn" onclick="toggleSearch()" id="searchToggleBtn" aria-label="Search">
           <i data-lucide="search"></i>
@@ -173,7 +173,7 @@
             <p>Don't know what to watch?</p>
           </div>
           <button class="random-action-btn" id="randomPickBtn" onclick="fetchRandomAnime(true)">
-            <i data-lucide="shuffle"></i> Suggest Another <span id="randomLimitText"></span>
+            <svg class="shuffle-custom-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"><g stroke-width="1.5"><path stroke="currentColor" stroke-linecap="round" d="M15.473 8.41a5 5 0 10.939 5.952"/><path fill="currentColor" stroke="currentColor" d="M17.195 10.373l-2.308-.347a.065.065 0 01-.018-.005.023.023 0 01-.007-.005.056.056 0 01-.015-.024.056.056 0 01-.002-.03.03.03 0 01.002-.007.069.069 0 01.013-.015l1.995-1.964a.066.066 0 01.015-.012.027.027 0 01.007-.003.056.056 0 01.029.003c.012.004.02.01.024.015a.027.027 0 01.005.007.069.069 0 01.004.019l.313 2.312a.047.047 0 01-.002.023.053.053 0 01-.013.02.053.053 0 01-.02.012.046.046 0 01-.022.001z"/></g></svg> Suggest Another <span id="randomLimitText"></span>
           </button>
         </div>
         <div class="explore-random-grid" id="randomAnimeGrid"></div>
@@ -218,7 +218,7 @@
   <!-- ===== FLOWMODE LOADING OVERLAY ===== -->
   <div class="flowmode-overlay" id="flowmodeOverlay" style="display:none;">
     <div class="flowmode-overlay-inner">
-      <i data-lucide="loader-2" style="width:48px;height:48px;color:var(--accent);animation:spin 1s linear infinite;"></i>
+      <img src="assets/images/blocks_shuffle_loading.svg" alt="Scanning..." class="blocks-loading flowmode-loading" style="width: 48px; height: 48px;" />
       <div class="flowmode-overlay-text" id="flowmodeStatus">Scanning your list...</div>
     </div>
   </div>
@@ -235,7 +235,7 @@
   <div class="auth-overlay" id="authOverlay" style="display:none;">
     <video autoplay loop muted playsinline class="auth-bg-video"><source src="assets/images/signupsigninbg.mp4" type="video/mp4"></video>
     <div class="auth-card">
-      <img src="assets/images/aniqueTitleLogo.png" alt="AniQue" class="logo-img" draggable="false" oncontextmenu="return false">
+      <img src="assets/images/aniqueTitleLogoNew.png" alt="AniQue" class="logo-img" draggable="false" oncontextmenu="return false">
       <h2 id="authTitle">Sign In</h2>
       <div class="auth-form">
         <div class="input-group" id="authUsernameGroup" style="display:none;">
@@ -268,7 +268,7 @@
   <div class="auth-overlay" id="verifyOverlay" style="display:none">
     <video autoplay loop muted playsinline class="auth-bg-video"><source src="assets/images/signupsigninbg.mp4" type="video/mp4"></video>
     <div class="auth-card">
-      <img src="assets/images/aniqueTitleLogo.png" alt="AniQue" class="logo-img" draggable="false" oncontextmenu="return false">
+      <img src="assets/images/aniqueTitleLogoNew.png" alt="AniQue" class="logo-img" draggable="false" oncontextmenu="return false">
       <div class="verify-icon"><i data-lucide="mail" style="width:40px;height:40px;color:var(--accent);"></i></div>
       <h2>Verify Your Email</h2>
       <p class="verify-hint">We sent a verification link to:</p>

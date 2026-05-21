@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/images/aniqueTitleLogo.png" alt="AniQue Logo" width="220" />
+  <img src="assets/images/aniqueTitleLogoNew.png" alt="AniQue Logo" width="220" />
 </p>
 
 <p align="center">
@@ -123,7 +123,7 @@ anique/
 │   ├── js/
 │   │   └── app.js          # App logic, Firebase, search, UI
 │   └── images/
-│       ├── aniqueTitleLogo.png       # Logo
+│       ├── aniqueTitleLogoNew.png    # Logo
 │       ├── AniQueLogo.svg   # Logo (SVG)
 │       └── screenshotDesktop.png       # App screenshot
 └── README.md                # Documentation

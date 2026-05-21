@@ -103,9 +103,15 @@ firebase.auth().onAuthStateChanged(async (user) => {
     document.getElementById('userBadge').style.display = 'flex';
     document.getElementById('userEmail').textContent = user.displayName || user.email;
     
-    // Sync preferences and data
-    await syncSettingsFromFirestore();
-    await loadWatchlist();
+    // Parallelize settings and watchlist fetching to decrease startup time significantly
+    try {
+      await Promise.all([
+        syncSettingsFromFirestore(),
+        loadWatchlist()
+      ]);
+    } catch (e) {
+      console.error("Error during parallel initialization:", e);
+    }
     applyWatchlistPreferencesOnLoad();
     
     hideSplash();
@@ -823,7 +829,7 @@ async function openModal(id, event) {
   const backdrop = document.getElementById('modalBackdrop');
   const content = document.getElementById('modalContent');
   backdrop.classList.add('open');
-  content.innerHTML = `<div class="modal-loading"><div class="spinner"></div>Loading details…</div>`;
+  content.innerHTML = `<div class="modal-loading"><img src="assets/images/blocks_shuffle_loading.svg" alt="Loading..." class="blocks-loading" />Loading details…</div>`;
 
   try {
     const [detailRes, staffRes, relRes] = await Promise.all([
@@ -1199,7 +1205,7 @@ async function fetchRandomAnime(forceNew = false) {
     return;
   }
 
-  container.innerHTML = `<div class="explore-loading" style="grid-column:1/-1;"><div class="spinner" style="border-top-color:var(--accent);"></div></div>`;
+  container.innerHTML = `<div class="explore-loading" style="grid-column:1/-1;"><img src="assets/images/blocks_shuffle_loading.svg" alt="Loading..." class="blocks-loading" /></div>`;
   if (btn) btn.classList.add('loading');
   lucide.createIcons();
 

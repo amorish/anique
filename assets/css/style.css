@@ -1108,6 +1108,13 @@ body.light-theme .auth-card p {
 body.light-theme .auth-card p {
   color: #5a5a62;
 }
+body.light-theme .input-wrapper input {
+  background: rgba(0, 0, 0, 0.03);
+}
+body.light-theme .search-overlay {
+  background: rgba(245, 245, 247, 0.96);
+}
+
 
 /* ===== ACCENT COLOR VARIATIONS ===== */
 body.accent-blue {
@@ -1183,6 +1190,9 @@ body.light-theme .settings-btn-profile:hover {
   gap: 20px;
   flex-shrink: 0;
 }
+body.light-theme .settings-sidebar {
+  background: rgba(0, 0, 0, 0.02);
+}
 .settings-title {
   font-size: 20px;
   font-weight: 800;
@@ -1216,13 +1226,15 @@ body.light-theme .settings-btn-profile:hover {
 }
 body.light-theme .settings-tab-btn:hover {
   background: rgba(0, 0, 0, 0.03);
+  color: var(--text) !important;
 }
 .settings-tab-btn.active {
   color: #fff;
   background: var(--accent);
 }
 body.light-theme .settings-tab-btn.active {
-  color: #fff;
+  color: var(--text) !important;
+  background: rgba(0, 0, 0, 0.06);
 }
 .settings-tab-btn svg {
   width: 18px;
@@ -1662,3 +1674,64 @@ body.light-theme .settings-select {
     gap: 16px;
   }
 }
+
+/* ===== CUSTOM SVG LOADERS & SHUFFLE ICON ===== */
+.blocks-loading {
+  display: inline-block;
+  vertical-align: middle;
+  transition: transform 0.3s ease;
+}
+.splash-loading {
+  width: 48px;
+  height: 48px;
+  margin-top: 10px;
+}
+.flowmode-loading {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 16px;
+}
+.modal-loading .blocks-loading {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 8px;
+}
+.explore-loading .blocks-loading {
+  width: 36px;
+  height: 36px;
+}
+
+/* Shuffle Custom SVG Icon */
+.shuffle-custom-icon {
+  width: 20px;
+  height: 20px;
+  color: #a8a6a5;
+  transition: color 0.3s ease;
+  vertical-align: middle;
+  margin-right: 6px;
+  display: inline-block;
+}
+.shuffle-custom-icon g {
+  transform-origin: center center;
+  stroke-width: 1.5;
+}
+
+/* Hover or Active states for Shuffle Button */
+#randomPickBtn:hover .shuffle-custom-icon {
+  color: #e50914;
+}
+#randomPickBtn.loading .shuffle-custom-icon,
+#randomPickBtn:hover .shuffle-custom-icon {
+  color: #e50914;
+}
+#randomPickBtn.loading .shuffle-custom-icon g,
+#randomPickBtn:hover .shuffle-custom-icon g,
+#randomPickBtn:active .shuffle-custom-icon g {
+  animation: rotate-center 2s ease-in-out infinite both;
+}
+
+@keyframes rotate-center {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
