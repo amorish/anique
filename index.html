@@ -35,18 +35,13 @@
           if (settings.theme === 'light') {
             document.body.classList.add('light-theme');
           }
-          if (settings.accentColor && settings.accentColor !== 'red') {
-            document.body.classList.add('accent-' + settings.accentColor);
-          }
         }
       } catch (e) { console.error('FOUC mitigation script error:', e); }
     })();
   </script>
 
-  <!-- ===== INITIAL SPLASH SCREEN ===== -->
   <div class="splash-screen" id="splashScreen" style="position:fixed; inset:0; z-index:10000; display:flex; align-items:center; justify-content:center; background:var(--bg, #0a0a0a); transition: opacity 0.4s ease, visibility 0.4s ease;">
     <div class="splash-content" style="display:flex; flex-direction:column; align-items:center; gap:20px; text-align:center;">
-      <img src="assets/images/aniqueTitleLogoNew.png" alt="AniQue" class="splash-logo" draggable="false" oncontextmenu="return false" style="height:64px; width:auto;" />
       <img src="assets/images/blocks_shuffle_loading.svg" alt="Loading..." class="blocks-loading splash-loading" style="width: 48px; height: 48px;" />
     </div>
   </div>
@@ -347,27 +342,16 @@
           <!-- Appearance Tab -->
           <div class="settings-pane" id="pane-appearance">
             <h3>Appearance Settings</h3>
-            <div class="setting-group">
-              <label>Theme</label>
-              <div class="theme-selector">
-                <button class="theme-card dark active" id="theme-btn-dark" onclick="setAppTheme('dark')">
-                  <div class="theme-preview"></div>
-                  <span>Dark Mode</span>
-                </button>
-                <button class="theme-card light" id="theme-btn-light" onclick="setAppTheme('light')">
-                  <div class="theme-preview"></div>
-                  <span>Light Mode</span>
-                </button>
-              </div>
-            </div>
-            <div class="setting-group">
-              <label>Accent Color</label>
-              <div class="accent-selector">
-                <button class="accent-dot red active" id="accent-dot-red" onclick="setAccentColor('red')" title="Red"></button>
-                <button class="accent-dot blue" id="accent-dot-blue" onclick="setAccentColor('blue')" title="Blue"></button>
-                <button class="accent-dot purple" id="accent-dot-purple" onclick="setAccentColor('purple')" title="Purple"></button>
-                <button class="accent-dot amber" id="accent-dot-amber" onclick="setAccentColor('amber')" title="Amber"></button>
-                <button class="accent-dot green" id="accent-dot-green" onclick="setAccentColor('green')" title="Green"></button>
+            <div class="setting-group toggle-group">
+              <div class="setting-row">
+                <div>
+                  <label for="settingsThemeToggle" style="margin-bottom:2px; display:block;">Light Mode</label>
+                  <p class="setting-description">Enable light theme across the application.</p>
+                </div>
+                <label class="switch-toggle">
+                  <input type="checkbox" id="settingsThemeToggle" onchange="toggleAppTheme(this.checked)">
+                  <span class="slider-toggle round-toggle"></span>
+                </label>
               </div>
             </div>
           </div>

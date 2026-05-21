@@ -855,7 +855,7 @@ async function openModal(id, event) {
     syn = syn.replace(/\[Written by MAL Rewrite\]/gi, '').trim();
     syn = escHtml(syn).replace(/\n/g, '<br>');
     
-    const existingItem = watchlist.find(w => w.id === id);
+    const existingItem = (watchlist || []).find(w => Number(w.id) === Number(id));
     const inList = !!existingItem;
 
     content.innerHTML = `
@@ -1211,24 +1211,37 @@ async function fetchRandomAnime(forceNew = false) {
 
   try {
     const page = Math.floor(Math.random() * 20) + 1;
-    const res = await fetch(`https://api.jikan.moe/v4/top/anime?page=${page}`);
+    const sfwParam = userSettings.sfwFilter ? '&sfw=true' : '';
+    const res = await fetch(`https://api.jikan.moe/v4/top/anime?page=${page}${sfwParam}`);
     if (!res.ok) throw new Error('Failed to fetch');
     const data = await res.json();
-    let candidates = data.data.filter(a => a.score >= 7.5 && !watchlist.some(w => w.id === a.mal_id));
+    if (!data.data || !Array.isArray(data.data)) throw new Error('Invalid data');
+
+    let candidates = data.data.filter(a => a.score >= 7.5 && !(watchlist || []).some(w => Number(w.id) === Number(a.mal_id)));
     
     // Shuffle candidates
     candidates = candidates.sort(() => 0.5 - Math.random());
     
     const newItems = [];
+    // First pass: try to avoid genre overlap
     for (const a of candidates) {
       if (newItems.length >= 3) break;
       const aGenres = (a.genres || []).map(g => g.name);
-      // Try to avoid genre overlap if possible
       const overlap = newItems.some(ex => {
         const exGenres = (ex.genres || []).map(g => g.name);
         return aGenres.some(g => exGenres.includes(g));
       });
-      if (!overlap || candidates.length < 5) newItems.push(a);
+      if (!overlap) newItems.push(a);
+    }
+    
+    // Second pass: if we don't have 3 items yet, fill them with candidates that we haven't selected yet (allow overlap as fallback)
+    if (newItems.length < 3) {
+      for (const a of candidates) {
+        if (newItems.length >= 3) break;
+        if (!newItems.some(ex => Number(ex.mal_id) === Number(a.mal_id))) {
+          newItems.push(a);
+        }
+      }
     }
 
     if (newItems.length >= 3) {
@@ -1436,16 +1449,7 @@ function applySettings() {
     document.body.classList.remove('light-theme');
   }
   
-  // 2. Accent color class switching
-  const accentColors = ['red', 'blue', 'purple', 'amber', 'green'];
-  accentColors.forEach(color => {
-    document.body.classList.remove(`accent-${color}`);
-  });
-  if (userSettings.accentColor !== 'red') {
-    document.body.classList.add(`accent-${userSettings.accentColor}`);
-  }
-  
-  // 3. Keep open modal UI in sync
+  // 2. Keep open modal UI in sync
   updateSettingsModalUI();
 }
 
@@ -1514,20 +1518,10 @@ function switchSettingsTab(tabName, btn) {
 }
 
 function updateSettingsModalUI() {
-  const btnDark = document.getElementById('theme-btn-dark');
-  const btnLight = document.getElementById('theme-btn-light');
-  if (btnDark && btnLight) {
-    btnDark.classList.toggle('active', userSettings.theme === 'dark');
-    btnLight.classList.toggle('active', userSettings.theme === 'light');
+  const themeToggle = document.getElementById('settingsThemeToggle');
+  if (themeToggle) {
+    themeToggle.checked = (userSettings.theme === 'light');
   }
-  
-  const accentColors = ['red', 'blue', 'purple', 'amber', 'green'];
-  accentColors.forEach(color => {
-    const dot = document.getElementById(`accent-dot-${color}`);
-    if (dot) {
-      dot.classList.toggle('active', userSettings.accentColor === color);
-    }
-  });
   
   const defaultViewSel = document.getElementById('settingsDefaultView');
   if (defaultViewSel) defaultViewSel.value = userSettings.defaultView;
@@ -1581,11 +1575,9 @@ function setAppTheme(themeName) {
   showToast(`Theme changed to ${themeName === 'light' ? 'Light' : 'Dark'} Mode`);
 }
 
-function setAccentColor(colorName) {
-  userSettings.accentColor = colorName;
-  saveSettings();
-  applySettings();
-  showToast(`Accent color updated`);
+function toggleAppTheme(isLight) {
+  const themeName = isLight ? 'light' : 'dark';
+  setAppTheme(themeName);
 }
 
 function updateWatchlistPreference(key, value) {
