@@ -36,7 +36,7 @@
 | ![Filter & Sort icon](https://api.iconify.design/lucide/sliders-horizontal.svg?color=white) **Filter & Sort** | Quick filter between All / Watching / Watched views |
 | ![Password Reset icon](https://api.iconify.design/lucide/key.svg?color=white) **Password Reset** | Forgot your password? Reset it with one click |
 | ![Responsive icon](https://api.iconify.design/lucide/smartphone.svg?color=white) **Responsive** | Looks great on desktop, tablet, and mobile |
-| ![Premium Dark UI icon](https://api.iconify.design/lucide/palette.svg?color=white) **Themes & Accents** | Toggle between premium Dark and Light modes, with accent modifiers (Red, Blue, Purple, Amber, Green) |
+| ![Premium Dark UI icon](https://api.iconify.design/lucide/palette.svg?color=white) **Themes** | Toggle between premium Dark and Light modes |
 | ![Settings icon](https://api.iconify.design/lucide/settings.svg?color=white) **Settings Modal** | Account management, username edits, email reset triggers, and dynamic watchlist preferences |
 | ![Data backup icon](https://api.iconify.design/lucide/database.svg?color=white) **JSON Data Backup** | Download whole watchlist backups in structured JSON format directly from settings |
 
