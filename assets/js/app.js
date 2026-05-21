@@ -17,6 +17,16 @@ try {
 let currentUser = null;
 let isSignupMode = false;
 
+// SETTINGS STATE
+let userSettings = {
+  theme: 'dark',
+  accentColor: 'red',
+  defaultView: 'list',
+  defaultSort: 'added',
+  defaultSortOrder: 'desc',
+  sfwFilter: true
+};
+
 // DISPOSABLE / TEMP EMAIL BLOCKLIST
 const BLOCKED_EMAIL_DOMAINS = new Set([
   'tempmail.com','temp-mail.org','guerrillamail.com','guerrillamail.net','guerrillamail.org',
@@ -84,6 +94,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
     if (!user.emailVerified) {
       currentUser = null;
       showVerificationScreen(user.email);
+      hideSplash();
       return;
     }
     currentUser = user;
@@ -91,7 +102,13 @@ firebase.auth().onAuthStateChanged(async (user) => {
     document.getElementById('verifyOverlay').style.display = 'none';
     document.getElementById('userBadge').style.display = 'flex';
     document.getElementById('userEmail').textContent = user.displayName || user.email;
+    
+    // Sync preferences and data
+    await syncSettingsFromFirestore();
     await loadWatchlist();
+    applyWatchlistPreferencesOnLoad();
+    
+    hideSplash();
   } else {
     currentUser = null;
     watchlist = [];
@@ -99,6 +116,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
     document.getElementById('verifyOverlay').style.display = 'none';
     document.getElementById('userBadge').style.display = 'none';
     renderGrid();
+    hideSplash();
   }
 });
 
@@ -476,7 +494,7 @@ function clearSearch() {
 async function fetchSearch(q) {
   lastQuery = q;
   try {
-    const res = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(q)}&limit=8&sfw=true`);
+    const res = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(q)}&limit=8&sfw=${userSettings.sfwFilter}`);
     const data = await res.json();
     if (q !== lastQuery) return;
     renderDropdown(data.data || []);
@@ -1028,6 +1046,7 @@ function undoDelete() {
 }
 
 // INIT
+loadLocalSettings();
 lucide.createIcons();
 renderGrid();
 
@@ -1350,4 +1369,247 @@ async function submitCalendarEvent() {
 if (!localStorage.getItem('exploreClicked')) {
   const tab = document.getElementById('tabExplore');
   if (tab) tab.classList.add('new');
+}
+
+// ===== SPLASH SCREEN CONTROLLER =====
+function hideSplash() {
+  const splash = document.getElementById('splashScreen');
+  if (splash && !splash.classList.contains('fade-out')) {
+    splash.classList.add('fade-out');
+    setTimeout(() => {
+      splash.style.display = 'none';
+    }, 500);
+  }
+}
+
+// ===== SETTINGS LOAD & SYNC SYSTEM =====
+function loadLocalSettings() {
+  try {
+    const saved = localStorage.getItem('anique_settings');
+    if (saved) {
+      userSettings = { ...userSettings, ...JSON.parse(saved) };
+    }
+  } catch (e) { console.error('Error loading settings from localStorage', e); }
+  applySettings();
+}
+
+async function syncSettingsFromFirestore() {
+  if (!db || !currentUser) return;
+  try {
+    const docSnap = await db.collection("users").doc(currentUser.uid).get();
+    if (docSnap.exists) {
+      const data = docSnap.data();
+      if (data.settings) {
+        userSettings = { ...userSettings, ...data.settings };
+        localStorage.setItem('anique_settings', JSON.stringify(userSettings));
+        applySettings();
+      }
+    }
+  } catch (e) {
+    console.error("Error syncing settings from Firestore", e);
+  }
+}
+
+async function saveSettings() {
+  localStorage.setItem('anique_settings', JSON.stringify(userSettings));
+  if (!db || !currentUser) return;
+  try {
+    await db.collection("users").doc(currentUser.uid).set({
+      settings: userSettings
+    }, { merge: true });
+  } catch (e) {
+    console.error("Error saving settings to Firestore", e);
+  }
+}
+
+function applySettings() {
+  // 1. Theme class switching
+  if (userSettings.theme === 'light') {
+    document.body.classList.add('light-theme');
+  } else {
+    document.body.classList.remove('light-theme');
+  }
+  
+  // 2. Accent color class switching
+  const accentColors = ['red', 'blue', 'purple', 'amber', 'green'];
+  accentColors.forEach(color => {
+    document.body.classList.remove(`accent-${color}`);
+  });
+  if (userSettings.accentColor !== 'red') {
+    document.body.classList.add(`accent-${userSettings.accentColor}`);
+  }
+  
+  // 3. Keep open modal UI in sync
+  updateSettingsModalUI();
+}
+
+function applyWatchlistPreferencesOnLoad() {
+  currentSort = userSettings.defaultSort;
+  currentSortOrder = userSettings.defaultSortOrder;
+  
+  const viewMap = {
+    'list': 'tabList',
+    'watching': 'tabWatching',
+    'watched': 'tabWatched',
+    'explore': 'tabExplore'
+  };
+  const targetTabId = viewMap[userSettings.defaultView] || 'tabList';
+  const btn = document.getElementById(targetTabId);
+  if (btn) {
+    setFilter(userSettings.defaultView, btn);
+  }
+}
+
+// ===== SETTINGS MODAL INTERFACES =====
+function openSettings() {
+  // Close profile menu if visible
+  const menu = document.getElementById('profileMenu');
+  if (menu) menu.style.display = 'none';
+  
+  // Display settings modal
+  document.getElementById('settingsBackdrop').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  
+  // Pop values
+  const usernameInput = document.getElementById('settingsUsername');
+  if (usernameInput && currentUser) {
+    usernameInput.value = currentUser.displayName || '';
+  }
+  const emailText = document.getElementById('settingsEmail');
+  if (emailText && currentUser) {
+    emailText.textContent = currentUser.email;
+  }
+  const badge = document.getElementById('settingsEmailBadge');
+  if (badge && currentUser) {
+    badge.style.display = currentUser.emailVerified ? 'inline-flex' : 'none';
+  }
+  
+  updateSettingsModalUI();
+  lucide.createIcons();
+}
+
+function closeSettings(event) {
+  if (event && event.target.id === 'settingsBackdrop') {
+    closeSettingsDirect();
+  }
+}
+
+function closeSettingsDirect() {
+  document.getElementById('settingsBackdrop').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function switchSettingsTab(tabName, btn) {
+  document.querySelectorAll('.settings-tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  
+  document.querySelectorAll('.settings-pane').forEach(p => p.classList.remove('active'));
+  document.getElementById(`pane-${tabName}`).classList.add('active');
+}
+
+function updateSettingsModalUI() {
+  const btnDark = document.getElementById('theme-btn-dark');
+  const btnLight = document.getElementById('theme-btn-light');
+  if (btnDark && btnLight) {
+    btnDark.classList.toggle('active', userSettings.theme === 'dark');
+    btnLight.classList.toggle('active', userSettings.theme === 'light');
+  }
+  
+  const accentColors = ['red', 'blue', 'purple', 'amber', 'green'];
+  accentColors.forEach(color => {
+    const dot = document.getElementById(`accent-dot-${color}`);
+    if (dot) {
+      dot.classList.toggle('active', userSettings.accentColor === color);
+    }
+  });
+  
+  const defaultViewSel = document.getElementById('settingsDefaultView');
+  if (defaultViewSel) defaultViewSel.value = userSettings.defaultView;
+  
+  const defaultSortSel = document.getElementById('settingsDefaultSort');
+  if (defaultSortSel) defaultSortSel.value = userSettings.defaultSort;
+  
+  const defaultSortOrderSel = document.getElementById('settingsDefaultSortOrder');
+  if (defaultSortOrderSel) defaultSortOrderSel.value = userSettings.defaultSortOrder;
+  
+  const sfwFilterChk = document.getElementById('settingsSfwFilter');
+  if (sfwFilterChk) sfwFilterChk.checked = userSettings.sfwFilter;
+}
+
+// ===== ACCOUNT ACTIONS =====
+async function updateProfileUsername() {
+  const newName = document.getElementById('settingsUsername').value.trim();
+  if (!newName) return showToast('Username cannot be empty');
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+  try {
+    await user.updateProfile({ displayName: newName });
+    if (db) {
+      await db.collection("users").doc(user.uid).update({ username: newName });
+    }
+    document.getElementById('userEmail').textContent = newName;
+    showToast('Username updated successfully');
+  } catch (e) {
+    console.error('Error updating username', e);
+    showToast('Failed to update username');
+  }
+}
+
+async function sendSettingsPasswordReset() {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+  try {
+    await firebase.auth().sendPasswordResetEmail(user.email);
+    showToast('Password reset link sent! Check your inbox.');
+  } catch (e) {
+    console.error('Error sending password reset email', e);
+    showToast('Failed to send reset link');
+  }
+}
+
+// ===== PREFERENCES SETTERS =====
+function setAppTheme(themeName) {
+  userSettings.theme = themeName;
+  saveSettings();
+  applySettings();
+  showToast(`Theme changed to ${themeName === 'light' ? 'Light' : 'Dark'} Mode`);
+}
+
+function setAccentColor(colorName) {
+  userSettings.accentColor = colorName;
+  saveSettings();
+  applySettings();
+  showToast(`Accent color updated`);
+}
+
+function updateWatchlistPreference(key, value) {
+  userSettings[key] = value;
+  saveSettings();
+  
+  if (key === 'defaultSort') {
+    currentSort = value;
+    renderGrid();
+  } else if (key === 'defaultSortOrder') {
+    currentSortOrder = value;
+    renderGrid();
+  }
+  
+  showToast('Preferences updated');
+}
+
+// ===== DATA MANAGEMENT ACTIONS =====
+function exportWatchlistData() {
+  try {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(watchlist, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `anique_watchlist_${new Date().toISOString().split('T')[0]}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+    showToast('Watchlist exported successfully');
+  } catch (e) {
+    console.error('Error exporting data', e);
+    showToast('Failed to export data');
+  }
 }

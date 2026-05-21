@@ -36,7 +36,9 @@
 | ![Filter & Sort icon](https://api.iconify.design/lucide/sliders-horizontal.svg?color=white) **Filter & Sort** | Quick filter between All / Watching / Watched views |
 | ![Password Reset icon](https://api.iconify.design/lucide/key.svg?color=white) **Password Reset** | Forgot your password? Reset it with one click |
 | ![Responsive icon](https://api.iconify.design/lucide/smartphone.svg?color=white) **Responsive** | Looks great on desktop, tablet, and mobile |
-| ![Premium Dark UI icon](https://api.iconify.design/lucide/palette.svg?color=white) **Premium Dark UI** | Sleek dark theme with Outfit + Inter fonts, video backgrounds, and glassmorphism |
+| ![Premium Dark UI icon](https://api.iconify.design/lucide/palette.svg?color=white) **Themes & Accents** | Toggle between premium Dark and Light modes, with accent modifiers (Red, Blue, Purple, Amber, Green) |
+| ![Settings icon](https://api.iconify.design/lucide/settings.svg?color=white) **Settings Modal** | Account management, username edits, email reset triggers, and dynamic watchlist preferences |
+| ![Data backup icon](https://api.iconify.design/lucide/database.svg?color=white) **JSON Data Backup** | Download whole watchlist backups in structured JSON format directly from settings |
 
 ---
 
@@ -80,6 +82,9 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /watchlists/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
     match /{document=**} {
@@ -137,6 +142,52 @@ anique/
 
 ---
 
+## ![Stitch icon](https://api.iconify.design/lucide/cpu.svg?color=white) Google Stitch MCP Setup
+
+The Model Context Protocol (MCP) server for Google's Stitch links your AI assistant (e.g. Cursor, Claude Desktop, etc.) directly to your Stitch design assets. Here are the steps to add it:
+
+### 1. Prerequisite
+Ensure you have the Google Cloud SDK installed and are authenticated. Run these commands in your shell:
+```bash
+gcloud auth application-default login
+gcloud config set project YOUR_PROJECT_ID
+```
+
+### 2. Automatic Configuration (Recommended)
+You can run the interactive initializer to automatically link Stitch to your global MCP configurations:
+```bash
+npx @_davideast/stitch-mcp init
+```
+This wizard will prompt you to authorize and will auto-detect your active projects.
+
+### 3. Manual Configuration in AI Editors
+
+Add the following block to your MCP configuration file depending on your editor:
+
+- **Cursor**: Go to `Settings` -> `Features` -> `MCP` -> `+ Add New Server`.
+  - **Name**: `stitch`
+  - **Type**: `command`
+  - **Command**: `npx -y @_davideast/stitch-mcp proxy`
+  
+- **Claude Desktop**: Open `%APPDATA%\Claude\claude_desktop_config.json` (Windows) or `~/Library/Application Support/Claude/claude_desktop_config.json` (Mac) and add:
+  ```json
+  {
+    "mcpServers": {
+      "stitch": {
+        "command": "npx",
+        "args": ["-y", "@_davideast/stitch-mcp", "proxy"],
+        "env": {
+          "GOOGLE_CLOUD_PROJECT": "YOUR_PROJECT_ID"
+        }
+      }
+    }
+  }
+  ```
+
+Once configured, restart your IDE/assistant. Your assistant will gain powerful custom tools to list design files, pull design tokens, and fetch component code from Google Stitch.
+
+---
+
 ## ![Roadmap icon](https://api.iconify.design/lucide/map.svg?color=white) Roadmap
 
 - [ ] Episode-by-episode progress tracking
@@ -147,7 +198,7 @@ anique/
 - [ ] Statistics dashboard (hours watched, genre breakdown)
 - [ ] Friend system & shared watchlists
 - [ ] PWA support (install on phone)
-- [ ] Light mode toggle
+- [x] Light mode toggle
 - [ ] Import from MyAnimeList
 
 ---
