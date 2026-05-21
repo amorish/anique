@@ -924,7 +924,7 @@ async function openModal(id, event) {
             <div class="detail-val">${detail.rank ? '#' + detail.rank : '—'}</div>
           </div>
           ${(inList && !existingItem.watched && detail.type !== 'Movie') ? `
-          <div style="grid-column: 1 / -1; background: #111; padding: 12px 16px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border);">
+          <div style="grid-column: 1 / -1; background: var(--elevated); padding: 12px 16px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border);">
             <div class="detail-label" style="margin: 0;">Episodes Watched</div>
             <div class="progress-controls">
               <button class="progress-btn" onmousedown="startProgress(${id},-1,event)" onmouseup="stopProgress(event)" onmouseleave="stopProgress(event)" ontouchstart="startProgress(${id},-1,event)" ontouchend="stopProgress(event)">−</button>
