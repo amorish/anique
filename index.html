@@ -94,17 +94,28 @@
   <!-- ===== TOP APP BAR ===== -->
   <header class="app-header">
     <div class="header-container">
-      <div class="header-left">
+      <!-- LEFT: Logo -->
+      <img src="assets/images/aniqueTitleLogoNew.png" alt="AniQue" class="logo-img" draggable="false" oncontextmenu="return false" />
+
+      <!-- MIDDLE: Inline search bar -->
+      <div class="header-search-wrap">
+        <div class="header-search-bar" id="headerSearchBar">
+          <i data-lucide="search" class="header-search-icon"></i>
+          <input type="text" id="searchInput" placeholder="Search anime..." autocomplete="off" class="header-search-input" />
+          <button class="icon-btn header-search-clear" id="headerSearchClear" onclick="clearSearch()" style="display:none;"><i data-lucide="x" style="width:16px;height:16px;"></i></button>
+        </div>
+        <div class="dropdown" id="dropdown"></div>
+        <div class="search-status" id="searchStatus"></div>
+      </div>
+
+      <!-- RIGHT: Profile -->
+      <div class="header-right">
         <button class="icon-btn" id="avatarBtn" onclick="toggleProfileMenu()" aria-label="Profile">
           <i data-lucide="user"></i>
         </button>
       </div>
-      <img src="assets/images/aniqueTitleLogoNew.png" alt="AniQue" class="logo-img" draggable="false" oncontextmenu="return false" />
-      <div class="header-right">
-        <button class="icon-btn" onclick="toggleSearch()" id="searchToggleBtn" aria-label="Search">
-          <i data-lucide="search"></i>
-        </button>
-      </div>
+
+      <!-- Profile dropdown -->
       <div class="profile-menu" id="profileMenu" style="display:none;">
         <div class="user-info" id="userBadge"><span id="userEmail"></span></div>
         <button class="settings-btn-profile" onclick="openSettings()"><i data-lucide="settings" style="width:14px;height:14px;margin-right:8px;"></i>Settings</button>
@@ -112,20 +123,6 @@
       </div>
     </div>
   </header>
-
-  <!-- ===== SEARCH OVERLAY ===== -->
-  <div class="search-overlay" id="searchOverlay" style="display:none;">
-    <div class="search-header">
-      <button class="icon-btn" onclick="toggleSearch()" title="Go Back"><i data-lucide="arrow-left"></i></button>
-      <div class="search-bar">
-        <i data-lucide="search" class="search-icon" style="width:18px;height:18px;"></i>
-        <input type="text" id="searchInput" placeholder="Search anime..." autocomplete="off" />
-        <button class="icon-btn close-search" onclick="clearSearch()"><i data-lucide="x"></i></button>
-        <div class="dropdown" id="dropdown"></div>
-        <div class="search-status" id="searchStatus"></div>
-      </div>
-    </div>
-  </div>
 
   <!-- ===== MAIN CONTENT ===== -->
   <main class="main-content">
@@ -317,11 +314,11 @@
             <button class="settings-tab-btn active" onclick="switchSettingsTab('account', this)">
               <i data-lucide="user"></i><span>Account</span>
             </button>
-            <button class="settings-tab-btn" onclick="switchSettingsTab('appearance', this)">
-              <i data-lucide="palette"></i><span>Appearance</span>
-            </button>
             <button class="settings-tab-btn" onclick="switchSettingsTab('watchlist', this)">
               <i data-lucide="list"></i><span>Watchlist</span>
+            </button>
+            <button class="settings-tab-btn" onclick="switchSettingsTab('appearance', this)">
+              <i data-lucide="palette"></i><span>Appearance</span>
             </button>
             <button class="settings-tab-btn" onclick="switchSettingsTab('data', this)">
               <i data-lucide="database"></i><span>Data</span>

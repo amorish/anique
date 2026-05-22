@@ -101,7 +101,11 @@ firebase.auth().onAuthStateChanged(async (user) => {
     document.getElementById('authOverlay').style.display = 'none';
     document.getElementById('verifyOverlay').style.display = 'none';
     document.getElementById('userBadge').style.display = 'flex';
-    document.getElementById('userEmail').textContent = user.displayName || user.email;
+    // Show "Hi @username" with styled username
+    const displayName = user.displayName || user.email;
+    document.getElementById('userEmail').innerHTML =
+      `<span class="profile-hi">Hi</span><span class="profile-username">@${escHtml(displayName)}</span>`;
+
     
     // Parallelize settings and watchlist fetching to decrease startup time significantly
     try {
@@ -162,7 +166,9 @@ async function checkVerification() {
     currentUser = user;
     document.getElementById('verifyOverlay').style.display = 'none';
     document.getElementById('userBadge').style.display = 'flex';
-    document.getElementById('userEmail').textContent = user.displayName || user.email;
+    const displayName = user.displayName || user.email;
+    document.getElementById('userEmail').innerHTML =
+      `<span class="profile-hi">Hi</span><span class="profile-username">@${escHtml(displayName)}</span>`;
     showToast('Email verified successfully.');
     await loadWatchlist();
   } else {
@@ -470,14 +476,17 @@ function closeLightbox() {
   }
 }
 
-// SEARCH
+// SEARCH (inline header search bar)
 const searchInput = document.getElementById('searchInput');
 const dropdown = document.getElementById('dropdown');
 const searchStatus = document.getElementById('searchStatus');
+const headerSearchClear = document.getElementById('headerSearchClear');
 
 searchInput.addEventListener('input', () => {
   const q = searchInput.value.trim();
   clearTimeout(searchTimeout);
+  // Show/hide clear button
+  if (headerSearchClear) headerSearchClear.style.display = q.length ? '' : 'none';
   if (q.length < 2) {
     closeDropdown();
     searchStatus.textContent = '';
@@ -492,13 +501,14 @@ searchInput.addEventListener('focus', () => {
 });
 
 document.addEventListener('click', (e) => {
-  if (!e.target.closest('.search-overlay')) closeDropdown();
+  if (!e.target.closest('.header-search-wrap')) closeDropdown();
 });
 
 function clearSearch() {
   searchInput.value = '';
   dropdown.innerHTML = '';
   searchStatus.textContent = '';
+  if (headerSearchClear) headerSearchClear.style.display = 'none';
   closeDropdown();
   searchInput.focus();
 }
@@ -670,17 +680,9 @@ function updateStats() {
   document.getElementById('remainCount').textContent = total - watched;
 }
 
-// SEARCH AND PROFILE TOGGLES
-function toggleSearch() {
-  const overlay = document.getElementById('searchOverlay');
-  const input = document.getElementById('searchInput');
-  if (overlay.style.display === 'none') {
-    overlay.style.display = 'flex';
-    input.focus();
-  } else {
-    overlay.style.display = 'none';
-  }
-}
+// toggleSearch is no longer needed (search is inline) — kept as no-op for safety
+function toggleSearch() {}
+
 
 function toggleProfileMenu() {
   const menu = document.getElementById('profileMenu');
@@ -862,11 +864,14 @@ async function openModal(id, event) {
     ]);
     const detail = (await detailRes.json()).data;
     currentModalAnime = detail;
-    // Refresh episode count for airing/ongoing anime in our watchlist
+    // Refresh episode count for airing/ongoing anime stored in our watchlist
     const wlItem = watchlist.find(w => Number(w.id) === Number(id));
     if (wlItem && detail.episodes && wlItem.episodes !== detail.episodes) {
       wlItem.episodes = detail.episodes;
-      save(); // Persist updated episode count silently
+      // Update the card ep-text live so Watching tab shows correct count immediately
+      const epText = document.getElementById(`ep-text-${id}`);
+      if (epText) epText.textContent = `Ep ${wlItem.episodesWatched || 0}/${detail.episodes}`;
+      save(); // Persist silently
     }
     const staffData = (await staffRes.json()).data || [];
     const relData = (await relRes.json()).data || [];
@@ -1580,7 +1585,9 @@ async function updateProfileUsername() {
     if (db) {
       await db.collection("users").doc(user.uid).update({ username: newName });
     }
-    document.getElementById('userEmail').textContent = newName;
+    // Update the profile menu greeting
+    document.getElementById('userEmail').innerHTML =
+      `<span class="profile-hi">Hi</span><span class="profile-username">@${escHtml(newName)}</span>`;
     showToast('Username updated successfully');
   } catch (e) {
     console.error('Error updating username', e);
