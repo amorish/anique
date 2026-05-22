@@ -84,8 +84,13 @@
         <button class="icon-btn" onclick="toggleSortPanel()" style="width:32px;height:32px;"><i data-lucide="x" style="width:16px;height:16px;"></i></button>
       </div>
       <div class="sort-pills" id="sortPills"></div>
-      <button class="flowmode-btn" id="flowModeBtn" onclick="activateFlowMode()">
-        <i data-lucide="sparkles" style="width:16px;height:16px;"></i>
+      <button class="flowmode-refined-btn" id="flowModeBtn" onclick="activateFlowMode()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sparkle-icon" style="width:16px;height:16px;">
+          <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path>
+          <path d="M20 2v4"></path>
+          <path d="M22 4h-4"></path>
+          <circle cx="4" cy="20" r="2"></circle>
+        </svg>
         <span>FlowMode</span>
       </button>
     </div>
@@ -95,13 +100,13 @@
   <header class="app-header">
     <div class="header-container">
       <!-- LEFT: Logo -->
-      <img src="assets/images/aniqueTitleLogoNew.png" alt="AniQue" class="logo-img" draggable="false" oncontextmenu="return false" />
+      <img src="assets/images/aniqueTitleLogoNew.png" alt="AniQue" class="logo-img" draggable="false" oncontextmenu="return false" onclick="resetToHome()" style="cursor:pointer;" />
 
       <!-- MIDDLE: Inline search bar -->
       <div class="header-search-wrap">
         <div class="header-search-bar" id="headerSearchBar">
           <i data-lucide="search" class="header-search-icon"></i>
-          <input type="text" id="searchInput" placeholder="Search anime..." autocomplete="off" class="header-search-input" />
+          <input type="text" id="searchInput" name="search-query" placeholder="Search anime..." autocomplete="off" class="header-search-input" />
           <button class="icon-btn header-search-clear" id="headerSearchClear" onclick="clearSearch()" style="display:none;"><i data-lucide="x" style="width:16px;height:16px;"></i></button>
         </div>
         <div class="dropdown" id="dropdown"></div>
@@ -257,7 +262,7 @@
     <div class="auth-card">
       <img src="assets/images/aniqueTitleLogoNew.png" alt="AniQue" class="logo-img" draggable="false" oncontextmenu="return false">
       <h2 id="authTitle">Sign In</h2>
-      <div class="auth-form">
+      <form class="auth-form" onsubmit="event.preventDefault(); handleAuth();">
         <div class="input-group" id="authUsernameGroup" style="display:none;">
           <label for="authUsername">Username</label>
           <div class="input-wrapper"><i data-lucide="user" class="input-icon"></i><input type="text" id="authUsername" placeholder="Choose a username" maxlength="15" /></div>
@@ -270,13 +275,13 @@
           <label for="authPwd">Password</label>
           <div class="input-wrapper">
             <i data-lucide="lock" class="input-icon"></i>
-            <input type="password" id="authPwd" placeholder="••••••••" />
+            <input type="password" id="authPwd" placeholder="••••••••" autocomplete="current-password" />
             <button class="pwd-toggle" type="button" onclick="togglePassword()" id="pwdToggleBtn"><i data-lucide="eye-off" id="pwdEyeIcon"></i></button>
           </div>
           <div class="forgot-link-wrapper" id="forgotLinkWrapper"><button class="forgot-link" type="button" onclick="forgotPassword()">Forgot password?</button></div>
         </div>
-        <button class="auth-btn" id="authActionBtn" onclick="handleAuth()">Sign In</button>
-      </div>
+        <button class="auth-btn" id="authActionBtn" type="submit">Sign In</button>
+      </form>
       <div class="auth-footer">
         <span class="auth-footer-text" id="authFooterText">New here?</span>
         <button class="auth-toggle-inline" onclick="toggleAuthMode()" id="authToggleBtn">Sign Up</button>

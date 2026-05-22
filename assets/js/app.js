@@ -1380,8 +1380,61 @@ async function deleteAccount() {
 }
 
 // ===== EXPLORE SECTION =====
+function getSkeletonHTML(count, isGridItem = false) {
+  let html = '';
+  for (let i = 0; i < count; i++) {
+    if (isGridItem) {
+      html += `
+        <div class="skeleton-card grid-skeleton">
+          <div class="skeleton-thumbnail"></div>
+          <div class="skeleton-text title"></div>
+          <div class="skeleton-text meta"></div>
+        </div>
+      `;
+    } else {
+      html += `
+        <div class="skeleton-card">
+          <div class="skeleton-thumbnail"></div>
+          ${!isGridItem ? `<div class="skeleton-rank"></div>` : ''}
+          <div class="skeleton-text title"></div>
+          <div class="skeleton-text meta"></div>
+        </div>
+      `;
+    }
+  }
+  return html;
+}
+
 async function loadExplore() {
   exploreLoaded = true;
+
+  // Pre-populate carousels with shimmery skeletons immediately
+  const carousels = ['carousel-trending', 'carousel-popular', 'carousel-upcoming', 'carousel-toprated'];
+  carousels.forEach(cid => {
+    const container = document.getElementById(cid);
+    if (container) {
+      container.innerHTML = getSkeletonHTML(5);
+    }
+  });
+
+  // Pre-populate random pick grid if there's no cached state
+  const randomContainer = document.getElementById('randomAnimeGrid');
+  if (randomContainer) {
+    const stored = localStorage.getItem('random_pick_state');
+    let hasCache = false;
+    try {
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.date === todayDate() && parsed.items && parsed.items.length === 3) {
+          hasCache = true;
+        }
+      }
+    } catch(e) {}
+    if (!hasCache) {
+      randomContainer.innerHTML = getSkeletonHTML(3, true);
+    }
+  }
+
   await fetchExploreList('https://api.jikan.moe/v4/top/anime?filter=airing&limit=10', 'carousel-trending');
   await new Promise(r => setTimeout(r, 400));
   await fetchExploreList('https://api.jikan.moe/v4/top/anime?filter=bypopularity&limit=10', 'carousel-popular');
@@ -1396,8 +1449,11 @@ async function loadExplore() {
 async function fetchExploreList(url, containerId, retries = 3) {
   const container = document.getElementById(containerId);
   if (!container) return;
-  container.innerHTML = `<div class="explore-loading"><i data-lucide="loader" style="width:20px;height:20px;animation:spin 2s linear infinite;"></i></div>`;
-  lucide.createIcons();
+  
+  // Render skeletons if they aren't already present
+  if (!container.querySelector('.skeleton-card')) {
+    container.innerHTML = getSkeletonHTML(5);
+  }
   
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
@@ -1456,7 +1512,8 @@ async function fetchRandomAnime(forceNew = false) {
     return;
   }
 
-  container.innerHTML = `<div class="explore-loading" style="grid-column:1/-1;"><img src="assets/images/blocks_shuffle_loading.svg" alt="Loading..." class="blocks-loading" /></div>`;
+  // Pre-populate with beautiful skeletons during loading phase
+  container.innerHTML = getSkeletonHTML(3, true);
   if (btn) btn.classList.add('loading');
   lucide.createIcons();
 
@@ -1866,3 +1923,97 @@ function exportWatchlistData() {
     showToast('Failed to export data');
   }
 }
+
+// ===== HEADER LOGO CLICK RESET =====
+function resetToHome() {
+  clearSearch();
+  if (deleteMode) {
+    toggleSelectMode();
+  }
+  const tabList = document.getElementById('tabList');
+  if (tabList) {
+    setFilter('list', tabList);
+  }
+}
+
+// ===== FLOWMODE REFINDED BUTTON SPARKLE PARTICLES =====
+(function() {
+  const btn = document.getElementById('flowModeBtn');
+  if (!btn) return;
+
+  let isHovered = false;
+  let intervalId = null;
+
+  function createParticle() {
+    if (!isHovered) return;
+    const rect = btn.getBoundingClientRect();
+    const particle = document.createElement('span');
+    particle.className = 'particle';
+
+    // Randomize initial horizontal position within the button
+    const x = Math.random() * rect.width;
+    const y = rect.height - Math.random() * 10;
+
+    // Randomize destination offsets and animation properties
+    const destX = (Math.random() - 0.5) * 60;
+    const destY = -50 - Math.random() * 40;
+    const size = Math.random() * 6 + 3;
+    const duration = Math.random() * 0.8 + 0.8;
+
+    particle.style.left = `${x}px`;
+    particle.style.top = `${y}px`;
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+    particle.style.setProperty('--x', `${destX}px`);
+    particle.style.setProperty('--y', `${destY}px`);
+    particle.style.setProperty('--duration', `${duration}s`);
+
+    btn.appendChild(particle);
+
+    setTimeout(() => {
+      particle.remove();
+    }, duration * 1000);
+  }
+
+  btn.addEventListener('mouseenter', () => {
+    isHovered = true;
+    for (let i = 0; i < 5; i++) {
+      setTimeout(createParticle, i * 80);
+    }
+    intervalId = setInterval(createParticle, 150);
+  });
+
+  btn.addEventListener('mouseleave', () => {
+    isHovered = false;
+    if (intervalId) {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+  });
+
+  btn.addEventListener('mousemove', (e) => {
+    if (Math.random() < 0.2) {
+      const rect = btn.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      const particle = document.createElement('span');
+      particle.className = 'particle';
+      const destX = (Math.random() - 0.5) * 40;
+      const destY = -40 - Math.random() * 30;
+      const size = Math.random() * 5 + 3;
+      const duration = Math.random() * 0.6 + 0.6;
+
+      particle.style.left = `${x}px`;
+      particle.style.top = `${y}px`;
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      particle.style.setProperty('--x', `${destX}px`);
+      particle.style.setProperty('--y', `${destY}px`);
+      particle.style.setProperty('--duration', `${duration}s`);
+
+      btn.appendChild(particle);
+      setTimeout(() => particle.remove(), duration * 1000);
+    }
+  });
+})();
