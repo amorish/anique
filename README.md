@@ -47,14 +47,35 @@
 <details>
 <summary><strong>Click to expand</strong></summary>
 
-### Login Screen
-> Clean auth overlay with sign in / sign up toggle and forgot password
+### 🔑 Login Page
+> Clean authentication overlay with smart sign in / sign up toggle and one-click password reset.
+<p align="center">
+  <img src="assets/images/ScreenshotDesktopLoginPage.png" alt="Login Page" width="90%" />
+</p>
 
-### Watchlist Grid
-> Anime cards with poster art, watched badges, and hover effects
+---
 
-### Anime Details Modal
-> Full details with synopsis, watch order, score, studio, and more
+### ℹ️ Anime Info
+> Detailed modal showing synopsis, watch order, director, studio, ratings, and Google Calendar scheduling.
+<p align="center">
+  <img src="assets/images/ScreenshotDesktopAnimeInfo.png" alt="Anime Info" width="90%" />
+</p>
+
+---
+
+### 🌊 Flow Mode
+> A beautiful, immersive, distraction-free view designed for a premium watchlist browsing experience.
+<p align="center">
+  <img src="assets/images/ScreenshotDesktopFlowmode.png" alt="Flow Mode" width="90%" />
+</p>
+
+---
+
+### 🎲 Random Pick
+> Unsure what to watch? Instantly shuffle and receive high-quality recommendation cards with hover effects.
+<p align="center">
+  <img src="assets/images/ScreenshotDesktopRandomPick.png" alt="Random Pick" width="90%" />
+</p>
 
 </details>
 
