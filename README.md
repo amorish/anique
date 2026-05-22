@@ -64,7 +64,7 @@
 ---
 
 ### ![Flow Mode icon](https://api.iconify.design/lucide/tv.svg?color=white) Flow Mode
-> A beautiful, immersive, distraction-free view designed for a premium watchlist browsing experience.
+> Analyzes your watchlist and dynamically sequences your next watches using a custom algorithm to keep you engaged, prevent viewer fatigue, and maintain the perfect entertainment flow.
 <p align="center">
   <img src="assets/images/ScreenshotDesktopFlowmode.png" alt="Flow Mode" width="90%" />
 </p>
