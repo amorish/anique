@@ -808,6 +808,20 @@ function toggleSelectMode() {
 function updateSelectUI() {
   const countText = document.getElementById('selectCountText');
   if (countText) countText.textContent = `${selectedForDelete.size} Selected`;
+
+  const bulkBtn = document.querySelector('.sel-watched');
+  if (bulkBtn) {
+    if (currentFilter === 'watched') {
+      bulkBtn.innerHTML = `<i data-lucide="eye-off" style="width:15px;height:15px;"></i> Unwatch`;
+      bulkBtn.setAttribute('onclick', 'markSelectedUnwatched()');
+    } else {
+      bulkBtn.innerHTML = `<i data-lucide="check-circle" style="width:15px;height:15px;"></i> Watched`;
+      bulkBtn.setAttribute('onclick', 'markSelectedWatched()');
+    }
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+      window.lucide.createIcons();
+    }
+  }
 }
 
 function toggleSelection(id) {
@@ -829,7 +843,7 @@ function confirmRemoveSelected() {
   showToast(`Removed ${recentlyDeletedItems.length} anime`, true);
 }
 
-function markSelectedWatched() {
+async function markSelectedWatched() {
   if (selectedForDelete.size === 0) { toggleSelectMode(); return; }
   const date = todayDate();
   selectedForDelete.forEach(id => {
@@ -841,10 +855,27 @@ function markSelectedWatched() {
     }
   });
   const count = selectedForDelete.size;
-  save();
+  await save();
   toggleSelectMode();
   showToast(`Marked ${count} anime as watched ✓`);
 }
+
+async function markSelectedUnwatched() {
+  if (selectedForDelete.size === 0) { toggleSelectMode(); return; }
+  selectedForDelete.forEach(id => {
+    const item = watchlist.find(w => w.id === id);
+    if (item) {
+      item.watched = false;
+      item.episodesWatched = item.previousEpisodesWatched !== undefined ? item.previousEpisodesWatched : 0;
+      item.watchedAt = null;
+    }
+  });
+  const count = selectedForDelete.size;
+  await save();
+  toggleSelectMode();
+  showToast(`Marked ${count} anime as unwatched ✓`);
+}
+
 
 // RENDER GRID
 function renderGrid() {
@@ -870,7 +901,25 @@ function renderGrid() {
     else { if (!asc) items.reverse(); }
   }
 
-  if (items.length === 0) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
+  if (items.length === 0) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    const emptyTitle = empty.querySelector('p');
+    const emptySub = empty.querySelector('small');
+    if (emptyTitle && emptySub) {
+      if (currentFilter === 'watched') {
+        emptyTitle.textContent = "You haven't completed any anime yet";
+        emptySub.textContent = "Mark anime as watched to see them here";
+      } else if (currentFilter === 'watching') {
+        emptyTitle.textContent = "No anime currently in progress";
+        emptySub.textContent = "Update episodes watched to track your progress";
+      } else {
+        emptyTitle.textContent = "Your watchlist is empty";
+        emptySub.textContent = "Search and add anime to get started";
+      }
+    }
+    return;
+  }
   empty.style.display = 'none';
   // epDisplay() is defined near STATE — uses epCache then item.episodes
 
@@ -880,10 +929,13 @@ function renderGrid() {
         <img class="poster-img" src="${a.poster || ''}" alt="${escHtml(a.title)}" loading="lazy" onerror="this.src=''" draggable="false" oncontextmenu="return false" />
         <div class="card-gradient"></div>
         <div class="card-select-overlay"></div>
-        <button class="watched-btn ${a.watched ? 'checked' : ''}" onclick="toggleWatched(${a.id}, event)" title="${a.watched ? 'Mark unwatched' : 'Mark watched'}">
+        ${!a.watched ? `
+        <button class="watched-btn" onclick="toggleWatched(${a.id}, event)" title="Mark watched">
           <i data-lucide="check" style="width:14px;height:14px;stroke-width:3;"></i>
         </button>
+        ` : ''}
         ${currentFilter !== 'watched' ? `<button class="remove-btn" onclick="removeAnime(${a.id}, event)" title="Remove"><i data-lucide="trash-2" style="width:13px;height:13px;"></i></button>` : ''}
+
         <div class="card-content">
           <div class="card-meta"><span class="type-pill">${a.type || 'TV'}</span></div>
           <h3 class="card-title">${escHtml(a.title)}</h3>
@@ -1033,6 +1085,19 @@ async function openModal(id, event) {
             </div>
           </div>
           ` : ''}
+          ${(inList && existingItem.watched) ? `
+          <div style="grid-column: 1 / -1; background: var(--elevated); padding: 12px 16px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border);">
+            <div style="display:flex; flex-direction:column; gap:2px;">
+              <span class="detail-label" style="margin: 0; color: #22c55e; display: flex; align-items: center; gap: 4px;">
+                <i data-lucide="check-circle" style="width:14px;height:14px;"></i> Watched
+              </span>
+              <span style="font-size:11px; color:var(--muted);">Completed on ${existingItem.watchedAt || '—'}</span>
+            </div>
+            <button class="modal-unwatch-btn" onclick="markUnwatchedFromModal(${detail.mal_id})">
+              <i data-lucide="eye-off" style="width:12px;height:12px;"></i> Mark Unwatched
+            </button>
+          </div>
+          ` : ''}
         </div>
 
         <div class="section-label">Synopsis</div>
@@ -1101,7 +1166,7 @@ function closeModalDirect() {
   }
 }
 
-function markWatchedFromModal(id) {
+async function markWatchedFromModal(id) {
   let item = watchlist.find(w => w.id === id);
   if (!item && currentModalAnime) {
     // Add to list first (inline, avoiding dummy button)
@@ -1122,7 +1187,23 @@ function markWatchedFromModal(id) {
     item.watched = true;
     if (item.episodes) item.episodesWatched = item.episodes;
     item.watchedAt = todayDate();
-    save(); renderGrid(); showToast('Marked as watched ✓');
+    await save();
+    renderGrid();
+    openModal(id); // Re-open/refresh modal to show updated watched/unwatched layout
+    showToast('Marked as watched ✓');
+  }
+}
+
+async function markUnwatchedFromModal(id) {
+  const item = watchlist.find(w => w.id === id);
+  if (item) {
+    item.watched = false;
+    item.episodesWatched = item.previousEpisodesWatched !== undefined ? item.previousEpisodesWatched : 0;
+    item.watchedAt = null;
+    await save();
+    renderGrid();
+    openModal(id); // Re-open/refresh modal to show updated unwatched progress section
+    showToast('Marked as unwatched ✓');
   }
 }
 
@@ -1226,24 +1307,41 @@ function stopProgress(event) {
   clearTimeout(progressTimeout);
   clearInterval(progressInterval);
   save(); // Save once when released
+  renderGrid(); // Ensure grid and filters are instantly up-to-date
 }
 
 async function updateProgress(id, change, event, skipSave = false) {
   if (event) event.stopPropagation();
   const item = watchlist.find(i => i.id === id);
   if (!item) return;
+  
+  const wasWatched = item.watched;
   let newProgress = (item.episodesWatched || 0) + change;
   if (newProgress < 0) newProgress = 0;
   if (item.episodes && newProgress > item.episodes) newProgress = item.episodes;
   item.episodesWatched = newProgress;
-  if (item.episodes && item.episodesWatched === item.episodes) item.watched = true;
+  
+  if (item.episodes) {
+    if (item.episodesWatched === item.episodes) {
+      if (!item.watched) {
+        item.watched = true;
+        item.watchedAt = todayDate();
+      }
+    } else {
+      if (item.watched) {
+        item.watched = false;
+        item.watchedAt = null;
+      }
+    }
+  }
+  
   if (!skipSave) await save();
   
   // Update card ep counter in-place
   const epText = document.getElementById(`ep-text-${id}`);
   const epTotal = item.episodes || (item.status === 'Currently Airing' || item.status === 'Airing' ? '?' : '?');
   if (epText) epText.textContent = `Ep ${item.episodesWatched}/${epTotal}`;
-  if (item.watched && !skipSave) renderGrid();
+  if (wasWatched !== item.watched && !skipSave) renderGrid();
   
   // Update modal progress text if open
   const modal = document.getElementById('modalBackdrop');
