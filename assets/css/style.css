@@ -10,6 +10,8 @@
   --radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-full:9999px;
   --shadow-card:0 4px 24px rgba(0,0,0,.4);
   --shadow-elevated:0 8px 32px rgba(0,0,0,.5);
+  --skeleton-base:#1f1f22;
+  --skeleton-shimmer:#2d2d30;
 }
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.5;min-height:100dvh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
@@ -501,95 +503,86 @@ button{font-family:inherit;cursor:pointer}
 .sort-pill .pill-arrow { display: flex; align-items: center; font-size: 14px; line-height: 1; }
 
 /* ===== FLOWMODE BUTTON ===== */
-.flowmode-refined-btn {
+.flowmode-state-btn {
   position: relative;
-  overflow: hidden;
-  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 12px;
-  border-radius: var(--radius-md);
-  border: 1.5px solid rgba(139, 92, 246, 0.2); 
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(217, 70, 239, 0.15) 100%);
-  color: var(--text);
-  font-size: 14px;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 24px;
+  border-radius: 12px; 
+  background: transparent; /* Background is handled by ::before */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 15px;
   font-weight: 700;
-  font-family: var(--font-heading);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  letter-spacing: 0.03em;
-  z-index: 1;
-  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.05);
+  outline: none;
+  z-index: 1; /* Keeps text above particles */
+  
+  /* State 1: Base glow (None) */
+  box-shadow: 0 0 0 rgba(109, 40, 217, 0); 
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-.flowmode-refined-btn::before {
+/* --- THE GRADIENT LAYER --- */
+.flowmode-state-btn::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(217, 70, 239, 0.3) 100%);
-  opacity: 0;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #6d28d9, #9333ea);
+  
+  /* State 1: Not selected, not hovered (Low opacity) */
+  opacity: 0.25; 
   transition: opacity 0.3s ease;
-  z-index: -1;
+  z-index: -2; /* Keeps gradient behind everything */
 }
 
-.flowmode-refined-btn:hover {
-  border-color: rgba(139, 92, 246, 0.5);
-  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.2);
-  transform: translateY(-1.5px);
+/* State 2: Hovered (Not selected) */
+.flowmode-state-btn:hover {
+  /* Moderate glow */
+  box-shadow: 0 0 15px rgba(109, 40, 217, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.2); 
+}
+.flowmode-state-btn:hover::before {
+  opacity: 1; /* Original color */
 }
 
-.flowmode-refined-btn:hover::before {
-  opacity: 1;
+/* State 3: Selected (Not hovered) */
+.flowmode-state-btn.is-selected {
+  border-color: rgba(255, 255, 255, 0.5); /* Brighter border to show active state */
+  box-shadow: 0 0 5px rgba(109, 40, 217, 0.2); /* Very faint persistent glow */
+}
+.flowmode-state-btn.is-selected::before {
+  opacity: 1; /* Original color */
 }
 
-.flowmode-refined-btn:active {
-  transform: scale(0.98) translateY(0);
+/* State 4: Selected & Hovered */
+.flowmode-state-btn.is-selected:hover {
+  box-shadow: 0 0 20px rgba(109, 40, 217, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.3);
 }
 
-.flowmode-refined-btn.active {
-  background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
-  border-color: #d946ef;
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.4), 0 0 40px rgba(217, 70, 239, 0.2);
-  color: #fff;
-  font-weight: 800;
-}
-
-.flowmode-refined-btn.active:hover {
-  box-shadow: 0 0 25px rgba(139, 92, 246, 0.6), 0 0 50px rgba(217, 70, 239, 0.3);
-}
-
-/* Sparkle icon style */
 .sparkle-icon {
-  width: 16px;
-  height: 16px;
-  transition: transform 0.4s ease;
-}
-.flowmode-refined-btn:hover .sparkle-icon {
-  transform: rotate(20deg) scale(1.1);
-  filter: drop-shadow(0 0 4px rgba(217, 70, 239, 0.8));
+  width: 20px;
+  height: 20px;
+  /* Icon remains completely static */
 }
 
-/* Particles wrapper and styles */
+/* --- Particle System Styles --- */
 .particle {
   position: absolute;
+  background: white;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  opacity: 0;
   pointer-events: none;
-  background: radial-gradient(circle, #ffffff 0%, rgba(217, 70, 239, 0.8) 50%, rgba(139, 92, 246, 0) 100%);
-  border-radius: 50%;
-  animation: floatUp var(--duration, 1.2s) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-  z-index: 10;
+  z-index: -1; /* Behind text, above background */
+  animation: floatUp linear forwards; 
 }
 
 @keyframes floatUp {
-  0% {
-    transform: translate(0, 0) scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(var(--x, 0), var(--y, -40px)) scale(0);
-    opacity: 0;
-  }
+  0% { transform: translateY(0) scale(0.3); opacity: 0.8; }
+  100% { transform: translateY(-35px) scale(1); opacity: 0; }
 }
 
 .flowmode-tag {
@@ -1111,7 +1104,7 @@ button{font-family:inherit;cursor:pointer}
   height: 170px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
-  background: linear-gradient(90deg, var(--card) 25%, var(--border) 50%, var(--card) 75%);
+  background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-shimmer) 50%, var(--skeleton-base) 75%);
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s infinite linear;
 }
@@ -1122,13 +1115,13 @@ button{font-family:inherit;cursor:pointer}
   border-radius: 50%;
   margin-top: 4px;
   margin-bottom: 4px;
-  background: linear-gradient(90deg, var(--card) 25%, var(--border) 50%, var(--card) 75%);
+  background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-shimmer) 50%, var(--skeleton-base) 75%);
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s infinite linear;
 }
 .skeleton-text {
   border-radius: var(--radius-sm);
-  background: linear-gradient(90deg, var(--card) 25%, var(--border) 50%, var(--card) 75%);
+  background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-shimmer) 50%, var(--skeleton-base) 75%);
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s infinite linear;
 }
@@ -1256,6 +1249,8 @@ body.light-theme {
   --text: #111112;
   --text-secondary: #5a5a62;
   --muted: #8c8c9a;
+  --skeleton-base: #e5e7eb;
+  --skeleton-shimmer: #f3f4f6;
 }
 body.light-theme .app-header {
   background: rgba(245, 245, 247, 0.88);

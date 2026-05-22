@@ -411,6 +411,7 @@ function renderSortPills() {
   // FlowMode makes no sense in Watched tab — hide it there
   if (flowBtn) {
     flowBtn.classList.toggle('active', flowModeActive);
+    flowBtn.classList.toggle('is-selected', flowModeActive);
     flowBtn.style.display = (currentFilter === 'watched') ? 'none' : '';
   }
   container.innerHTML = SORT_OPTIONS.map(opt => {
@@ -1435,6 +1436,9 @@ async function loadExplore() {
     }
   }
 
+  // Load random pick first so cached recommendations render instantly or fresh fetch starts first
+  await fetchRandomAnime();
+
   await fetchExploreList('https://api.jikan.moe/v4/top/anime?filter=airing&limit=10', 'carousel-trending');
   await new Promise(r => setTimeout(r, 400));
   await fetchExploreList('https://api.jikan.moe/v4/top/anime?filter=bypopularity&limit=10', 'carousel-popular');
@@ -1442,8 +1446,6 @@ async function loadExplore() {
   await fetchExploreList('https://api.jikan.moe/v4/seasons/upcoming?limit=10', 'carousel-upcoming');
   await new Promise(r => setTimeout(r, 400));
   await fetchExploreList('https://api.jikan.moe/v4/seasons/now?limit=10', 'carousel-toprated');
-  await new Promise(r => setTimeout(r, 400));
-  await fetchRandomAnime();
 }
 
 async function fetchExploreList(url, containerId, retries = 3) {
@@ -1936,84 +1938,69 @@ function resetToHome() {
   }
 }
 
-// ===== FLOWMODE REFINDED BUTTON SPARKLE PARTICLES =====
+// ===== FLOWMODE STATE BUTTON SPARKLE PARTICLES =====
 (function() {
   const btn = document.getElementById('flowModeBtn');
   if (!btn) return;
 
   let isHovered = false;
-  let intervalId = null;
 
-  function createParticle() {
-    if (!isHovered) return;
-    const rect = btn.getBoundingClientRect();
-    const particle = document.createElement('span');
-    particle.className = 'particle';
+  // 1. Handle Selection State (Click to toggle)
+  btn.addEventListener('click', () => {
+    btn.classList.toggle('is-selected');
+  });
 
-    // Randomize initial horizontal position within the button
-    const x = Math.random() * rect.width;
-    const y = rect.height - Math.random() * 10;
+  // 2. Track Hover State
+  btn.addEventListener('mouseenter', () => isHovered = true);
+  btn.addEventListener('mouseleave', () => isHovered = false);
 
-    // Randomize destination offsets and animation properties
-    const destX = (Math.random() - 0.5) * 60;
-    const destY = -50 - Math.random() * 40;
-    const size = Math.random() * 6 + 3;
-    const duration = Math.random() * 0.8 + 0.8;
+  // 3. Dynamic Particle Spawner
+  function spawnParticle() {
+    // If the button is hidden (display: none or in a hidden container), pause spawning to save CPU
+    if (btn.offsetWidth === 0 || btn.offsetHeight === 0) {
+      setTimeout(spawnParticle, 350);
+      return;
+    }
 
-    particle.style.left = `${x}px`;
-    particle.style.top = `${y}px`;
+    const particle = document.createElement('div');
+    particle.classList.add('particle');
+
+    // Randomize tiny size
+    const size = Math.random() * 3 + 2;
     particle.style.width = `${size}px`;
     particle.style.height = `${size}px`;
-    particle.style.setProperty('--x', `${destX}px`);
-    particle.style.setProperty('--y', `${destY}px`);
-    particle.style.setProperty('--duration', `${duration}s`);
+
+    // Randomize X and Y position within the button
+    const x = Math.random() * btn.offsetWidth;
+    const y = Math.random() * btn.offsetHeight;
+    particle.style.left = `${x}px`;
+    particle.style.top = `${y}px`;
+
+    // --- DYNAMIC SPEED LOGIC ---
+    // If hovered: Particles float up fast (0.6 to 0.9 seconds)
+    // If not hovered: Particles float up slow (1.2 to 1.7 seconds)
+    const animDuration = isHovered 
+      ? (Math.random() * 0.3 + 0.6) 
+      : (Math.random() * 0.5 + 1.2);
+    
+    particle.style.animationDuration = `${animDuration}s`;
 
     btn.appendChild(particle);
 
+    // Clean up element after its animation finishes
     setTimeout(() => {
       particle.remove();
-    }, duration * 1000);
+    }, animDuration * 1000);
+
+    // --- DYNAMIC VOLUME LOGIC ---
+    // If hovered: Spawn a new particle quickly (every ~120ms)
+    // If not hovered: Spawn slowly (every ~350ms)
+    const nextSpawnTime = isHovered ? 120 : 350;
+    
+    // Recursively call the function to keep it running forever
+    setTimeout(spawnParticle, nextSpawnTime);
   }
 
-  btn.addEventListener('mouseenter', () => {
-    isHovered = true;
-    for (let i = 0; i < 5; i++) {
-      setTimeout(createParticle, i * 80);
-    }
-    intervalId = setInterval(createParticle, 150);
-  });
-
-  btn.addEventListener('mouseleave', () => {
-    isHovered = false;
-    if (intervalId) {
-      clearInterval(intervalId);
-      intervalId = null;
-    }
-  });
-
-  btn.addEventListener('mousemove', (e) => {
-    if (Math.random() < 0.2) {
-      const rect = btn.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      
-      const particle = document.createElement('span');
-      particle.className = 'particle';
-      const destX = (Math.random() - 0.5) * 40;
-      const destY = -40 - Math.random() * 30;
-      const size = Math.random() * 5 + 3;
-      const duration = Math.random() * 0.6 + 0.6;
-
-      particle.style.left = `${x}px`;
-      particle.style.top = `${y}px`;
-      particle.style.width = `${size}px`;
-      particle.style.height = `${size}px`;
-      particle.style.setProperty('--x', `${destX}px`);
-      particle.style.setProperty('--y', `${destY}px`);
-      particle.style.setProperty('--duration', `${duration}s`);
-
-      btn.appendChild(particle);
-      setTimeout(() => particle.remove(), duration * 1000);
-    }
-  });
+  // Start the continuous particle loop
+  spawnParticle();
 })();
