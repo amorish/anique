@@ -303,6 +303,12 @@ async function loadWatchlist() {
         epCache = { ...epCache, ...data.epCache };
         saveEpCache();
       }
+      if (data.randomPickState) {
+        const todayStr = todayDate();
+        if (data.randomPickState.date === todayStr) {
+          localStorage.setItem('random_pick_state', JSON.stringify(data.randomPickState));
+        }
+      }
     } else {
       watchlist = [];
     }
@@ -711,9 +717,16 @@ async function save() {
   updateStats();
   if (!db || !currentUser) return;
   try {
+    let randomPickState = null;
+    try {
+      const stored = localStorage.getItem('random_pick_state');
+      if (stored) randomPickState = JSON.parse(stored);
+    } catch(e) {}
+
     await db.collection("watchlists").doc(currentUser.uid).set({
       items: watchlist,
-      epCache: epCache
+      epCache: epCache,
+      randomPickState: randomPickState
     });
   } catch (e) {
     console.error("Error saving watchlist", e);
@@ -1390,6 +1403,7 @@ async function fetchRandomAnime(forceNew = false) {
       localStorage.setItem('random_pick_state', JSON.stringify(state));
       renderRandomAnime(state.items);
       updateRandomLimit(state.count);
+      save(); // Sync new suggestions and re-roll limit count to Firestore
     } else {
       throw new Error('Not enough items');
     }
