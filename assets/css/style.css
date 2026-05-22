@@ -108,19 +108,26 @@ button{font-family:inherit;cursor:pointer}
   border-bottom:1px solid var(--border);
 }
 /* Hi @username styling */
-.profile-hi { font-size:13px; color:var(--text-secondary); }
+.profile-hi {
+  font-size:13px;
+  color:var(--text-secondary);
+  display:inline-block;
+  vertical-align:middle;
+}
 .profile-username {
   font-size:16px;
   font-weight:700;
   color:var(--accent);
-  display:block;
-  margin-top:2px;
+  display:inline-block;
+  vertical-align:middle;
+  margin-left:4px;
   letter-spacing:-0.01em;
   cursor:default;
   user-select:none;
   /* monospace width helps scramble stay same width, but keep original font */
   font-variant-numeric: tabular-nums;
   transition: opacity .1s;
+  word-break: break-all;
 }
 .profile-username:hover { opacity: 0.9; }
 

@@ -200,6 +200,7 @@ async function handleAuth() {
   const username = document.getElementById('authUsername').value.trim();
   
   if (isSignupMode && (!email || !pwd || !username)) return showToast('Enter username, email, and password');
+  if (isSignupMode && username.length > 15) return showToast('Username cannot be more than 15 characters');
   if (!isSignupMode && (!email || !pwd)) return showToast('Enter email and password');
 
   // Validate email format
@@ -1679,6 +1680,7 @@ function updateSettingsModalUI() {
 async function updateProfileUsername() {
   const newName = document.getElementById('settingsUsername').value.trim();
   if (!newName) return showToast('Username cannot be empty');
+  if (newName.length > 15) return showToast('Username cannot be more than 15 characters');
   const user = firebase.auth().currentUser;
   if (!user) return;
   try {

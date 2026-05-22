@@ -260,7 +260,7 @@
       <div class="auth-form">
         <div class="input-group" id="authUsernameGroup" style="display:none;">
           <label for="authUsername">Username</label>
-          <div class="input-wrapper"><i data-lucide="user" class="input-icon"></i><input type="text" id="authUsername" placeholder="Choose a username" /></div>
+          <div class="input-wrapper"><i data-lucide="user" class="input-icon"></i><input type="text" id="authUsername" placeholder="Choose a username" maxlength="15" /></div>
         </div>
         <div class="input-group">
           <label for="authEmail">Email</label>
@@ -334,7 +334,7 @@
             <div class="setting-group">
               <label>Username</label>
               <div class="input-wrapper-settings">
-                <input type="text" id="settingsUsername" placeholder="Username" />
+                <input type="text" id="settingsUsername" placeholder="Username" maxlength="15" />
                 <button class="settings-action-btn" onclick="updateProfileUsername()">Update</button>
               </div>
             </div>
