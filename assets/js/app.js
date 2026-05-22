@@ -295,7 +295,13 @@ async function loadWatchlist() {
   try {
     const docSnap = await db.collection("watchlists").doc(currentUser.uid).get();
     if (docSnap.exists) {
-      watchlist = docSnap.data().items || [];
+      const data = docSnap.data();
+      watchlist = data.items || [];
+      if (data.epCache) {
+        // Merge Firestore's epCache with our local epCache
+        epCache = { ...epCache, ...data.epCache };
+        saveEpCache();
+      }
     } else {
       watchlist = [];
     }
@@ -704,7 +710,10 @@ async function save() {
   updateStats();
   if (!db || !currentUser) return;
   try {
-    await db.collection("watchlists").doc(currentUser.uid).set({ items: watchlist });
+    await db.collection("watchlists").doc(currentUser.uid).set({
+      items: watchlist,
+      epCache: epCache
+    });
   } catch (e) {
     console.error("Error saving watchlist", e);
     showToast("Failed to sync to database");
@@ -898,17 +907,20 @@ async function openModal(id, event) {
     ]);
     const detail = (await detailRes.json()).data;
     currentModalAnime = detail;
-    // Refresh episode count for airing/ongoing anime — cache only, NO Firestore write
+    // Refresh episode count for airing/ongoing anime and sync to Firestore
     const wlItem = watchlist.find(w => Number(w.id) === Number(id));
     if (detail.episodes) {
       const key = String(id);
       const hadMissing = !epCache[key] || epCache[key] !== detail.episodes;
-      epCache[key] = detail.episodes;
-      saveEpCache();
-      // Also update in-memory item so progress cap works correctly
-      if (wlItem) wlItem.episodes = detail.episodes;
-      // Update the card ep-text live if the count changed
       if (hadMissing) {
+        epCache[key] = detail.episodes;
+        saveEpCache();
+        // Also update in-memory item so progress cap works correctly
+        if (wlItem) wlItem.episodes = detail.episodes;
+        // Save the updated cache and watchlist to Firestore
+        save();
+        
+        // Update the card ep-text live if the count changed
         const epText = document.getElementById(`ep-text-${id}`);
         if (epText) epText.textContent = `Ep ${wlItem ? (wlItem.episodesWatched || 0) : 0}/${detail.episodes}`;
       }
