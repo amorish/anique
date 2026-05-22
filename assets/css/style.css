@@ -108,6 +108,7 @@ button{font-family:inherit;cursor:pointer}
   font-size:13px;color:var(--text-secondary);word-break:break-all;
   padding-bottom:8px;
   border-bottom:1px solid var(--border);
+  text-align: right;
 }
 /* Hi @username styling */
 .profile-hi {
