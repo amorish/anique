@@ -24,7 +24,8 @@ let userSettings = {
   defaultView: 'list',
   defaultSort: 'added',
   defaultSortOrder: 'desc',
-  sfwFilter: true
+  sfwFilter: true,
+  navText: true
 };
 
 // DISPOSABLE / TEMP EMAIL BLOCKLIST
@@ -101,7 +102,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
     document.getElementById('authOverlay').style.display = 'none';
     document.getElementById('verifyOverlay').style.display = 'none';
     document.getElementById('userBadge').style.display = 'flex';
-    document.getElementById('userEmail').textContent = user.displayName || user.email;
+    document.getElementById('userEmail').innerHTML = `<span style="color:red; font-weight:bold;">Hi, @${user.displayName || user.email}</span>`;
     
     // Parallelize settings and watchlist fetching to decrease startup time significantly
     try {
@@ -162,7 +163,7 @@ async function checkVerification() {
     currentUser = user;
     document.getElementById('verifyOverlay').style.display = 'none';
     document.getElementById('userBadge').style.display = 'flex';
-    document.getElementById('userEmail').textContent = user.displayName || user.email;
+    document.getElementById('userEmail').innerHTML = `<span style="color:red; font-weight:bold;">Hi, @${user.displayName || user.email}</span>`;
     showToast('Email verified successfully.');
     await loadWatchlist();
   } else {
@@ -1197,10 +1198,13 @@ async function fetchExploreList(url, containerId, retries = 3) {
         <div class="explore-card-wrap" onclick="openModal(${a.mal_id}, event)">
           <div class="explore-card">
             <img class="explore-card-img" src="${escHtml(a.images?.jpg?.large_image_url || a.images?.jpg?.image_url || '')}" onerror="this.src=''" alt="" draggable="false" oncontextmenu="return false"/>
+            <div class="card-gradient"></div>
+            <div class="card-content" style="padding: 10px;">
+              <div class="explore-card-title">${escHtml(a.title)}</div>
+              <div class="explore-card-meta">${escHtml(a.type || 'TV')} · ★ ${a.score || 'N/A'}</div>
+            </div>
+            <div class="explore-card-rank">${idx + 1}</div>
           </div>
-          <div class="explore-card-rank">${idx + 1}</div>
-          <div class="explore-card-title">${escHtml(a.title)}</div>
-          <div class="explore-card-meta">${escHtml(a.type || 'TV')} · ★ ${a.score || 'N/A'}</div>
         </div>
       `).join('');
       return; // Success, exit function
@@ -1482,6 +1486,12 @@ function applySettings() {
     document.body.classList.remove('light-theme');
   }
   
+  if (userSettings.navText === false) {
+    document.getElementById('filterNav').classList.add('hide-nav-text');
+  } else {
+    document.getElementById('filterNav').classList.remove('hide-nav-text');
+  }
+
   // 2. Keep open modal UI in sync
   updateSettingsModalUI();
 }
@@ -1567,6 +1577,9 @@ function updateSettingsModalUI() {
   
   const sfwFilterChk = document.getElementById('settingsSfwFilter');
   if (sfwFilterChk) sfwFilterChk.checked = userSettings.sfwFilter;
+  
+  const navTextChk = document.getElementById('settingsNavTextToggle');
+  if (navTextChk) navTextChk.checked = (userSettings.navText !== false);
 }
 
 // ===== ACCOUNT ACTIONS =====
@@ -1623,6 +1636,8 @@ function updateWatchlistPreference(key, value) {
   } else if (key === 'defaultSortOrder') {
     currentSortOrder = value;
     renderGrid();
+  } else if (key === 'navText') {
+    applySettings();
   }
   
   showToast('Preferences updated');
