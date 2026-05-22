@@ -95,17 +95,14 @@
   <header class="app-header">
     <div class="header-container">
       <div class="header-left">
-        <img src="assets/images/aniqueTitleLogoNew.png" alt="AniQue" class="logo-img" draggable="false" oncontextmenu="return false" />
-      </div>
-      <div class="header-middle" onclick="toggleSearch()">
-        <div class="topbar-search">
-          <input type="text" placeholder="Search anime..." readonly />
-          <i data-lucide="search" class="search-icon"></i>
-        </div>
-      </div>
-      <div class="header-right">
         <button class="icon-btn" id="avatarBtn" onclick="toggleProfileMenu()" aria-label="Profile">
           <i data-lucide="user"></i>
+        </button>
+      </div>
+      <img src="assets/images/aniqueTitleLogoNew.png" alt="AniQue" class="logo-img" draggable="false" oncontextmenu="return false" />
+      <div class="header-right">
+        <button class="icon-btn" onclick="toggleSearch()" id="searchToggleBtn" aria-label="Search">
+          <i data-lucide="search"></i>
         </button>
       </div>
       <div class="profile-menu" id="profileMenu" style="display:none;">
@@ -149,6 +146,35 @@
         <span class="stat-value" id="remainCount">0</span>
       </div>
     </section>
+
+    <!-- Filter Tabs -->
+    <nav class="tabs-nav scrollbar-hide" id="filterNav">
+      <div class="tabs-container" id="normalFilters">
+        <button class="tab-btn active" onclick="setFilter('list', this)" id="tabList">List</button>
+        <button class="tab-btn" onclick="setFilter('watching', this)" id="tabWatching">Watching</button>
+        <button class="tab-btn" onclick="setFilter('watched', this)" id="tabWatched">Watched</button>
+        <button class="tab-btn" onclick="setFilter('explore', this)" id="tabExplore">Explore</button>
+        <div style="flex:1"></div>
+        <button class="icon-btn sort-filter-btn" id="sortFilterBtn" onclick="toggleSortPanel()" title="Sort" style="margin-bottom:8px;">
+          <i data-lucide="sliders-horizontal"></i>
+        </button>
+        <button class="icon-btn" id="selectModeToggleBtn" onclick="toggleSelectMode()" title="Select" style="margin-bottom:8px;margin-left:8px;">
+          <i data-lucide="list-checks"></i>
+        </button>
+      </div>
+      <div class="tabs-container select-bar" id="selectFilters" style="display:none;align-items:center;gap:8px;">
+        <span style="font-size:13px;color:var(--accent);font-weight:600;flex:1;" id="selectCountText">0 Selected</span>
+        <button class="sel-action-btn sel-watched" onclick="markSelectedWatched()">
+          <i data-lucide="check-circle" style="width:15px;height:15px;"></i> Watched
+        </button>
+        <button class="sel-action-btn sel-remove" onclick="confirmRemoveSelected()">
+          <i data-lucide="trash-2" style="width:15px;height:15px;"></i> Remove
+        </button>
+        <button class="icon-btn sel-close-btn" onclick="toggleSelectMode()" title="Cancel">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+    </nav>
 
     <!-- Main Anime Grid -->
     <div class="grid-wrap" id="gridWrap">
@@ -195,43 +221,6 @@
       </div>
     </div>
   </main>
-
-  <!-- Filter Tabs (Bottom Navigation) -->
-  <nav class="bottom-nav tabs-nav scrollbar-hide" id="filterNav">
-    <div class="tabs-container" id="normalFilters">
-      <button class="tab-btn active" onclick="setFilter('list', this)" id="tabList">
-        <i data-lucide="list"></i><span class="nav-text">List</span>
-      </button>
-      <button class="tab-btn" onclick="setFilter('watching', this)" id="tabWatching">
-        <i data-lucide="play-circle"></i><span class="nav-text">Watching</span>
-      </button>
-      <button class="tab-btn" onclick="setFilter('watched', this)" id="tabWatched">
-        <i data-lucide="check-circle"></i><span class="nav-text">Watched</span>
-      </button>
-      <button class="tab-btn" onclick="setFilter('explore', this)" id="tabExplore">
-        <i data-lucide="compass"></i><span class="nav-text">Explore</span>
-      </button>
-      <div style="flex:1"></div>
-      <button class="icon-btn sort-filter-btn" id="sortFilterBtn" onclick="toggleSortPanel()" title="Sort">
-        <i data-lucide="sliders-horizontal"></i>
-      </button>
-      <button class="icon-btn" id="selectModeToggleBtn" onclick="toggleSelectMode()" title="Select" style="margin-left:8px;">
-        <i data-lucide="list-checks"></i>
-      </button>
-    </div>
-    <div class="tabs-container select-bar" id="selectFilters" style="display:none;align-items:center;gap:8px;padding: 0 16px;width:100%;">
-      <span style="font-size:13px;color:var(--accent);font-weight:600;flex:1;" id="selectCountText">0 Selected</span>
-      <button class="sel-action-btn sel-watched" onclick="markSelectedWatched()">
-        <i data-lucide="check-circle" style="width:15px;height:15px;"></i> Watched
-      </button>
-      <button class="sel-action-btn sel-remove" onclick="confirmRemoveSelected()">
-        <i data-lucide="trash-2" style="width:15px;height:15px;"></i> Remove
-      </button>
-      <button class="icon-btn sel-close-btn" onclick="toggleSelectMode()" title="Cancel">
-        <i data-lucide="x"></i>
-      </button>
-    </div>
-  </nav>
 
   <!-- ===== DETAIL MODAL ===== -->
   <div class="modal-backdrop" id="modalBackdrop" onclick="closeModal(event)">
@@ -389,18 +378,6 @@
                 </div>
                 <label class="switch-toggle">
                   <input type="checkbox" id="settingsThemeToggle" onchange="toggleAppTheme(this.checked)">
-                  <span class="slider-toggle round-toggle"></span>
-                </label>
-              </div>
-            </div>
-            <div class="setting-group toggle-group">
-              <div class="setting-row">
-                <div>
-                  <label for="settingsNavTextToggle" style="margin-bottom:2px; display:block;">Show Navigation Text</label>
-                  <p class="setting-description">Show text labels in the bottom navigation bar.</p>
-                </div>
-                <label class="switch-toggle">
-                  <input type="checkbox" id="settingsNavTextToggle" onchange="updateWatchlistPreference('navText', this.checked)">
                   <span class="slider-toggle round-toggle"></span>
                 </label>
               </div>
