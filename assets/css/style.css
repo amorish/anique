@@ -116,7 +116,13 @@ button{font-family:inherit;cursor:pointer}
   display:block;
   margin-top:2px;
   letter-spacing:-0.01em;
+  cursor:default;
+  user-select:none;
+  /* monospace width helps scramble stay same width, but keep original font */
+  font-variant-numeric: tabular-nums;
+  transition: opacity .1s;
 }
+.profile-username:hover { opacity: 0.9; }
 
 
 /* Icon Buttons — universal */

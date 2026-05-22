@@ -313,6 +313,29 @@ let selectedForDelete = new Set();
 let recentlyDeletedItems = [];
 let exploreLoaded = false;
 
+// ===== EPISODE COUNT CACHE (localStorage only — never written to Firestore) =====
+// Solves the '?' bug for airing anime without mutating the user's watchlist in the database.
+// When a modal fetch returns the real episode count, it's stored here keyed by mal_id.
+// epDisplay() always checks this cache first, so every tab renders the correct number.
+let epCache = {};
+try {
+  const cached = localStorage.getItem('anique_ep_cache');
+  if (cached) epCache = JSON.parse(cached);
+} catch(e) { epCache = {}; }
+
+function saveEpCache() {
+  try { localStorage.setItem('anique_ep_cache', JSON.stringify(epCache)); } catch(e) {}
+}
+
+// Returns the best-known episode count for an item: cache > stored > '?'
+function epDisplay(item) {
+  const cached = epCache[String(item.id)];
+  if (cached) return cached;
+  if (item.episodes) return item.episodes;
+  return '?';
+}
+
+
 // Google Calendar
 const CAL_CLIENT_ID = '509204660972-3774jpvhcginocobddqkn3pmv8ngnf51.apps.googleusercontent.com';
 const CAL_SCOPE = 'https://www.googleapis.com/auth/calendar.events';
@@ -590,8 +613,13 @@ function addAnime(id, animeData, btn) {
   if (watchlist.some(w => w.id === id)) return;
 
   // For airing/ongoing anime, episodes may be null from the API.
-  // We store what we have; it will be refreshed when user opens the modal.
-  const episodeCount = animeData.episodes || null;
+  // Check the ep cache first — if we've seen this anime before, use the cached count.
+  const episodeCount = animeData.episodes || epCache[String(animeData.mal_id)] || null;
+  // If we got a real count from the API, cache it
+  if (animeData.episodes) {
+    epCache[String(animeData.mal_id)] = animeData.episodes;
+    saveEpCache();
+  }
 
   const item = {
     id: animeData.mal_id,
@@ -809,13 +837,7 @@ function renderGrid() {
 
   if (items.length === 0) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
   empty.style.display = 'none';
-
-  // Show ep count: for airing anime with null episodes, show '?' with a note
-  const epDisplay = (item) => {
-    if (item.episodes) return item.episodes;
-    if (item.status === 'Currently Airing' || item.status === 'Airing') return '?';
-    return '?';
-  };
+  // epDisplay() is defined near STATE — uses epCache then item.episodes
 
   grid.innerHTML = items.map((a, i) => `
     <div class="card-wrapper">
@@ -864,14 +886,20 @@ async function openModal(id, event) {
     ]);
     const detail = (await detailRes.json()).data;
     currentModalAnime = detail;
-    // Refresh episode count for airing/ongoing anime stored in our watchlist
+    // Refresh episode count for airing/ongoing anime — cache only, NO Firestore write
     const wlItem = watchlist.find(w => Number(w.id) === Number(id));
-    if (wlItem && detail.episodes && wlItem.episodes !== detail.episodes) {
-      wlItem.episodes = detail.episodes;
-      // Update the card ep-text live so Watching tab shows correct count immediately
-      const epText = document.getElementById(`ep-text-${id}`);
-      if (epText) epText.textContent = `Ep ${wlItem.episodesWatched || 0}/${detail.episodes}`;
-      save(); // Persist silently
+    if (detail.episodes) {
+      const key = String(id);
+      const hadMissing = !epCache[key] || epCache[key] !== detail.episodes;
+      epCache[key] = detail.episodes;
+      saveEpCache();
+      // Also update in-memory item so progress cap works correctly
+      if (wlItem) wlItem.episodes = detail.episodes;
+      // Update the card ep-text live if the count changed
+      if (hadMissing) {
+        const epText = document.getElementById(`ep-text-${id}`);
+        if (epText) epText.textContent = `Ep ${wlItem ? (wlItem.episodesWatched || 0) : 0}/${detail.episodes}`;
+      }
     }
     const staffData = (await staffRes.json()).data || [];
     const relData = (await relRes.json()).data || [];
@@ -1089,6 +1117,55 @@ function undoDelete() {
 loadLocalSettings();
 lucide.createIcons();
 renderGrid();
+
+// ===== SCRAMBLE TEXT EFFECT ON USERNAME HOVER =====
+// Inspired by: https://codepen.io/hermesgrau/pen/MOLoZO
+// Pure JS implementation — uses the app's existing font (Outfit), not a monospace font.
+(function () {
+  const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#!&*%';
+  let scrambleTimer = null;
+
+  function scramble(el) {
+    if (scrambleTimer) clearInterval(scrambleTimer);
+    const original = el.dataset.original || el.textContent;
+    el.dataset.original = original; // preserve original on first run
+    const len = original.length;
+    let revealed = 0;
+    let frame = 0;
+
+    scrambleTimer = setInterval(() => {
+      // Every 2 frames, reveal one more correct character from the left
+      if (frame % 2 === 0 && revealed < len) revealed++;
+
+      el.textContent = original.split('').map((ch, i) => {
+        if (i < revealed) return ch; // already resolved
+        return CHARS[Math.floor(Math.random() * CHARS.length)];
+      }).join('');
+
+      frame++;
+      if (revealed >= len) {
+        clearInterval(scrambleTimer);
+        scrambleTimer = null;
+        el.textContent = original; // ensure perfect final state
+      }
+    }, 28);
+  }
+
+  function unscramble(el) {
+    if (scrambleTimer) { clearInterval(scrambleTimer); scrambleTimer = null; }
+    if (el.dataset.original) el.textContent = el.dataset.original;
+  }
+
+  // Event delegation — works even after dynamic innerHTML updates
+  document.addEventListener('mouseover', (e) => {
+    const el = e.target.closest('.profile-username');
+    if (el) scramble(el);
+  });
+  document.addEventListener('mouseout', (e) => {
+    const el = e.target.closest('.profile-username');
+    if (el) unscramble(el);
+  });
+})();
 
 let progressInterval = null;
 let progressTimeout = null;
