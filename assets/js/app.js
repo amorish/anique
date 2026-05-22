@@ -101,6 +101,8 @@ firebase.auth().onAuthStateChanged(async (user) => {
     document.getElementById('authOverlay').style.display = 'none';
     document.getElementById('verifyOverlay').style.display = 'none';
     document.getElementById('userBadge').style.display = 'flex';
+    // Load this user's ep cache from localStorage (UID-scoped, isolated per user)
+    loadEpCacheForUser(user.uid);
     // Show "Hi @username" with styled username
     const displayName = user.displayName || user.email;
     document.getElementById('userEmail').innerHTML =
@@ -122,6 +124,9 @@ firebase.auth().onAuthStateChanged(async (user) => {
   } else {
     currentUser = null;
     watchlist = [];
+    // Reset in-memory cache on sign-out (next user gets their own via loadEpCacheForUser)
+    epCache = {};
+    epCacheKey = 'anique_ep_cache';
     document.getElementById('authOverlay').style.display = 'flex';
     document.getElementById('verifyOverlay').style.display = 'none';
     document.getElementById('userBadge').style.display = 'none';
@@ -313,18 +318,25 @@ let selectedForDelete = new Set();
 let recentlyDeletedItems = [];
 let exploreLoaded = false;
 
-// ===== EPISODE COUNT CACHE (localStorage only — never written to Firestore) =====
-// Solves the '?' bug for airing anime without mutating the user's watchlist in the database.
-// When a modal fetch returns the real episode count, it's stored here keyed by mal_id.
-// epDisplay() always checks this cache first, so every tab renders the correct number.
+// ===== EPISODE COUNT CACHE (localStorage, scoped per user UID — never written to Firestore) =====
+// Key format: anique_ep_cache_<uid>
+// - Different users on same browser get separate isolated caches
+// - Same user's cache survives sign-out → sign-in (same UID = same key)
+// - Survives page refresh and browser restart
+// - Only limitation: not synced across devices (rebuilds automatically on first modal open)
 let epCache = {};
-try {
-  const cached = localStorage.getItem('anique_ep_cache');
-  if (cached) epCache = JSON.parse(cached);
-} catch(e) { epCache = {}; }
+let epCacheKey = 'anique_ep_cache'; // default until UID is known
+
+function loadEpCacheForUser(uid) {
+  epCacheKey = `anique_ep_cache_${uid}`;
+  try {
+    const raw = localStorage.getItem(epCacheKey);
+    epCache = raw ? JSON.parse(raw) : {};
+  } catch(e) { epCache = {}; }
+}
 
 function saveEpCache() {
-  try { localStorage.setItem('anique_ep_cache', JSON.stringify(epCache)); } catch(e) {}
+  try { localStorage.setItem(epCacheKey, JSON.stringify(epCache)); } catch(e) {}
 }
 
 // Returns the best-known episode count for an item: cache > stored > '?'
