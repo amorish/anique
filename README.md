@@ -47,7 +47,7 @@
 <details>
 <summary><strong>Click to expand</strong></summary>
 
-### 🔑 Login Page
+### ![Login icon](https://api.iconify.design/lucide/log-in.svg?color=white) Login Page
 > Clean authentication overlay with smart sign in / sign up toggle and one-click password reset.
 <p align="center">
   <img src="assets/images/ScreenshotDesktopLoginPage.png" alt="Login Page" width="90%" />
@@ -55,7 +55,7 @@
 
 ---
 
-### ℹ️ Anime Info
+### ![Info icon](https://api.iconify.design/lucide/info.svg?color=white) Anime Info
 > Detailed modal showing synopsis, watch order, director, studio, ratings, and Google Calendar scheduling.
 <p align="center">
   <img src="assets/images/ScreenshotDesktopAnimeInfo.png" alt="Anime Info" width="90%" />
@@ -63,7 +63,7 @@
 
 ---
 
-### 🌊 Flow Mode
+### ![Flow Mode icon](https://api.iconify.design/lucide/tv.svg?color=white) Flow Mode
 > A beautiful, immersive, distraction-free view designed for a premium watchlist browsing experience.
 <p align="center">
   <img src="assets/images/ScreenshotDesktopFlowmode.png" alt="Flow Mode" width="90%" />
@@ -71,7 +71,7 @@
 
 ---
 
-### 🎲 Random Pick
+### ![Random Pick icon](https://api.iconify.design/lucide/dices.svg?color=white) Random Pick
 > Unsure what to watch? Instantly shuffle and receive high-quality recommendation cards with hover effects.
 <p align="center">
   <img src="assets/images/ScreenshotDesktopRandomPick.png" alt="Random Pick" width="90%" />
